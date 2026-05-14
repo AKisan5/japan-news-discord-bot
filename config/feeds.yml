@@ -1,0 +1,29 @@
+settings:
+  max_items_per_feed: 5
+  state_retention: 1000
+  http_timeout: 15
+  user_agent: "news-discord-bot/1.0 (+https://github.com/<owner>/<repo>)"
+  post_interval_seconds: 1.5
+
+discord:
+  embed_color: 0x1E90FF
+  embeds_per_message: 5
+  header: "📰 本日の主要ニュース"
+
+feeds:
+  - name: "NHK 主要ニュース"
+    url: "https://www.nhk.or.jp/rss/news/cat0.xml"
+    category: "総合"
+    enabled: true
+  - name: "NHK 経済"
+    url: "https://www.nhk.or.jp/rss/news/cat5.xml"
+    category: "経済"
+    enabled: true
+  - name: "NHK 国際"
+    url: "https://www.nhk.or.jp/rss/news/cat6.xml"
+    category: "国際"
+    enabled: true
+  - name: "NHK 科学・文化"
+    url: "https://www.nhk.or.jp/rss/news/cat3.xml"
+    category: "科学・文化"
+    enabled: true
