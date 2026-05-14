@@ -30,21 +30,21 @@ feeds:
     enabled: true
 
   # --- Web3 / Crypto ---
-  - name: "CoinDesk Japan"
-    url: "https://www.coindeskjapan.com/feed/"
+  - name: "COINPOST"
+    url: "https://coinpost.jp/?feed=rss2"
     category: "Web3"
     enabled: true
-  - name: "CoinTelegraph Japan"
-    url: "https://jp.cointelegraph.com/rss"
+  - name: "Decrypt"
+    url: "https://decrypt.co/feed"
     category: "Web3"
     enabled: true
 
   # --- Fintech ---
-  - name: "The Bridge"
-    url: "https://thebridge.jp/feed"
-    category: "Fintech"
-    enabled: true
   - name: "TechCrunch Fintech"
     url: "https://techcrunch.com/category/fintech/feed/"
+    category: "Fintech"
+    enabled: true
+  - name: "Finextra"
+    url: "https://www.finextra.com/rss/channel.aspx?channel=news"
     category: "Fintech"
     enabled: true
