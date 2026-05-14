@@ -2,7 +2,7 @@ name: Post Daily News
 
 on:
   schedule:
-    # 毎日 01:00 UTC = 10:00 JST
+    # 01:00 UTC = 10:00 JST
     - cron: "0 1 * * *"
   workflow_dispatch:
 
