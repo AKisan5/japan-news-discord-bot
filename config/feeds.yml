@@ -11,6 +11,7 @@ discord:
   header: "📰 本日の主要ニュース"
 
 feeds:
+  # --- 総合ニュース ---
   - name: "NHK 主要ニュース"
     url: "https://www.nhk.or.jp/rss/news/cat0.xml"
     category: "総合"
@@ -26,4 +27,24 @@ feeds:
   - name: "NHK 科学・文化"
     url: "https://www.nhk.or.jp/rss/news/cat3.xml"
     category: "科学・文化"
+    enabled: true
+
+  # --- Web3 / Crypto ---
+  - name: "CoinDesk Japan"
+    url: "https://www.coindeskjapan.com/feed/"
+    category: "Web3"
+    enabled: true
+  - name: "CoinTelegraph Japan"
+    url: "https://jp.cointelegraph.com/rss"
+    category: "Web3"
+    enabled: true
+
+  # --- Fintech ---
+  - name: "The Bridge"
+    url: "https://thebridge.jp/feed"
+    category: "Fintech"
+    enabled: true
+  - name: "TechCrunch Fintech"
+    url: "https://techcrunch.com/category/fintech/feed/"
+    category: "Fintech"
     enabled: true
