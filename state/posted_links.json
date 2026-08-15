@@ -2,6 +2,94 @@
   "version": 1,
   "posted": [
     {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260815de44232",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260815de44211",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260815de44218",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260815de44212",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260815de44208",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260815de44230",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260812de43487",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260815de44201",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260815de44213",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260815de44203",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20260814de44189",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=731036",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=731059",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=731027",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=731044",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=731037",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://decrypt.co/375715/france-tax-data-leak-wrench-attacks-bitcoin",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://decrypt.co/375684/china-z-ai-glm-5-3-top-open-weight-coding-model",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://decrypt.co/375672/sharplink-stake-200m-ethereum-lido-wsteth",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://decrypt.co/375670/openai-staff-blame-rush-ship-rogue-agent-hack",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://decrypt.co/375656/coldcard-bitcoin-thefts-slow-losses-top-150-million",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/08/14/talks-to-sell-paypal-to-stripe-and-advent-are-heating-up/",
+      "posted_at": "2026-08-15T11:13:01.744919+09:00"
+    },
+    {
       "url": "https://news.web.nhk/newsweb/na/nd-20260814de44162",
       "posted_at": "2026-08-14T23:08:00.096398+09:00"
     },
@@ -3912,94 +4000,6 @@
     {
       "url": "https://coinpost.jp/?p=726083",
       "posted_at": "2026-07-21T13:15:02.983563+09:00"
-    },
-    {
-      "url": "https://coinpost.jp/?p=724540",
-      "posted_at": "2026-07-21T13:15:02.983563+09:00"
-    },
-    {
-      "url": "https://coinpost.jp/?p=726038",
-      "posted_at": "2026-07-21T13:15:02.983563+09:00"
-    },
-    {
-      "url": "https://coinpost.jp/?p=726019",
-      "posted_at": "2026-07-21T13:15:02.983563+09:00"
-    },
-    {
-      "url": "https://decrypt.co/373905/bank-korea-scales-up-cbdc-pilot-half-million-users",
-      "posted_at": "2026-07-21T13:15:02.983563+09:00"
-    },
-    {
-      "url": "https://decrypt.co/373880/russia-first-comprehensive-crypto-law",
-      "posted_at": "2026-07-21T13:15:02.983563+09:00"
-    },
-    {
-      "url": "https://decrypt.co/373858/cardano-van-rossem-hard-fork-live-community-upgrade",
-      "posted_at": "2026-07-21T13:15:02.983563+09:00"
-    },
-    {
-      "url": "https://decrypt.co/373850/bitcoin-etfs-green-inflows-why-investors-should-zoom-out",
-      "posted_at": "2026-07-21T13:15:02.983563+09:00"
-    },
-    {
-      "url": "https://decrypt.co/373847/tom-lee-bitmine-taps-brakes-eth-buys-86m-stock-buyback",
-      "posted_at": "2026-07-21T13:15:02.983563+09:00"
-    },
-    {
-      "url": "https://techcrunch.com/2026/07/20/natural-raises-30m-to-reinvent-payments-for-ai-agents-and-take-on-stripe/",
-      "posted_at": "2026-07-21T13:15:02.983563+09:00"
-    },
-    {
-      "url": "https://news.web.nhk/newsweb/na/na-k10015181411000",
-      "posted_at": "2026-07-21T00:01:37.279781+09:00"
-    },
-    {
-      "url": "https://news.web.nhk/newsweb/na/na-k10015181401000",
-      "posted_at": "2026-07-21T00:01:37.279781+09:00"
-    },
-    {
-      "url": "https://news.web.nhk/newsweb/na/na-k10015181031000",
-      "posted_at": "2026-07-21T00:01:37.279781+09:00"
-    },
-    {
-      "url": "https://news.web.nhk/newsweb/na/na-k10015181331000",
-      "posted_at": "2026-07-21T00:01:37.279781+09:00"
-    },
-    {
-      "url": "https://news.web.nhk/newsweb/na/na-k10015181251000",
-      "posted_at": "2026-07-21T00:01:37.279781+09:00"
-    },
-    {
-      "url": "https://news.web.nhk/newsweb/na/na-k10015181211000",
-      "posted_at": "2026-07-21T00:01:37.279781+09:00"
-    },
-    {
-      "url": "https://coinpost.jp/?p=726003",
-      "posted_at": "2026-07-21T00:01:37.279781+09:00"
-    },
-    {
-      "url": "https://decrypt.co/373831/allbridge-pauses-cross-chain-protocol-after-1-65m-flash-loan-attack",
-      "posted_at": "2026-07-21T00:01:37.279781+09:00"
-    },
-    {
-      "url": "https://decrypt.co/373828/morning-minute-hyperliquid-opens-prediction-markets-to-anyone-in-hip-4-upgrade",
-      "posted_at": "2026-07-21T00:01:37.279781+09:00"
-    },
-    {
-      "url": "https://decrypt.co/373819/strategys-michael-saylor-makes-110-point-case-against-bitcoins-bip-110",
-      "posted_at": "2026-07-21T00:01:37.279781+09:00"
-    },
-    {
-      "url": "https://news.web.nhk/newsweb/na/na-k10015180931000",
-      "posted_at": "2026-07-20T13:35:10.220697+09:00"
-    },
-    {
-      "url": "https://news.web.nhk/newsweb/na/na-k10015181041000",
-      "posted_at": "2026-07-20T13:35:10.220697+09:00"
-    },
-    {
-      "url": "https://news.web.nhk/newsweb/na/na-k10015181191000",
-      "posted_at": "2026-07-20T13:35:10.220697+09:00"
     }
   ]
 }
