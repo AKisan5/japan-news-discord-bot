@@ -180,7 +180,7 @@ def test_real_select_fetch_write_content_only_pipeline(monkeypatch, tmp_path, ht
     httpx_mock.add_response(url=WEBHOOK + "?wait=true", json={"id": "123"})
     httpx_mock.add_response(url=WEBHOOK + "?wait=true", json={"id": "124"})
     with patch("src.main.load_config", return_value=cfg), \
-         patch("src.main.fetch_feed", return_value=[item(), item(1)]):
+         patch("src.main.fetch_feed", return_value=[item()]):
         assert main() == 0
     requests = httpx_mock.get_requests()
     writer = json.loads(requests[2].content)

@@ -156,15 +156,34 @@ def select_items(items: list[FeedItem], *, max_briefing_items: int = 15,
     selected: dict[str, FeedItem] = {}
     for entry in result.items:
         source = sources.get(entry.id)
-        if source is None or source.url != entry.url:
+        if source is None:
             continue
+        # Trust the catalog URL for a known id; Haiku often rewrites query strings.
         selected.setdefault(source.url, source)
     skipped = len(result.items) - len(selected)
     if skipped:
-        logger.info("Selection skipped %d mismatched/duplicate rows", skipped)
+        logger.info("Selection skipped %d unknown-id/duplicate rows", skipped)
     if not selected and result.items:
         raise CurationError("Claude selection matched no known sources")
-    return list(selected.values())[:max_briefing_items]
+    if not selected:
+        return []  # Claude intentionally returned no stories
+    chosen = list(selected.values())
+    # Top up toward the target when Claude under-filled or rows were skipped.
+    if len(chosen) < max_briefing_items:
+        chosen_urls = {item.url for item in chosen}
+        for item in items:
+            if item.url in chosen_urls:
+                continue
+            chosen.append(item)
+            chosen_urls.add(item.url)
+            if len(chosen) >= max_briefing_items:
+                break
+        if len(chosen) > len(selected):
+            logger.info(
+                "Topped up selection from candidates: %d -> %d",
+                len(selected), len(chosen),
+            )
+    return chosen[:max_briefing_items]
 
 
 def _drop_duplicate_url_stories(text: str, *, reserved: set[str],

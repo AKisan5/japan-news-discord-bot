@@ -88,13 +88,21 @@ def test_write_receives_bodies_and_missing_body_instruction(httpx_mock):
 
 @pytest.mark.parametrize("text", ["not json", "[]", "{}", '{"items":null}',
     '{"items":[{"id":"0"}]}',
-    '{"items":[{"id":"0","url":"https://invented.test"}]}',
     '{"items":[{"id":"wrong","url":"https://example.com/0"}]}',
     '{"items":[{"id":"0","url":"https://example.com/0","summary":"teaser"}]}'])
 def test_invalid_selection(httpx_mock, text):
     reply(httpx_mock, text)
     with pytest.raises(CurationError):
         select_items([source()])
+
+
+def test_select_accepts_rewritten_url_and_tops_up(httpx_mock):
+    reply(httpx_mock, '{"items":[{"id":"0","url":"https://rewritten.example/0?x=1"}]}')
+    items = [source(i) for i in range(3)]
+    result = select_items(items, max_briefing_items=3)
+    assert result[0] == source(0)
+    assert len(result) == 3
+    assert {item.url for item in result} == {source(i).url for i in range(3)}
 
 
 @pytest.mark.parametrize("text", ["", "just a headline",
