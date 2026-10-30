@@ -35,6 +35,22 @@ class MissingAPIKeyError(CurationError):
     pass
 
 
+def _extract_json_text(text: str) -> str:
+    """Accept raw JSON or a markdown-fenced JSON object."""
+    cleaned = text.strip()
+    if cleaned.startswith("```"):
+        lines = cleaned.splitlines()
+        lines = lines[1:]
+        if lines and lines[-1].strip().startswith("```"):
+            lines = lines[:-1]
+        cleaned = "\n".join(lines).strip()
+    start = cleaned.find("{")
+    end = cleaned.rfind("}")
+    if start < 0 or end <= start:
+        raise ValueError("No JSON object in Claude response")
+    return cleaned[start : end + 1]
+
+
 class _Selection(BaseModel):
     model_config = ConfigDict(strict=True, extra="forbid", str_strip_whitespace=True)
 
@@ -100,7 +116,7 @@ def curate_items(
                 if not isinstance(content, list) or not content:
                     raise ValueError("Missing content")
                 text = "".join(block["text"] for block in content if block["type"] == "text")
-                result = _Response.model_validate_json(text)
+                result = _Response.model_validate_json(_extract_json_text(text))
             except httpx.HTTPError:
                 raise CurationError("Claude API request failed") from None
             except (ValueError, KeyError, TypeError, ValidationError):

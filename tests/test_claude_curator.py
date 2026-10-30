@@ -74,7 +74,14 @@ def test_chunking_global_cap_and_model_override(httpx_mock, monkeypatch):
         assert len(json.loads(body["messages"][0]["content"])) == count
 
 
-@pytest.mark.parametrize("text", ["not json", '```json\n{"items":[]}\n```', '[]', '{}',
+def test_accepts_markdown_fenced_json(httpx_mock):
+    fenced = "```json\n" + json.dumps({"items": [selection()]}, ensure_ascii=False) + "\n```"
+    httpx_mock.add_response(json={"stop_reason": "end_turn", "content": [{"type": "text", "text": fenced}]})
+    result = curate_items([source()])
+    assert result[0].title == "重要な発表"
+
+
+@pytest.mark.parametrize("text", ["not json", '[]', '{}',
                                      '{"items":null}', '{"items":[{"url":"x"}]}'])
 def test_invalid_json(httpx_mock, text):
     httpx_mock.add_response(json={"stop_reason": "end_turn", "content": [{"type": "text", "text": text}]})
