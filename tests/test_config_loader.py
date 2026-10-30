@@ -4,12 +4,14 @@ from pydantic import ValidationError
 from src.config_loader import Settings, load_config
 
 
-def test_curated_limits():
-    assert Settings().max_curated == 50
-    assert Settings(max_curated=50).max_curated == 50
+def test_briefing_limits():
+    assert Settings().max_briefing_items == 15
+    assert Settings().claude_timeout == 180
+    assert Settings().article_timeout == 20
+    assert Settings(max_briefing_items=50).max_briefing_items == 50
     for limit in (0, 51):
         with pytest.raises(ValidationError):
-            Settings(max_curated=limit)
+            Settings(max_briefing_items=limit)
 
 
 def test_expanded_feeds_enabled_and_unique():

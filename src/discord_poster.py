@@ -6,31 +6,13 @@ from dataclasses import dataclass, field
 
 import httpx
 
-from .categories import CATEGORIES, normalize_category
-from .config_loader import DiscordConfig
-from .feed_fetcher import FeedItem
-
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class PostResult:
-    posted: list[FeedItem] = field(default_factory=list)
-    failed: list[FeedItem] = field(default_factory=list)
+    success: bool = True
     message_ids: list[str] = field(default_factory=list)
-
-
-def _build_embed(item: FeedItem, color: int) -> dict:
-    embed: dict = {
-        "title": item.title[:256],
-        "url": item.url,
-        "description": item.summary[:900],
-        "color": color,
-        "footer": {"text": f"{item.feed_name} / {item.feed_category}"},
-    }
-    if item.published_at:
-        embed["timestamp"] = item.published_at.isoformat()
-    return embed
 
 
 def _post_with_retry(client: httpx.Client, webhook_url: str, payload: dict) -> str | None:
@@ -71,49 +53,68 @@ def _post_with_retry(client: httpx.Client, webhook_url: str, payload: dict) -> s
         return None
 
 
-def post_items(
-    items: list[FeedItem],
-    *,
-    webhook_url: str,
-    discord_config: DiscordConfig,
-    interval_seconds: float,
-) -> PostResult:
+REACTION_PROMPT = "読んだら✅を付けてください"
+
+
+def _discord_length(text: str) -> int:
+    # Count UTF-16 code units too, so astral emoji cannot exceed Discord's cap.
+    return len(text.encode("utf-16-le")) // 2
+
+
+def split_message(text: str, limit: int = 1900) -> list[str]:
+    """Prefer blank-line boundaries; split oversized paragraphs only as needed."""
+    if limit < 2:
+        raise ValueError("Message limit must be at least 2")
+    chunks: list[str] = []
+    current = ""
+    for paragraph in text.strip().split("\n\n"):
+        if not paragraph:
+            continue
+        candidate = current + "\n\n" + paragraph if current else paragraph
+        if _discord_length(candidate) <= limit:
+            current = candidate
+            continue
+        if current:
+            chunks.append(current)
+            current = ""
+        while _discord_length(paragraph) > limit:
+            units = 0
+            cut = 0
+            for char in paragraph:
+                size = _discord_length(char)
+                if units + size > limit:
+                    break
+                units += size
+                cut += 1
+            # Prefer a line/sentence boundary within an oversized paragraph.
+            boundary = max(paragraph.rfind("\n", 0, cut),
+                           paragraph.rfind("。", 0, cut))
+            if boundary >= cut // 2:
+                cut = boundary + 1
+            chunks.append(paragraph[:cut])
+            paragraph = paragraph[cut:]
+        current = paragraph
+    if current:
+        chunks.append(current)
+    return chunks
+
+
+def post_briefing(briefing: str, *, webhook_url: str,
+                  interval_seconds: float = 1.5) -> PostResult:
     result = PostResult()
-    if not items:
+    if not briefing.strip():
+        result.success = False
         return result
-
-    n = discord_config.embeds_per_message
-    grouped: dict[str, list[FeedItem]] = {category: [] for category in CATEGORIES}
-    for item in items:
-        grouped[normalize_category(item.feed_category)].append(item)
-
-    batches: list[tuple[str, list[FeedItem]]] = []
-    for category, group in grouped.items():
-        group.sort(key=lambda item: getattr(item, "importance", 0), reverse=True)
-        for offset in range(0, len(group), n):
-            label = f"本日の要約・{len(group)}件" if offset == 0 else "続き"
-            header = f"📰 **{category}**（{label}）"
-            batches.append((header, group[offset : offset + n]))
-
+    chunks = split_message(briefing.rstrip() + "\n\n" + REACTION_PROMPT)
     with httpx.Client(timeout=30) as client:
-        for idx, (header, batch) in enumerate(batches):
-            embeds = [_build_embed(item, discord_config.embed_color) for item in batch]
-            payload: dict = {
-                "embeds": embeds,
-                "content": header + "\n読んだら✅を付けてください",
-                "allowed_mentions": {"parse": []},
-            }
-
-            message_id = _post_with_retry(client, webhook_url, payload)
-
-            if message_id:
-                result.message_ids.append(message_id)
-                result.posted.extend(batch)
-            else:
-                result.failed.extend(batch)
-                logger.error("Failed to post batch %d/%d", idx + 1, len(batches))
-
-            if idx < len(batches) - 1:
+        for index, chunk in enumerate(chunks):
+            message_id = _post_with_retry(client, webhook_url, {
+                "content": chunk, "allowed_mentions": {"parse": []},
+            })
+            if not message_id:
+                result.success = False
+                break
+            result.message_ids.append(message_id)
+            if index < len(chunks) - 1:
                 time.sleep(interval_seconds)
-
     return result

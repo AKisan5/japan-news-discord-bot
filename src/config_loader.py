@@ -21,8 +21,9 @@ class FeedConfig(BaseModel):
 
 
 class Settings(BaseModel):
-    max_curated: int = Field(default=50, ge=1, le=50)
-    claude_timeout: float = Field(default=120, gt=0)
+    max_briefing_items: int = Field(default=15, ge=1, le=50)
+    claude_timeout: float = Field(default=180, gt=0)
+    article_timeout: float = Field(default=20, gt=0)
     max_items_per_feed: int = 5
     state_retention: int = 1000
     http_timeout: int = 15
@@ -31,9 +32,8 @@ class Settings(BaseModel):
 
 
 class DiscordConfig(BaseModel):
-    embed_color: int = 0x1E90FF
-    embeds_per_message: int = 5
-    header: str | None = "📰 本日の重要ニュース（Claude要約）"
+    # Retained for config compatibility; the briefing supplies its own header.
+    header: str | None = None
 
 
 class Config(BaseModel):
