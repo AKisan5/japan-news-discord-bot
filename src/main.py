@@ -4,9 +4,10 @@ import logging
 import os
 import sys
 
+from .claude_curator import CurationError, MissingAPIKeyError, curate_items
 from .config_loader import load_config
 from .deduplicator import StateStore
-from .discord_poster import post_items
+from .discord_poster import PostResult, post_items
 from .feed_fetcher import fetch_feed
 from .pending_reads import DEFAULT_CHANNEL_ID, PendingReadStore
 
@@ -67,12 +68,28 @@ def main() -> int:
         logger.info("No new items today, skipping Discord post")
         return 2 if feed_error_count else 0
 
-    result = post_items(
-        new_items,
-        webhook_url=webhook_url,
-        discord_config=config.discord,
-        interval_seconds=config.settings.post_interval_seconds,
-    )
+    try:
+        curated_items = curate_items(
+            new_items,
+            max_curated=config.settings.max_curated,
+            timeout=config.settings.claude_timeout,
+        )
+    except MissingAPIKeyError:
+        logger.error("ANTHROPIC_API_KEY environment variable is not set")
+        return 1
+    except CurationError:
+        logger.error("Claude curation failed; no news posted and state unchanged")
+        return 2
+
+    logger.info("Claude selected %d important items", len(curated_items))
+    result = PostResult()
+    if curated_items:
+        result = post_items(
+            curated_items,
+            webhook_url=webhook_url,
+            discord_config=config.discord,
+            interval_seconds=config.settings.post_interval_seconds,
+        )
 
     if result.message_ids:
         pending.append(
@@ -81,8 +98,11 @@ def main() -> int:
         )
         pending.save()
 
-    if result.posted:
-        state.mark_posted(result.posted)
+    # Remember noise too, but leave failed Discord deliveries retryable.
+    failed_urls = {item.url for item in result.failed}
+    processed = [item for item in new_items if item.url not in failed_urls]
+    if processed:
+        state.mark_posted(processed)
         state.save(retention=config.settings.state_retention)
 
     logger.info(

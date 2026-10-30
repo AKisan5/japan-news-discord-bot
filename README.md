@@ -1,8 +1,7 @@
 # 日本語ニュース Discord 自動投稿ボット
 
-国内外の RSS フィードから見出し・リンク・フィード内の要約だけを、毎朝 07:55 JST と夜 22:00 JST に Discord へ自動投稿します。
-記事ページの本文取得（有料記事を含む）や LLM は使いません。Grok のトークンも不要です。
-GitHub Actions で完結するため、外部サーバー・DB・有料サービスは一切不要です。
+国内外の RSS フィードから新着記事を取得し、Claude が重要なニュースを選び、日本語の短い見出し・2〜4文の要約・重要な理由・カテゴリを Discord に投稿します。毎朝 07:55 JST と夜 22:00 JST に GitHub Actions で実行します。
+記事本文は取得せず、フィードの見出しと要約だけを使います。Anthropic API の利用料金が発生します。英語の見出し一覧へのフォールバックはありません。
 
 ---
 
@@ -22,6 +21,7 @@ GitHub Actions で完結するため、外部サーバー・DB・有料サービ
    | Name | Value |
    |---|---|
    | `DISCORD_WEBHOOK_URL` | 取得した Webhook URL（ニュース投稿用） |
+   | `ANTHROPIC_API_KEY` | Anthropic API キー（重要ニュース選定・日本語要約に必須） |
    | `DISCORD_BOT_TOKEN` | Discord Bot のトークン（✅確認・リマインダー用） |
 
 4. **Actions を有効化**
@@ -32,6 +32,18 @@ Bot をサーバーに追加し、投稿先で「チャンネルを見る」「�
 既定の投稿先は #ニュース（`1290456657653928048`）、サーバーは `1173405237390868610` です。変更時はWebhookの投稿先も合わせ、Actions Variables の `DISCORD_CHANNEL_ID`（投稿追跡先）と `DISCORD_GUILD_ID`（ジャンプリンク）を設定してください。ローカルでは同名の環境変数を使用します。
 
 Actions の書き込み権限を有効にしてください（Settings → Actions → General → Workflow permissions → Read and write permissions）。スケジュール実行には、変更をデフォルトブランチへ取り込む必要があります。
+
+---
+
+## Claude による選定・要約
+
+`ANTHROPIC_API_KEY` は GitHub Actions Secret またはローカルの環境変数で設定します。キーをファイルやログに保存しないでください。既定モデルは `claude-haiku-4-5-20251001`。Actions Variables の `ANTHROPIC_MODEL`（ローカルでは同名の環境変数）で変更できます。
+
+`config/feeds.yml` の `settings.max_curated` は投稿上限（既定10、1〜12）、`settings.claude_timeout` はAPIタイムアウト秒数（既定60）です。40件までを1回のAPI呼び出しで処理し、それを超える場合は分割します。全結果を重要度順に並べ、重複URLを除いて上限を適用します。AI・テクノロジー・フィンテック・Web3・市場を中心に、一次情報を優先し、軽微な記事や重複する話題を除きます。
+
+新着がなければAPIを呼びません。新着があるのにキーが未設定の場合は終了コード1、API失敗や不正JSONでは終了コード2で投稿せず、処理済み状態も変更しません。重要記事が0件なら投稿せず、新着URLを処理済みにします。選外の記事も `state/posted_links.json` に記録するため、毎回同じ記事を選定し直しません。Discord送信が失敗した記事だけは再試行のため未処理に残します。
+
+Claude の要約は提供された見出し・要約に基づくため、詳細は記事リンクで確認してください。投稿は「📰 本日の重要ニュース（Claude要約）」で始まり、既存の✅案内と既読リマインダーを使います。
 
 ---
 
@@ -90,6 +102,7 @@ pip install -r requirements.txt
 pytest
 
 # 実行 (実際に投稿されます)
+# ANTHROPIC_API_KEY を環境変数に設定してから実行
 export DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
 python -m src.main
 
@@ -103,7 +116,7 @@ python -m src.check_reminder
 
 - **GitHub Actions の cron はベストエフォート**です。実行時刻が数分〜十数分遅延することがあります。厳密な時刻を要件とする用途には向きません。
 - 1 フィードのフェッチ失敗は他フィードの投稿に影響しません。自動的に次回実行で復帰します。
-- 同じ記事は 2 回以上投稿されません (`state/posted_links.json` で管理)。
+- 処理済みURLは `state/posted_links.json` で管理し、保持件数（既定1000件）の範囲で再処理を防ぎます。
 
 ---
 

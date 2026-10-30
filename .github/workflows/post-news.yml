@@ -32,6 +32,8 @@ jobs:
       - name: Run bot
         env:
           DISCORD_CHANNEL_ID: ${{ vars.DISCORD_CHANNEL_ID || '1290456657653928048' }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python -m src.main
 

@@ -28,7 +28,16 @@ def _make_config(feeds=None):
     cfg.settings.max_items_per_feed = 5
     cfg.settings.post_interval_seconds = 0.0
     cfg.settings.state_retention = 100
+    cfg.settings.max_curated = 10
+    cfg.settings.claude_timeout = 60
     return cfg
+
+
+@pytest.fixture(autouse=True)
+def mock_curator():
+    # Existing delivery tests isolate curation; dedicated tests override this.
+    with patch("src.main.curate_items", side_effect=lambda items, **kw: items) as curator:
+        yield curator
 
 
 # --- exit code 1: missing webhook ---
@@ -48,7 +57,7 @@ def test_config_error_exits_1(monkeypatch):
 
 # --- exit code 0: all success ---
 
-def test_no_new_items_does_not_post_exits_0(monkeypatch):
+def test_no_new_items_does_not_post_exits_0(monkeypatch, mock_curator):
     monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
     mock_state = MagicMock()
     mock_state.filter_new.return_value = []
@@ -60,6 +69,7 @@ def test_no_new_items_does_not_post_exits_0(monkeypatch):
         result = main()
 
     mock_post.assert_not_called()
+    mock_curator.assert_not_called()
     assert result == 0
 
 
@@ -190,3 +200,72 @@ def test_successful_message_ids_saved_to_pending(monkeypatch, tmp_path):
     assert data[0]["channel_id"] == "654321"
     assert data[0]["kind"] == "news"
     assert data[0]["posted_at"]
+
+
+def test_only_curated_items_posted_and_all_new_urls_saved(mock_curator):
+    raw, noise = make_item("https://example.com/important"), make_item("https://example.com/noise")
+    japanese = make_item(raw.url)
+    japanese.title = "重要なニュース"
+    japanese.summary = "重要な発表です。市場に影響します。"
+    mock_curator.side_effect = None
+    mock_curator.return_value = [japanese]
+    state = MagicMock()
+    state.filter_new.return_value = [raw, noise]
+    with patch.dict("os.environ", {"DISCORD_WEBHOOK_URL": "https://discord.test/wh"}), \
+         patch("src.main.load_config", return_value=_make_config()), \
+         patch("src.main.StateStore", return_value=state), \
+         patch("src.main.PendingReadStore"), \
+         patch("src.main.post_items", return_value=PostResult(posted=[japanese])) as post:
+        from src.main import main
+        assert main() == 0
+    assert post.call_args.args == ([japanese],)
+    mock_curator.assert_called_once_with([raw, noise], max_curated=10, timeout=60)
+    state.mark_posted.assert_called_once_with([raw, noise])
+    state.save.assert_called_once_with(retention=100)
+
+
+def test_empty_selection_saves_noise_without_discord(mock_curator):
+    mock_curator.side_effect = None
+    mock_curator.return_value = []
+    noise = make_item("https://example.com/noise")
+    state = MagicMock()
+    state.filter_new.return_value = [noise]
+    with patch.dict("os.environ", {"DISCORD_WEBHOOK_URL": "https://discord.test/wh"}), \
+         patch("src.main.load_config", return_value=_make_config()), \
+         patch("src.main.StateStore", return_value=state), \
+         patch("src.main.PendingReadStore") as pending, \
+         patch("src.main.post_items") as post:
+        from src.main import main
+        assert main() == 0
+    state.mark_posted.assert_called_once_with([noise])
+    post.assert_not_called()
+    pending.return_value.append.assert_not_called()
+
+
+@pytest.mark.parametrize("missing_key", [True, False])
+def test_real_curator_failure_never_posts_or_saves(
+    monkeypatch, mock_curator, httpx_mock, missing_key, caplog
+):
+    from src.claude_curator import curate_items
+    mock_curator.side_effect = curate_items
+    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
+    if missing_key:
+        monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    else:
+        monkeypatch.setenv("ANTHROPIC_API_KEY", "test-secret-never-log")
+        httpx_mock.add_response(json={"stop_reason": "end_turn", "content": [
+            {"type": "text", "text": "not JSON test-secret-never-log"}
+        ]})
+    state = MagicMock()
+    state.filter_new.return_value = [make_item("https://example.com/1")]
+    with patch("src.main.load_config", return_value=_make_config()), \
+         patch("src.main.StateStore", return_value=state), \
+         patch("src.main.PendingReadStore") as pending, \
+         patch("src.main.post_items") as post:
+        from src.main import main
+        assert main() == (1 if missing_key else 2)
+    post.assert_not_called()
+    state.mark_posted.assert_not_called()
+    state.save.assert_not_called()
+    pending.return_value.save.assert_not_called()
+    assert "test-secret-never-log" not in caplog.text
