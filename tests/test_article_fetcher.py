@@ -41,6 +41,7 @@ def test_body_cap(httpx_mock):
 def test_unavailable_body_keeps_item(httpx_mock, kind):
     if kind == "timeout":
         httpx_mock.add_exception(httpx.ReadTimeout("secret must not leak"))
+        httpx_mock.add_exception(httpx.ReadTimeout("secret must not leak"))
     elif kind == "http":
         httpx_mock.add_response(status_code=403)
     else:
@@ -97,3 +98,11 @@ def test_resolved_publisher_url_survives_paywall(httpx_mock):
     article = fetch_article(item(GOOGLE))
     assert article.url == URL
     assert article.body == ""
+
+
+def test_transient_error_retried_once(httpx_mock):
+    httpx_mock.add_exception(httpx.ConnectError("boom"))
+    httpx_mock.add_response(text=HTML)
+    from unittest.mock import patch
+    with patch("src.article_fetcher.trafilatura.extract", return_value="a" * 500):
+        assert fetch_article(item()).body

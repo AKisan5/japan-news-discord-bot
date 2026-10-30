@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import logging
 import re
 from dataclasses import dataclass
 from html.parser import HTMLParser
@@ -10,6 +11,8 @@ import httpx
 import trafilatura
 
 from .feed_fetcher import FeedItem
+
+_log = logging.getLogger(__name__)
 
 MAX_BODY_CHARS = 6000
 MIN_BODY_CHARS = 400
@@ -69,6 +72,17 @@ def _google_target(url: str, html: str) -> str | None:
 def fetch_article(
     item: FeedItem, *, timeout: float = 20, user_agent: str = "news-discord-bot/1.0"
 ) -> Article:
+    """Fetch an article body, retrying once on transient network errors."""
+    for attempt in (1, 2):
+        try:
+            return _fetch_article_once(item, timeout=timeout, user_agent=user_agent)
+        except httpx.TransportError as exc:
+            if attempt == 2:
+                _log.info("Body unavailable for %s: %s", item.url, type(exc).__name__)
+    return Article(item.title, item.url, item.feed_name)
+
+
+def _fetch_article_once(item: FeedItem, *, timeout: float, user_agent: str) -> Article:
     article = Article(item.title, item.url, item.feed_name)
     try:
         with httpx.Client(timeout=timeout, follow_redirects=True,
@@ -95,7 +109,10 @@ def fetch_article(
             ) or ""
             if len(text.strip()) >= MIN_BODY_CHARS:
                 article.body = text.strip()[:MAX_BODY_CHARS]
-    except Exception:
+    except httpx.TransportError:
+        raise
+    except Exception as exc:
+        _log.info("Body unavailable for %s: %s", item.url, type(exc).__name__)
         # Paywalls, timeouts, malformed HTML, and extraction failures must not
         # promote an RSS teaser into apparent article-body evidence.
         pass
