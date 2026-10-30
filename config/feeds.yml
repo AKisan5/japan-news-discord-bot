@@ -2,7 +2,7 @@ settings:
   max_curated: 50
   claude_timeout: 120
   max_items_per_feed: 5
-  state_retention: 1000
+  state_retention: 5000
   http_timeout: 15
   user_agent: "news-discord-bot/1.0 (+https://github.com/AKisan5/japan-news-discord-bot)"
   post_interval_seconds: 1.5
