@@ -49,7 +49,8 @@ readable narrative, not headline lists, RSS teaser rewrites, bullet points, or
 embeds. Numbers and proper names must come from article evidence. Separate
 headings and paragraphs with blank lines. End each story with its supplied
 publisher/primary link on its own line in <https://...> format. Use only supplied
-URLs; do not invent primary links. You may combine duplicate stories and skip
+URLs; do not invent primary links. Each story must end with that story
+article's own URL - never reuse another story's link. You may combine duplicate stories and skip
 weak evidence. The introduction's N must match the final number of stories.
 No code fences, tables, preamble or read-reaction reminder.
 """

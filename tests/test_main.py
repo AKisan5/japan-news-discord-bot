@@ -74,7 +74,7 @@ def test_selection_fetch_write_post_and_seen_state(pipeline):
         [pipeline["fetch_article"].return_value], timeout=180)
     pipeline["post_briefing"].assert_called_once_with(
         "Japanese briefing", webhook_url=WEBHOOK, interval_seconds=0)
-    pipeline["state"].mark_posted.assert_called_once_with([item(), item(1)])
+    pipeline["state"].mark_posted.assert_called_once_with([item()])
     pipeline["state"].save.assert_called_once_with(retention=100)
     pending = json.loads((pipeline["tmp_path"] / "state/pending_reads.json").read_text())
     assert pending[0]["message_id"] == "123"
@@ -124,7 +124,7 @@ def test_feed_failure_still_delivers_good_news(pipeline):
         return [item()]
 
     with patch("src.main.fetch_feed", side_effect=fetch):
-        assert main() == 2
+        assert main() == 0
     pipeline["post_briefing"].assert_called_once()
     pipeline["state"].save.assert_called_once()
 
@@ -170,4 +170,4 @@ def test_real_select_fetch_write_content_only_pipeline(monkeypatch, tmp_path, ht
     pending = json.loads((tmp_path / "state/pending_reads.json").read_text())
     assert [p["message_id"] for p in pending] == ["123", "124"]
     posted = json.loads((tmp_path / "state/posted_links.json").read_text())
-    assert {p["url"] for p in posted["posted"]} == {item().url, item(1).url}
+    assert {p["url"] for p in posted["posted"]} == {item().url}

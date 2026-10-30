@@ -81,6 +81,7 @@ def main() -> int:
         return 2 if feed_error_count else 0
 
     result = PostResult()
+    selected = []
     try:
         selected = select_items(
             new_items,
@@ -89,14 +90,23 @@ def main() -> int:
         )
         logger.info("Claude selected %d articles", len(selected))
         if selected:
+            logger.info("Fetching article bodies for %d selected items", len(selected))
             articles = [fetch_article(
                 item, timeout=config.settings.article_timeout,
                 user_agent=config.settings.user_agent,
             ) for item in selected]
+            with_body = sum(1 for a in articles if a.body)
+            logger.info("Fetched bodies: %d/%d usable", with_body, len(articles))
+            logger.info("Writing Cooper-style briefing with Sonnet")
             briefing = write_briefing(articles, timeout=config.settings.claude_timeout)
+            logger.info("Posting briefing (%d chars) to Discord", len(briefing))
             result = post_briefing(
                 briefing, webhook_url=webhook_url,
                 interval_seconds=config.settings.post_interval_seconds,
+            )
+            logger.info(
+                "Discord post done: success=%s messages=%d",
+                result.success, len(result.message_ids),
             )
     except MissingAPIKeyError:
         logger.error("ANTHROPIC_API_KEY environment variable is not set")
@@ -118,9 +128,16 @@ def main() -> int:
         logger.error("Briefing delivery incomplete; news state unchanged")
         return 2
 
-    state.mark_posted(new_items)
+    # Mark only selected stories so unselected candidates can still run later.
+    to_mark = selected if selected else new_items
+    state.mark_posted(to_mark)
     state.save(retention=config.settings.state_retention)
-    return 2 if feed_error_count else 0
+    if feed_error_count:
+        logger.warning(
+            "Briefing posted; %d feed fetch warning(s) ignored for exit code",
+            feed_error_count,
+        )
+    return 0
 
 
 if __name__ == "__main__":
