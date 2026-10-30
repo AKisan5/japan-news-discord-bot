@@ -157,6 +157,38 @@ def select_items(items: list[FeedItem], *, max_briefing_items: int = 15,
     return list(selected.values())[:max_briefing_items]
 
 
+def _drop_duplicate_url_stories(text: str, *, reserved: set[str]) -> str:
+    """Keep the first story for each source URL; drop later duplicates."""
+    lines = text.splitlines()
+    out: list[str] = []
+    block: list[str] = []
+    seen_local: set[str] = set()
+
+    def flush() -> None:
+        nonlocal block
+        if not block:
+            return
+        links = re.findall(r"<(https?://[^<>\s]+)>", "\n".join(block))
+        if links and (links[0] in reserved or links[0] in seen_local):
+            block = []
+            return
+        if links:
+            seen_local.add(links[0])
+        out.extend(block)
+        block = []
+
+    for line in lines:
+        if re.match(r"^\*\*\d+\. ", line):
+            flush()
+            block = [line]
+        elif block:
+            block.append(line)
+        else:
+            out.append(line)
+    flush()
+    return "\n".join(out).strip()
+
+
 def write_briefing(articles: list[Article], *, timeout: float = 180,
                    date: str | None = None) -> str:
     if not articles:
@@ -215,7 +247,16 @@ def write_briefing(articles: list[Article], *, timeout: float = 180,
         if any(url not in allowed_urls for url in links):
             raise CurationError("Claude briefing contains invented links")
         if len(links) != len(set(links)) or seen_urls.intersection(links):
-            raise CurationError("Claude briefing reuses the same source link")
+            part = _drop_duplicate_url_stories(part, reserved=seen_urls)
+            numbers = re.findall(r"^\*\*(\d+)\. ", part, re.MULTILINE)
+            links = re.findall(r"<(https?://[^<>\s]+)>", part)
+            if not numbers:
+                if story_count and not first_batch:
+                    continue  # whole continuation batch was duplicate noise
+                raise CurationError("Claude briefing reuses the same source link")
+            if (not links or len(links) != len(set(links))
+                    or seen_urls.intersection(links)):
+                raise CurationError("Claude briefing reuses the same source link")
         seen_urls.update(links)
         # Keep numbering continuous even if a continuation restarts at one.
         next_number = iter(range(story_count + 1, story_count + len(numbers) + 1))

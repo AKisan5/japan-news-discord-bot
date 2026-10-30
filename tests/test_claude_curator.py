@@ -107,16 +107,18 @@ def test_invalid_briefing(httpx_mock, text):
 
 
 
-def test_rejects_reused_source_link(httpx_mock):
+def test_drops_reused_source_link_within_batch(httpx_mock):
     second = "\n\n**2. 別話**\n背景。\n<" + source().url + ">"
     text = BRIEFING + second
     reply(httpx_mock, text)
-    with pytest.raises(CurationError, match="reuses"):
-        write_briefing(
-            [Article("Title", source().url, "Feed", "body"),
-             Article("Other", source(1).url, "Feed", "body")],
-            date=DATE,
-        )
+    result = write_briefing(
+        [Article("Title", source().url, "Feed", "body"),
+         Article("Other", source(1).url, "Feed", "body")],
+        date=DATE,
+    )
+    assert source().url in result
+    assert result.count(source().url) == 1
+    assert "**2." not in result
 
 
 def test_empty_inputs_and_selection(httpx_mock):
@@ -228,14 +230,23 @@ def test_batched_write_strips_continuation_title_and_uses_actual_story_count(htt
     assert payload["start_index"] == 2
 
 
-@pytest.mark.parametrize("url,error", [
-    (source().url, "reuses"), ("https://invented.test/story", "invented"),
-])
-def test_batched_write_rejects_reused_or_invented_links(httpx_mock, url, error):
+def test_batched_write_drops_link_reused_across_batches(httpx_mock):
     articles = [Article("Title", source(i).url, "Feed", "Body")
                 for i in range(WRITE_BATCH_SIZE + 1)]
     reply(httpx_mock, batch_text(range(WRITE_BATCH_SIZE), total=len(articles)))
     continuation = batch_text([WRITE_BATCH_SIZE], start_index=WRITE_BATCH_SIZE + 1)
-    reply(httpx_mock, continuation.replace(source(WRITE_BATCH_SIZE).url, url))
-    with pytest.raises(CurationError, match=error):
+    reply(httpx_mock, continuation.replace(source(WRITE_BATCH_SIZE).url, source().url))
+    text = write_briefing(articles, date=DATE)
+    assert text.count(source().url) == 1
+    assert f"**{WRITE_BATCH_SIZE + 1}." not in text
+
+
+def test_batched_write_rejects_invented_links(httpx_mock):
+    articles = [Article("Title", source(i).url, "Feed", "Body")
+                for i in range(WRITE_BATCH_SIZE + 1)]
+    reply(httpx_mock, batch_text(range(WRITE_BATCH_SIZE), total=len(articles)))
+    continuation = batch_text([WRITE_BATCH_SIZE], start_index=WRITE_BATCH_SIZE + 1)
+    reply(httpx_mock, continuation.replace(
+        source(WRITE_BATCH_SIZE).url, "https://invented.test/story"))
+    with pytest.raises(CurationError, match="invented"):
         write_briefing(articles, date=DATE)

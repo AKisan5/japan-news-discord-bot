@@ -97,15 +97,22 @@ def main() -> int:
             ) for item in selected]
             with_body = [a for a in articles if a.body]
             logger.info("Fetched bodies: %d/%d usable", len(with_body), len(articles))
-            # Prefer evidence-backed stories; keep a few thin ones only if needed.
-            if len(with_body) >= 5:
-                articles = with_body
-                logger.info("Writing from %d articles with usable bodies", len(articles))
-            else:
-                logger.warning(
-                    "Only %d usable bodies; including thin articles for coverage",
-                    len(with_body),
+            # Prefer bodies first, but keep thin articles so we can approach the 50 target.
+            articles = with_body + [a for a in articles if not a.body]
+            # Collapse redirect duplicates onto one story (keep body if any).
+            deduped: list = []
+            seen_urls: set[str] = set()
+            for article in articles:
+                if article.url in seen_urls:
+                    continue
+                seen_urls.add(article.url)
+                deduped.append(article)
+            if len(deduped) < len(articles):
+                logger.info(
+                    "Deduped selected articles by URL: %d -> %d",
+                    len(articles), len(deduped),
                 )
+            articles = deduped
             logger.info("Writing Cooper-style briefing with Sonnet")
             briefing = write_briefing(articles, timeout=config.settings.claude_timeout)
             logger.info("Posting briefing (%d chars) to Discord", len(briefing))
