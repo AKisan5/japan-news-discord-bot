@@ -2,7 +2,7 @@ settings:
   max_briefing_items: 50
   claude_timeout: 300
   article_timeout: 20
-  max_items_per_feed: 8
+  max_items_per_feed: 10
   state_retention: 5000
   http_timeout: 15
   user_agent: "news-discord-bot/1.0 (+https://github.com/AKisan5/japan-news-discord-bot)"

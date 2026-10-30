@@ -250,3 +250,11 @@ def test_batched_write_rejects_invented_links(httpx_mock):
         source(WRITE_BATCH_SIZE).url, "https://invented.test/story"))
     with pytest.raises(CurationError, match="invented"):
         write_briefing(articles, date=DATE)
+
+
+def test_select_prompt_aims_to_fill_target():
+    from src.claude_curator import SELECT_SYSTEM_PROMPT, WRITE_SYSTEM_PROMPT
+    assert "Do not fill" not in SELECT_SYSTEM_PROMPT
+    assert "full target count" in SELECT_SYSTEM_PROMPT
+    assert "EVERY supplied article" in WRITE_SYSTEM_PROMPT
+    assert "本文未確認" in WRITE_SYSTEM_PROMPT

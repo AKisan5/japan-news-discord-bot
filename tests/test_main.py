@@ -93,15 +93,15 @@ def test_empty_selection_marks_noise_seen(pipeline):
     pipeline["state"].mark_posted.assert_called_once_with([item(), item(1)])
 
 
-def test_selection_candidates_capped_at_150_newest(pipeline):
+def test_selection_candidates_capped_at_200_newest(pipeline):
     epoch = datetime(2026, 10, 1, tzinfo=timezone.utc)
     candidates = [FeedItem("Title", item(i).url, "RSS teaser",
                            epoch + timedelta(minutes=i), "Feed", "AI")
-                  for i in range(170)]
+                  for i in range(230)]
     pipeline["state"].filter_new.return_value = candidates
     assert main() == 0
     pipeline["select_items"].assert_called_once_with(
-        list(reversed(candidates))[:150], max_briefing_items=50, timeout=300)
+        list(reversed(candidates))[:200], max_briefing_items=50, timeout=300)
 
 
 def test_write_orders_usable_bodies_first_but_keeps_thin(pipeline):
