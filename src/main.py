@@ -95,8 +95,17 @@ def main() -> int:
                 item, timeout=config.settings.article_timeout,
                 user_agent=config.settings.user_agent,
             ) for item in selected]
-            with_body = sum(1 for a in articles if a.body)
-            logger.info("Fetched bodies: %d/%d usable", with_body, len(articles))
+            with_body = [a for a in articles if a.body]
+            logger.info("Fetched bodies: %d/%d usable", len(with_body), len(articles))
+            # Prefer evidence-backed stories; keep a few thin ones only if needed.
+            if len(with_body) >= 5:
+                articles = with_body
+                logger.info("Writing from %d articles with usable bodies", len(articles))
+            else:
+                logger.warning(
+                    "Only %d usable bodies; including thin articles for coverage",
+                    len(with_body),
+                )
             logger.info("Writing Cooper-style briefing with Sonnet")
             briefing = write_briefing(articles, timeout=config.settings.claude_timeout)
             logger.info("Posting briefing (%d chars) to Discord", len(briefing))

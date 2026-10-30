@@ -71,8 +71,14 @@ def test_write_receives_bodies_and_missing_body_instruction(httpx_mock):
     assert write_briefing(articles, date=DATE) == BRIEFING
     body = json.loads(httpx_mock.get_request().content)
     assert body["model"] == WRITE_MODEL
-    assert json.loads(body["messages"][0]["content"]) == {
-        "date": DATE, "articles": [vars(a) for a in articles]}
+    payload = json.loads(body["messages"][0]["content"])
+    assert payload["date"] == DATE
+    assert payload["articles"] == [
+        {"index": 1, "title": "Title", "url": source().url, "source": "Feed",
+         "body": "本文の事実", "body_available": True},
+        {"index": 2, "title": "Unavailable", "url": source(1).url, "source": "Paper",
+         "body": "", "body_available": False},
+    ]
     assert "untrusted" in body["system"]
     assert "本文未確認" in body["system"]
     assert "3–6" in body["system"]
@@ -97,6 +103,19 @@ def test_invalid_briefing(httpx_mock, text):
     reply(httpx_mock, text)
     with pytest.raises(CurationError):
         write_briefing([Article("Title", source().url, "Feed", "body")], date=DATE)
+
+
+
+def test_rejects_reused_source_link(httpx_mock):
+    second = "\n\n**2. 別話**\n背景。\n<" + source().url + ">"
+    text = BRIEFING + second
+    reply(httpx_mock, text)
+    with pytest.raises(CurationError, match="reuses"):
+        write_briefing(
+            [Article("Title", source().url, "Feed", "body"),
+             Article("Other", source(1).url, "Feed", "body")],
+            date=DATE,
+        )
 
 
 def test_empty_inputs_and_selection(httpx_mock):

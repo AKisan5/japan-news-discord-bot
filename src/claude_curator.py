@@ -50,7 +50,8 @@ embeds. Numbers and proper names must come from article evidence. Separate
 headings and paragraphs with blank lines. End each story with its supplied
 publisher/primary link on its own line in <https://...> format. Use only supplied
 URLs; do not invent primary links. Each story must end with that story
-article's own URL - never reuse another story's link. You may combine duplicate stories and skip
+article's own URL from the matching articles[].url field - never reuse
+another story's link. articles[].index is only for your reference. You may combine duplicate stories and skip
 weak evidence. The introduction's N must match the final number of stories.
 No code fences, tables, preamble or read-reaction reminder.
 """
@@ -161,9 +162,20 @@ def write_briefing(articles: list[Article], *, timeout: float = 180,
     if not articles:
         raise CurationError("No articles for briefing")
     date = date or datetime.now(ZoneInfo("Asia/Tokyo")).date().isoformat()
+    payload_articles = [
+        {
+            "index": i,
+            "title": article.title,
+            "url": article.url,
+            "source": article.source,
+            "body": article.body,
+            "body_available": bool(article.body),
+        }
+        for i, article in enumerate(articles, start=1)
+    ]
     text = _strip_fence(_call_claude(
         WRITE_SYSTEM_PROMPT,
-        {"date": date, "articles": [vars(article) for article in articles]},
+        {"date": date, "articles": payload_articles},
         timeout=timeout, max_tokens=16384,
         model=os.environ.get("ANTHROPIC_WRITE_MODEL") or WRITE_MODEL,
     ))
@@ -182,6 +194,8 @@ def write_briefing(articles: list[Article], *, timeout: float = 180,
     invented = [u for u in links if u not in allowed_urls]
     if invented:
         raise CurationError("Claude briefing contains invented links")
+    if len(links) != len(set(links)):
+        raise CurationError("Claude briefing reuses the same source link")
     if len(text) < 120:
         raise CurationError("Claude briefing too short")
     return text
