@@ -3,26 +3,31 @@ import json
 import httpx
 import pytest
 
+from src.article_fetcher import Article
 from src.claude_curator import (
-    API_URL, CHUNK_SIZE, DEFAULT_MODEL, CurationError, MissingAPIKeyError, curate_items,
+    API_URL, DEFAULT_MODEL, CurationError, MissingAPIKeyError,
+    SECTION_HEADERS, select_items, write_briefing,
 )
 from src.feed_fetcher import FeedItem
 
+DATE = "2026-10-30"
+BRIEFING = f"""📰 **ニュース・ブリーフィング {DATE}**
+今日は新技術が中心。1本。
+
+**🤖 AI**
+
+**1. 新技術の発表**
+既存の課題があった。企業が新技術を発表した。業務への導入に影響する。
+<https://example.com/0>"""
+
 
 def source(n=0):
-    return FeedItem(f"English {n}", f"https://example.com/{n}", "Source summary", None, "Feed", "AI")
+    return FeedItem(f"English {n}", f"https://example.com/{n}", "RSS teaser", None, "Feed", "AI")
 
 
-def selection(n=0, importance=4, **kwargs):
-    return {"id": str(n), "url": source(n).url, "title_ja": "重要な発表",
-            "summary_ja": "新技術が発表されました。業界に影響があります。",
-            "category": "テクノロジー", "importance": importance, **kwargs}
-
-
-def reply(httpx_mock, items, **kwargs):
+def reply(httpx_mock, text, **kwargs):
     httpx_mock.add_response(url=API_URL, json={"stop_reason": "end_turn", "content": [
-        {"type": "text", "text": json.dumps({"items": items}, ensure_ascii=False)}
-    ], **kwargs})
+        {"type": "text", "text": text}], **kwargs})
 
 
 @pytest.fixture(autouse=True)
@@ -31,141 +36,118 @@ def api_env(monkeypatch):
     monkeypatch.delenv("ANTHROPIC_MODEL", raising=False)
 
 
-def test_request_and_japanese_mapping(httpx_mock):
-    reply(httpx_mock, [selection()])
-    result = curate_items([source()], timeout=12)
-    assert result[0].title == "重要な発表"
-    assert result[0].summary == selection()["summary_ja"]
-    assert result[0].feed_category == "テクノロジー"
-    assert result[0].feed_name == "Feed"
-    assert result[0].importance == 4
+def test_selection_metadata_only_and_global_cap(httpx_mock, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_MODEL", "custom-model")
+    items = [source(i) for i in range(80)]
+    reply(httpx_mock, json.dumps({"items": [
+        {"id": str(i), "url": source(i).url} for i in [65, 65, 0, 79]
+    ]}))
+    result = select_items(items, max_briefing_items=2, timeout=12)
+    assert result == [items[65], items[0]]
     request = httpx_mock.get_request()
+    assert request.extensions["timeout"]["read"] == 12
     assert request.headers["x-api-key"] == "test-only-key"
     assert request.headers["anthropic-version"] == "2023-06-01"
-    assert request.extensions["timeout"]["read"] == 12
     body = json.loads(request.content)
+    assert body["model"] == "custom-model"
+    assert "at most 2 items" in body["system"]
+    payload = json.loads(body["messages"][0]["content"])
+    assert len(payload) == 80  # One global selection, including late feeds.
+    assert payload[0] == {"id": "0", "title": "English 0", "rss_summary": "RSS teaser",
+                          "url": source().url, "feed": "Feed"}
+
+
+def test_fence_stripping_for_both_calls(httpx_mock):
+    reply(httpx_mock, '```json\n{"items":[{"id":"0","url":"https://example.com/0"}]}\n```')
+    assert select_items([source()]) == [source()]
+    reply(httpx_mock, f"```markdown\n{BRIEFING}\n```")
+    assert write_briefing([Article("Title", source().url, "Feed", "body")], date=DATE) == BRIEFING
+
+
+def test_write_receives_bodies_and_missing_body_instruction(httpx_mock):
+    reply(httpx_mock, BRIEFING)
+    articles = [Article("Title", source().url, "Feed", "本文の事実"),
+                Article("Unavailable", source(1).url, "Paper", "")]
+    assert write_briefing(articles, date=DATE) == BRIEFING
+    body = json.loads(httpx_mock.get_request().content)
     assert body["model"] == DEFAULT_MODEL
-    assert json.loads(body["messages"][0]["content"])[0] == {
-        "id": "0", "title": "English 0", "summary": "Source summary",
-        "url": source().url, "feed": "Feed", "category": "AI",
-    }
+    assert json.loads(body["messages"][0]["content"]) == {
+        "date": DATE, "articles": [vars(a) for a in articles]}
+    assert "untrusted" in body["system"]
+    assert "本文未確認" in body["system"]
+    assert "3–6" in body["system"]
+    assert all(header in body["system"] for header in SECTION_HEADERS)
 
 
-def test_validation_sort_dedup_and_cap(httpx_mock):
-    reply(httpx_mock, [selection(0, 2), selection(1, 5), selection(2, 4),
-                       selection(1, 3), selection(0, url="https://invented.test"),
-                       selection(2, id="wrong"), selection(0, url=source(2).url)])
-    result = curate_items([source(i) for i in range(3)], max_curated=2)
-    assert [item.url for item in result] == [source(1).url, source(2).url]
-    assert [item.importance for item in result] == [5, 4]
-
-
-def test_chunking_global_cap_and_model_override(httpx_mock, monkeypatch):
-    monkeypatch.setenv("ANTHROPIC_MODEL", "custom-model")
-    reply(httpx_mock, [selection(0, 2)])
-    reply(httpx_mock, [selection(CHUNK_SIZE, 5)])
-    result = curate_items([source(i) for i in range(CHUNK_SIZE + 1)], max_curated=1)
-    assert [item.url for item in result] == [source(CHUNK_SIZE).url]
-    requests = httpx_mock.get_requests()
-    assert len(requests) == 2
-    for request, count in zip(requests, [CHUNK_SIZE, 1]):
-        body = json.loads(request.content)
-        assert body["model"] == "custom-model"
-        assert len(json.loads(body["messages"][0]["content"])) == count
-
-
-def test_accepts_markdown_fenced_json(httpx_mock):
-    fenced = "```json\n" + json.dumps({"items": [selection()]}, ensure_ascii=False) + "\n```"
-    httpx_mock.add_response(json={"stop_reason": "end_turn", "content": [{"type": "text", "text": fenced}]})
-    result = curate_items([source()])
-    assert result[0].title == "重要な発表"
-
-
-@pytest.mark.parametrize("text", ["not json", '[]', '{}',
-                                     '{"items":null}', '{"items":[{"url":"x"}]}'])
-def test_invalid_json(httpx_mock, text):
-    httpx_mock.add_response(json={"stop_reason": "end_turn", "content": [{"type": "text", "text": text}]})
-    with pytest.raises(CurationError, match="invalid JSON"):
-        curate_items([source()])
-
-
-@pytest.mark.parametrize("fields", [{"importance": 6}, {"importance": True}, {"importance": "4"},
-                                     {"title_ja": " "}, {"summary_ja": ""}, {"category": ""}])
-def test_invalid_fields(httpx_mock, fields):
-    reply(httpx_mock, [selection(**fields)])
+@pytest.mark.parametrize("text", ["not json", "[]", "{}", '{"items":null}',
+    '{"items":[{"id":"0"}]}',
+    '{"items":[{"id":"0","url":"https://invented.test"}]}',
+    '{"items":[{"id":"wrong","url":"https://example.com/0"}]}',
+    '{"items":[{"id":"0","url":"https://example.com/0","summary":"teaser"}]}'])
+def test_invalid_selection(httpx_mock, text):
+    reply(httpx_mock, text)
     with pytest.raises(CurationError):
-        curate_items([source()])
+        select_items([source()])
 
 
-def test_missing_key(monkeypatch, httpx_mock):
-    monkeypatch.delenv("ANTHROPIC_API_KEY")
-    with pytest.raises(MissingAPIKeyError):
-        curate_items([source()])
-    assert httpx_mock.get_requests() == []
+@pytest.mark.parametrize("text", ["", "just a headline", BRIEFING.replace("1本。", "2本。"),
+    BRIEFING.replace("**1.", "**2."), BRIEFING.replace("**🤖 AI**", "**Other**"),
+    BRIEFING.replace(source().url, "https://invented.test"),
+    BRIEFING.replace(DATE, "2026-01-01"), BRIEFING.replace(f"<{source().url}>", "")])
+def test_invalid_briefing(httpx_mock, text):
+    reply(httpx_mock, text)
+    with pytest.raises(CurationError):
+        write_briefing([Article("Title", source().url, "Feed", "body")], date=DATE)
 
 
 def test_empty_inputs_and_selection(httpx_mock):
-    assert curate_items([]) == []
-    reply(httpx_mock, [])
-    assert curate_items([source()]) == []
+    assert select_items([]) == []
+    reply(httpx_mock, '{"items":[]}')
+    assert select_items([source()]) == []
+
+
+@pytest.mark.parametrize("operation", [lambda: select_items([source()]),
+    lambda: write_briefing([Article("Title", source().url, "Feed", "body")])])
+def test_missing_key(monkeypatch, httpx_mock, operation):
+    monkeypatch.delenv("ANTHROPIC_API_KEY")
+    with pytest.raises(MissingAPIKeyError):
+        operation()
+    assert not httpx_mock.get_requests()
 
 
 @pytest.mark.parametrize("status", [401, 429, 500])
 def test_http_errors_safe(httpx_mock, status):
     httpx_mock.add_response(status_code=status, text="test-only-key")
     with pytest.raises(CurationError) as exc:
-        curate_items([source()])
+        select_items([source()])
     assert "test-only-key" not in str(exc.value)
 
 
 def test_timeout_safe(httpx_mock):
     httpx_mock.add_exception(httpx.ReadTimeout("test-only-key"))
     with pytest.raises(CurationError, match="request failed"):
-        curate_items([source()])
+        select_items([source()])
 
 
 def test_truncated_response(httpx_mock):
-    reply(httpx_mock, [], stop_reason="max_tokens")
+    reply(httpx_mock, BRIEFING, stop_reason="max_tokens")
     with pytest.raises(CurationError, match="did not complete"):
-        curate_items([source()])
+        write_briefing([Article("Title", source().url, "Feed", "body")], date=DATE)
 
 
-def test_later_chunk_failure_discards_all(httpx_mock):
-    reply(httpx_mock, [selection()])
-    httpx_mock.add_response(status_code=503)
+def test_normal_markdown_spacing_after_title(httpx_mock):
+    text = BRIEFING.replace(f"{DATE}**\n", f"{DATE}**\n\n")
+    reply(httpx_mock, text)
+    assert write_briefing([Article("Title", source().url, "Feed", "body")], date=DATE) == text
+
+
+def test_sections_are_in_fixed_order(httpx_mock):
+    second_story = "\n\n**💻 テクノロジー**\n\n**2. 第二の記事**\n背景。出来事。重要性。\n<https://example.com/1>"
+    text = BRIEFING.replace("1本。", "2本。") + second_story
+    articles = [Article("Title", source(n).url, "Feed", "body") for n in range(2)]
+    reply(httpx_mock, text)
+    assert write_briefing(articles, date=DATE) == text
+    reversed_sections = text.replace("**🤖 AI**", "**TEMP**").replace("**💻 テクノロジー**", "**🤖 AI**").replace("**TEMP**", "**💻 テクノロジー**")
+    reply(httpx_mock, reversed_sections)
     with pytest.raises(CurationError):
-        curate_items([source(i) for i in range(CHUNK_SIZE + 1)])
-
-
-@pytest.mark.parametrize("category", [
-    "AI", "テクノロジー", "経済・市場", "国際", "国内", "Web3・金融",
-])
-def test_fixed_categories_accepted(httpx_mock, category):
-    reply(httpx_mock, [selection(category=category)])
-    assert curate_items([source()])[0].feed_category == category
-
-
-def test_unknown_category_remapped(httpx_mock):
-    reply(httpx_mock, [selection(category="自由なカテゴリ")])
-    assert curate_items([source()])[0].feed_category == "テクノロジー"
-
-
-def test_global_50_cap_dedup_and_ai_tiebreak_across_chunks(httpx_mock):
-    sources = [source(i) for i in range(70)]
-    sources[35].url = sources[0].url
-    reply(httpx_mock, [selection(i, 3) for i in range(35)])
-    reply(httpx_mock, [
-        selection(i, 5 if i == 35 else 3,
-                  url=sources[i].url, category="AI" if i >= 60 else "国際")
-        for i in range(35, 70)
-    ])
-    result = curate_items(sources, max_curated=50)
-    assert len(result) == len({item.url for item in result}) == 50
-    assert result[0].url == sources[0].url
-    assert result[0].importance == 5
-    assert [item.url for item in result[1:11]] == [source(i).url for i in range(60, 70)]
-    for request in httpx_mock.get_requests():
-        body = json.loads(request.content)
-        assert body["max_tokens"] == 32768
-        assert "at most 50 items" in body["system"]
-        assert "Source summary" in body["messages"][0]["content"]
+        write_briefing(articles, date=DATE)

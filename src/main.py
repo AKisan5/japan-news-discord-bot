@@ -4,10 +4,11 @@ import logging
 import os
 import sys
 
-from .claude_curator import CurationError, MissingAPIKeyError, curate_items
+from .article_fetcher import fetch_article
+from .claude_curator import CurationError, MissingAPIKeyError, select_items, write_briefing
 from .config_loader import load_config
 from .deduplicator import StateStore
-from .discord_poster import PostResult, post_items
+from .discord_poster import PostResult, post_briefing
 from .feed_fetcher import fetch_feed
 from .pending_reads import DEFAULT_CHANNEL_ID, PendingReadStore
 
@@ -68,28 +69,30 @@ def main() -> int:
         logger.info("No new items today, skipping Discord post")
         return 2 if feed_error_count else 0
 
+    result = PostResult()
     try:
-        curated_items = curate_items(
+        selected = select_items(
             new_items,
-            max_curated=config.settings.max_curated,
+            max_briefing_items=config.settings.max_briefing_items,
             timeout=config.settings.claude_timeout,
         )
+        logger.info("Claude selected %d articles", len(selected))
+        if selected:
+            articles = [fetch_article(
+                item, timeout=config.settings.article_timeout,
+                user_agent=config.settings.user_agent,
+            ) for item in selected]
+            briefing = write_briefing(articles, timeout=config.settings.claude_timeout)
+            result = post_briefing(
+                briefing, webhook_url=webhook_url,
+                interval_seconds=config.settings.post_interval_seconds,
+            )
     except MissingAPIKeyError:
         logger.error("ANTHROPIC_API_KEY environment variable is not set")
         return 1
     except CurationError:
-        logger.error("Claude curation failed; no news posted and state unchanged")
+        logger.error("Claude briefing failed; no news posted and state unchanged")
         return 2
-
-    logger.info("Claude selected %d important items", len(curated_items))
-    result = PostResult()
-    if curated_items:
-        result = post_items(
-            curated_items,
-            webhook_url=webhook_url,
-            discord_config=config.discord,
-            interval_seconds=config.settings.post_interval_seconds,
-        )
 
     if result.message_ids:
         pending.append(
@@ -98,21 +101,15 @@ def main() -> int:
         )
         pending.save()
 
-    # Remember noise too, but leave failed Discord deliveries retryable.
-    failed_urls = {item.url for item in result.failed}
-    processed = [item for item in new_items if item.url not in failed_urls]
-    if processed:
-        state.mark_posted(processed)
-        state.save(retention=config.settings.state_retention)
-
-    logger.info(
-        "Posted %d items, failed %d items", len(result.posted), len(result.failed)
-    )
-
-    if feed_error_count > 0 or result.failed:
+    # A briefing is one delivery: on any failed chunk keep all URLs retryable.
+    # Successful chunks are still tracked above for read reminders.
+    if not result.success:
+        logger.error("Briefing delivery incomplete; news state unchanged")
         return 2
 
-    return 0
+    state.mark_posted(new_items)
+    state.save(retention=config.settings.state_retention)
+    return 2 if feed_error_count else 0
 
 
 if __name__ == "__main__":

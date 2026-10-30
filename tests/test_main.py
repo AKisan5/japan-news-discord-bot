@@ -1,323 +1,173 @@
-from __future__ import annotations
-
-from datetime import datetime, timezone
-from unittest.mock import MagicMock, patch
+import json
+from contextlib import ExitStack
+from datetime import datetime
+from unittest.mock import patch
+from zoneinfo import ZoneInfo
 
 import pytest
 
+from src.article_fetcher import Article
+from src.claude_curator import API_URL, CurationError, MissingAPIKeyError
+from src.config_loader import Config, FeedConfig, Settings
 from src.discord_poster import PostResult
 from src.feed_fetcher import FeedItem
+from src.main import main
+
+WEBHOOK = "https://discord.test/wh"
 
 
-def make_item(url: str) -> FeedItem:
-    return FeedItem(
-        title="Title",
-        url=url,
-        summary="Summary",
-        published_at=datetime.now(timezone.utc),
-        feed_name="Feed",
-        feed_category="Cat",
-    )
+def item(n=0):
+    return FeedItem("Title", f"https://example.com/{n}", "RSS teaser", None, "Feed", "AI")
 
 
-def _make_config(feeds=None):
-    cfg = MagicMock()
-    cfg.feeds = feeds or []
-    cfg.settings.http_timeout = 10
-    cfg.settings.user_agent = "test-agent"
-    cfg.settings.max_items_per_feed = 5
-    cfg.settings.post_interval_seconds = 0.0
-    cfg.settings.state_retention = 100
-    cfg.settings.max_curated = 10
-    cfg.settings.claude_timeout = 60
-    return cfg
+@pytest.fixture
+def pipeline(monkeypatch, tmp_path):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("DISCORD_WEBHOOK_URL", WEBHOOK)
+    monkeypatch.setenv("DISCORD_CHANNEL_ID", "654321")
+    cfg = Config(feeds=[], settings=Settings(post_interval_seconds=0, state_retention=100))
+    with ExitStack() as stack:
+        mocks = {}
+        for name in ("load_config", "StateStore", "select_items", "fetch_article",
+                     "write_briefing", "post_briefing"):
+            mocks[name] = stack.enter_context(patch("src.main." + name))
+        mocks["load_config"].return_value = cfg
+        state = mocks["StateStore"].return_value
+        state.filter_new.return_value = [item(), item(1)]
+        mocks["select_items"].return_value = [item()]
+        mocks["fetch_article"].return_value = Article("Title", item().url, "Feed", "Body")
+        mocks["write_briefing"].return_value = "Japanese briefing"
+        mocks["post_briefing"].return_value = PostResult(message_ids=["123"])
+        mocks["state"] = state
+        mocks["config"] = cfg
+        mocks["tmp_path"] = tmp_path
+        yield mocks
 
 
-@pytest.fixture(autouse=True)
-def mock_curator():
-    # Existing delivery tests isolate curation; dedicated tests override this.
-    with patch("src.main.curate_items", side_effect=lambda items, **kw: items) as curator:
-        yield curator
-
-
-# --- exit code 1: missing webhook ---
-
-def test_missing_webhook_exits_1(monkeypatch):
-    monkeypatch.delenv("DISCORD_WEBHOOK_URL", raising=False)
-    from src.main import main
+def test_missing_webhook(pipeline, monkeypatch):
+    monkeypatch.delenv("DISCORD_WEBHOOK_URL")
     assert main() == 1
+    pipeline["select_items"].assert_not_called()
 
 
-def test_config_error_exits_1(monkeypatch):
-    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
-    with patch("src.main.load_config", side_effect=ValueError("bad config")):
-        from src.main import main
-        assert main() == 1
+def test_config_error(pipeline):
+    pipeline["load_config"].side_effect = ValueError("bad config")
+    assert main() == 1
+    pipeline["select_items"].assert_not_called()
 
 
-# --- exit code 0: all success ---
-
-def test_no_new_items_does_not_post_exits_0(monkeypatch, mock_curator):
-    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
-    mock_state = MagicMock()
-    mock_state.filter_new.return_value = []
-
-    with patch("src.main.load_config", return_value=_make_config()), \
-         patch("src.main.StateStore", return_value=mock_state), \
-         patch("src.main.post_items") as mock_post:
-        from src.main import main
-        result = main()
-
-    mock_post.assert_not_called()
-    mock_curator.assert_not_called()
-    assert result == 0
+def test_no_new_items(pipeline):
+    pipeline["state"].filter_new.return_value = []
+    assert main() == 0
+    pipeline["select_items"].assert_not_called()
+    pipeline["post_briefing"].assert_not_called()
+    pipeline["state"].save.assert_not_called()
 
 
-def test_all_success_exits_0(monkeypatch):
-    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
-    item = make_item("https://example.com/1")
-    mock_state = MagicMock()
-    mock_state.filter_new.return_value = [item]
-    post_result = PostResult(posted=[item], failed=[])
-
-    with patch("src.main.load_config", return_value=_make_config()), \
-         patch("src.main.StateStore", return_value=mock_state), \
-         patch("src.main.post_items", return_value=post_result):
-        from src.main import main
-        result = main()
-
-    assert result == 0
-
-
-# --- exit code 2: partial failure ---
-
-def test_feed_error_with_posts_exits_2(monkeypatch):
-    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
-    good_feed = MagicMock()
-    bad_feed = MagicMock()
-    item = make_item("https://example.com/1")
-
-    def mock_fetch(feed, **kwargs):
-        if feed is good_feed:
-            return [item]
-        on_error = kwargs.get("on_error")
-        if on_error:
-            on_error(Exception("network error"))
-        return []
-
-    mock_state = MagicMock()
-    mock_state.filter_new.return_value = [item]
-    post_result = PostResult(posted=[item], failed=[])
-
-    with patch("src.main.load_config", return_value=_make_config([good_feed, bad_feed])), \
-         patch("src.main.StateStore", return_value=mock_state), \
-         patch("src.main.fetch_feed", side_effect=mock_fetch), \
-         patch("src.main.post_items", return_value=post_result):
-        from src.main import main
-        result = main()
-
-    assert result == 2
+def test_selection_fetch_write_post_and_seen_state(pipeline):
+    assert main() == 0
+    pipeline["select_items"].assert_called_once_with(
+        [item(), item(1)], max_briefing_items=15, timeout=180)
+    pipeline["fetch_article"].assert_called_once_with(
+        item(), timeout=20, user_agent=pipeline["config"].settings.user_agent)
+    pipeline["write_briefing"].assert_called_once_with(
+        [pipeline["fetch_article"].return_value], timeout=180)
+    pipeline["post_briefing"].assert_called_once_with(
+        "Japanese briefing", webhook_url=WEBHOOK, interval_seconds=0)
+    pipeline["state"].mark_posted.assert_called_once_with([item(), item(1)])
+    pipeline["state"].save.assert_called_once_with(retention=100)
+    pending = json.loads((pipeline["tmp_path"] / "state/pending_reads.json").read_text())
+    assert pending[0]["message_id"] == "123"
+    assert pending[0]["channel_id"] == "654321"
+    assert pending[0]["kind"] == "news"
 
 
-def test_post_failure_exits_2(monkeypatch):
-    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
-    items = [make_item(f"https://example.com/{i}") for i in range(3)]
-    mock_state = MagicMock()
-    mock_state.filter_new.return_value = items
-    post_result = PostResult(posted=[items[0]], failed=[items[1], items[2]])
-
-    with patch("src.main.load_config", return_value=_make_config()), \
-         patch("src.main.StateStore", return_value=mock_state), \
-         patch("src.main.post_items", return_value=post_result):
-        from src.main import main
-        result = main()
-
-    assert result == 2
+def test_empty_selection_marks_noise_seen(pipeline):
+    pipeline["select_items"].return_value = []
+    assert main() == 0
+    pipeline["fetch_article"].assert_not_called()
+    pipeline["write_briefing"].assert_not_called()
+    pipeline["post_briefing"].assert_not_called()
+    pipeline["state"].mark_posted.assert_called_once_with([item(), item(1)])
 
 
-# --- state management ---
-
-def test_only_posted_items_saved(monkeypatch):
-    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
-    posted = make_item("https://example.com/ok")
-    failed = make_item("https://example.com/fail")
-    mock_state = MagicMock()
-    mock_state.filter_new.return_value = [posted, failed]
-    post_result = PostResult(posted=[posted], failed=[failed])
-
-    with patch("src.main.load_config", return_value=_make_config()), \
-         patch("src.main.StateStore", return_value=mock_state), \
-         patch("src.main.post_items", return_value=post_result):
-        from src.main import main
-        main()
-
-    mock_state.mark_posted.assert_called_once_with([posted])
+@pytest.mark.parametrize("stage", ["select_items", "write_briefing"])
+@pytest.mark.parametrize("error,code", [(CurationError("safe failure"), 2),
+    (MissingAPIKeyError("missing"), 1)])
+def test_briefing_failure_never_posts_or_saves(pipeline, stage, error, code):
+    pipeline[stage].side_effect = error
+    assert main() == code
+    pipeline["post_briefing"].assert_not_called()
+    pipeline["state"].mark_posted.assert_not_called()
+    pipeline["state"].save.assert_not_called()
+    assert not (pipeline["tmp_path"] / "state/pending_reads.json").exists()
 
 
-def test_feed_failure_does_not_stop_posting(monkeypatch):
-    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
-    feed1, feed2 = MagicMock(), MagicMock()
-    item = make_item("https://example.com/1")
+def test_partial_delivery_leaves_state_unchanged_tracks_success(pipeline):
+    pipeline["post_briefing"].return_value = PostResult(success=False, message_ids=["123"])
+    assert main() == 2
+    pipeline["state"].mark_posted.assert_not_called()
+    pipeline["state"].save.assert_not_called()
+    pending = json.loads((pipeline["tmp_path"] / "state/pending_reads.json").read_text())
+    assert [p["message_id"] for p in pending] == ["123"]
 
-    def mock_fetch(feed, **kwargs):
-        if feed is feed1:
-            on_error = kwargs.get("on_error")
-            if on_error:
-                on_error(Exception("broken"))
+
+def test_feed_failure_still_delivers_good_news(pipeline):
+    good = FeedConfig(name="good", url="https://example.com/rss", category="AI")
+    bad = FeedConfig(name="bad", url="https://example.com/bad", category="AI")
+    pipeline["config"].feeds = [good, bad]
+
+    def fetch(feed, **kw):
+        if feed is bad:
+            kw["on_error"](ValueError())
             return []
-        return [item]
+        return [item()]
 
-    mock_state = MagicMock()
-    mock_state.filter_new.return_value = [item]
-    post_result = PostResult(posted=[item], failed=[])
-    mock_post = MagicMock(return_value=post_result)
-
-    with patch("src.main.load_config", return_value=_make_config([feed1, feed2])), \
-         patch("src.main.StateStore", return_value=mock_state), \
-         patch("src.main.fetch_feed", side_effect=mock_fetch), \
-         patch("src.main.post_items", mock_post):
-        from src.main import main
-        main()
-
-    mock_post.assert_called_once()
+    with patch("src.main.fetch_feed", side_effect=fetch):
+        assert main() == 2
+    pipeline["post_briefing"].assert_called_once()
+    pipeline["state"].save.assert_called_once()
 
 
-def test_successful_message_ids_saved_to_pending(monkeypatch, tmp_path):
-    import json
+def test_invalid_pending_state_prevents_delivery(pipeline):
+    path = pipeline["tmp_path"] / "state/pending_reads.json"
+    path.parent.mkdir()
+    path.write_text("invalid JSON")
+    assert main() == 1
+    pipeline["select_items"].assert_not_called()
+    pipeline["state"].save.assert_not_called()
+
+
+def test_real_select_fetch_write_content_only_pipeline(monkeypatch, tmp_path, httpx_mock):
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
-    monkeypatch.setenv("DISCORD_CHANNEL_ID", "654321")
-    item = make_item("https://example.com/ok")
-    mock_state = MagicMock()
-    mock_state.filter_new.return_value = [item]
-    with patch("src.main.load_config", return_value=_make_config()), \
-         patch("src.main.StateStore", return_value=mock_state), \
-         patch("src.main.post_items", return_value=PostResult(posted=[item], message_ids=["12345"])):
-        from src.main import main
+    monkeypatch.setenv("DISCORD_WEBHOOK_URL", WEBHOOK)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-only-key")
+    cfg = Config(feeds=[FeedConfig(name="Feed", url="https://example.com/rss", category="AI")],
+                 settings=Settings(post_interval_seconds=0))
+    httpx_mock.add_response(url=API_URL, json={"stop_reason": "end_turn", "content": [
+        {"type": "text", "text": json.dumps({"items": [{"id": "0", "url": item().url}]})}]})
+    body_text = "A research team has announced a new artificial intelligence system. " * 20
+    httpx_mock.add_response(url=item().url, text=f"<article><h1>Research</h1><p>{body_text}</p></article>")
+    date = datetime.now(ZoneInfo("Asia/Tokyo")).date().isoformat()
+    # A substantial paragraph makes this a multiple-message delivery.
+    briefing = f"📰 **ニュース・ブリーフィング {date}**\n今日はAIが中心。1本。\n\n**🤖 AI**\n\n**1. 新技術の発表**\n" + "研究チームが新技術を発表した。" * 120 + f"\n<{item().url}>"
+    httpx_mock.add_response(url=API_URL, json={"stop_reason": "end_turn", "content": [
+        {"type": "text", "text": briefing}]})
+    httpx_mock.add_response(url=WEBHOOK + "?wait=true", json={"id": "123"})
+    httpx_mock.add_response(url=WEBHOOK + "?wait=true", json={"id": "124"})
+    with patch("src.main.load_config", return_value=cfg), \
+         patch("src.main.fetch_feed", return_value=[item(), item(1)]):
         assert main() == 0
-    data = json.loads((tmp_path / "state/pending_reads.json").read_text())
-    assert data[0]["message_id"] == "12345"
-    assert data[0]["channel_id"] == "654321"
-    assert data[0]["kind"] == "news"
-    assert data[0]["posted_at"]
-
-
-def test_only_curated_items_posted_and_all_new_urls_saved(mock_curator):
-    raw, noise = make_item("https://example.com/important"), make_item("https://example.com/noise")
-    japanese = make_item(raw.url)
-    japanese.title = "重要なニュース"
-    japanese.summary = "重要な発表です。市場に影響します。"
-    mock_curator.side_effect = None
-    mock_curator.return_value = [japanese]
-    state = MagicMock()
-    state.filter_new.return_value = [raw, noise]
-    with patch.dict("os.environ", {"DISCORD_WEBHOOK_URL": "https://discord.test/wh"}), \
-         patch("src.main.load_config", return_value=_make_config()), \
-         patch("src.main.StateStore", return_value=state), \
-         patch("src.main.PendingReadStore"), \
-         patch("src.main.post_items", return_value=PostResult(posted=[japanese])) as post:
-        from src.main import main
-        assert main() == 0
-    assert post.call_args.args == ([japanese],)
-    mock_curator.assert_called_once_with([raw, noise], max_curated=10, timeout=60)
-    state.mark_posted.assert_called_once_with([raw, noise])
-    state.save.assert_called_once_with(retention=100)
-
-
-def test_empty_selection_saves_noise_without_discord(mock_curator):
-    mock_curator.side_effect = None
-    mock_curator.return_value = []
-    noise = make_item("https://example.com/noise")
-    state = MagicMock()
-    state.filter_new.return_value = [noise]
-    with patch.dict("os.environ", {"DISCORD_WEBHOOK_URL": "https://discord.test/wh"}), \
-         patch("src.main.load_config", return_value=_make_config()), \
-         patch("src.main.StateStore", return_value=state), \
-         patch("src.main.PendingReadStore") as pending, \
-         patch("src.main.post_items") as post:
-        from src.main import main
-        assert main() == 0
-    state.mark_posted.assert_called_once_with([noise])
-    post.assert_not_called()
-    pending.return_value.append.assert_not_called()
-
-
-@pytest.mark.parametrize("missing_key", [True, False])
-def test_real_curator_failure_never_posts_or_saves(
-    monkeypatch, mock_curator, httpx_mock, missing_key, caplog
-):
-    from src.claude_curator import curate_items
-    mock_curator.side_effect = curate_items
-    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
-    if missing_key:
-        monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
-    else:
-        monkeypatch.setenv("ANTHROPIC_API_KEY", "test-secret-never-log")
-        httpx_mock.add_response(json={"stop_reason": "end_turn", "content": [
-            {"type": "text", "text": "not JSON test-secret-never-log"}
-        ]})
-    state = MagicMock()
-    state.filter_new.return_value = [make_item("https://example.com/1")]
-    with patch("src.main.load_config", return_value=_make_config()), \
-         patch("src.main.StateStore", return_value=state), \
-         patch("src.main.PendingReadStore") as pending, \
-         patch("src.main.post_items") as post:
-        from src.main import main
-        assert main() == (1 if missing_key else 2)
-    post.assert_not_called()
-    state.mark_posted.assert_not_called()
-    state.save.assert_not_called()
-    pending.return_value.save.assert_not_called()
-    assert "test-secret-never-log" not in caplog.text
-
-
-def test_config_50_category_posts_and_pending_reads(
-    monkeypatch, tmp_path, httpx_mock, mock_curator
-):
-    import json
-    from src.categories import CATEGORIES
-    from src.claude_curator import CuratedItem
-    from src.config_loader import load_config
-
-    config = load_config()
-    config.settings.post_interval_seconds = 0
-    assert config.settings.max_curated == 50
-    assert config.settings.claude_timeout == 120
-    assert config.settings.max_items_per_feed == 5
-    items = [
-        CuratedItem(f"記事{i}", f"https://example.com/{i}", "事実と重要な理由。",
-                    None, "Mixed feed", CATEGORIES[i % 6], i % 5 + 1)
-        for i in reversed(range(50))
-    ]
-    mock_curator.side_effect = None
-    mock_curator.return_value = items
-    state = MagicMock()
-    state.filter_new.return_value = items
-    # Two batches for each of six categories (8 or 9 items each).
-    ids = [str(100 + i) for i in range(12)]
-    for message_id in ids:
-        httpx_mock.add_response(json={"id": message_id})
-    monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
-    monkeypatch.setenv("DISCORD_CHANNEL_ID", "654321")
-    with patch("src.main.load_config", return_value=config), \
-         patch("src.main.StateStore", return_value=state), \
-         patch("src.main.fetch_feed", return_value=[]) as fetch:
-        from src.main import main
-        assert main() == 0
-    mock_curator.assert_called_once_with(items, max_curated=50, timeout=120)
-    assert all(call.kwargs["max_items"] == 5 for call in fetch.call_args_list)
     requests = httpx_mock.get_requests()
-    assert len(requests) == 12
-    assert sum(len(json.loads(r.content)["embeds"]) for r in requests) == 50
-    for i, category in enumerate(CATEGORIES):
-        first, rest = [json.loads(r.content) for r in requests[i * 2:i * 2 + 2]]
-        assert f"**{category}**" in first["content"]
-        assert f"{9 if i < 2 else 8}件" in first["content"]
-        assert f"**{category}**（続き）" in rest["content"]
-        assert len(first["embeds"]) == 5
-    assert all(r.url.params["wait"] == "true" for r in requests)
+    writer = json.loads(requests[2].content)
+    articles = json.loads(writer["messages"][0]["content"])["articles"]
+    assert "research team" in articles[0]["body"]
+    assert "RSS teaser" not in writer["messages"][0]["content"]
+    deliveries = [json.loads(r.content) for r in requests[3:]]
+    assert len(deliveries) == 2
+    assert all("embeds" not in d and len(d["content"]) <= 1900 for d in deliveries)
+    assert deliveries[-1]["content"].endswith("読んだら✅を付けてください")
     pending = json.loads((tmp_path / "state/pending_reads.json").read_text())
-    assert [entry["message_id"] for entry in pending] == ids
-    assert all(entry["channel_id"] == "654321" for entry in pending)
-    state.mark_posted.assert_called_once_with(items)
+    assert [p["message_id"] for p in pending] == ["123", "124"]
+    posted = json.loads((tmp_path / "state/posted_links.json").read_text())
+    assert {p["url"] for p in posted["posted"]} == {item().url, item(1).url}
