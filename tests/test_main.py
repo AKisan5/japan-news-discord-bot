@@ -104,14 +104,15 @@ def test_selection_candidates_capped_at_150_newest(pipeline):
         list(reversed(candidates))[:150], max_briefing_items=50, timeout=300)
 
 
-def test_write_still_prefers_articles_with_usable_bodies(pipeline):
+def test_write_orders_usable_bodies_first_but_keeps_thin(pipeline):
     selected = [item(i) for i in range(8)]
     articles = [Article("Title", entry.url, "Feed", "Body" if i < 5 else "")
                 for i, entry in enumerate(selected)]
     pipeline["select_items"].return_value = selected
     pipeline["fetch_article"].side_effect = articles
     assert main() == 0
-    pipeline["write_briefing"].assert_called_once_with(articles[:5], timeout=300)
+    ordered = articles[:5] + articles[5:]
+    pipeline["write_briefing"].assert_called_once_with(ordered, timeout=300)
 
 
 @pytest.mark.parametrize("stage", ["select_items", "write_briefing"])
