@@ -196,3 +196,29 @@ feeds:
     url: "https://www.technologyreview.com/feed/"
     category: "AI"
     enabled: true
+
+  # --- 予測市場 ---
+  - name: "Polymarket News (The Oracle)"
+    url: "https://news.polymarket.com/feed"
+    category: "Web3"
+    enabled: true
+
+  # --- Reddit ---
+  # Disabled: reddit.com RSS returned 403/429 from datacenter IPs when verified
+  # (2026-10-30). Re-enable if fetched from a non-blocked network / OAuth API.
+  - name: "Reddit r/MachineLearning"
+    url: "https://www.reddit.com/r/MachineLearning/top/.rss?t=day"
+    category: "AI"
+    enabled: false
+  - name: "Reddit r/technology"
+    url: "https://www.reddit.com/r/technology/top/.rss?t=day"
+    category: "テクノロジー"
+    enabled: false
+  - name: "Reddit r/japannews"
+    url: "https://www.reddit.com/r/japannews/top/.rss?t=day"
+    category: "国際"
+    enabled: false
+  - name: "Reddit r/CryptoCurrency"
+    url: "https://www.reddit.com/r/CryptoCurrency/top/.rss?t=day"
+    category: "Web3"
+    enabled: false
