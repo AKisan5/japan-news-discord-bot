@@ -68,9 +68,9 @@ def test_batch_split_correct_count(httpx_mock):
     config = make_config(embeds_per_message=2)
     items = [make_item(i) for i in range(5)]
     # 5 items / 2 per batch = 3 batches
-    httpx_mock.add_response(status_code=204)
-    httpx_mock.add_response(status_code=204)
-    httpx_mock.add_response(status_code=204)
+    httpx_mock.add_response(status_code=200, json={"id": "123456"})
+    httpx_mock.add_response(status_code=200, json={"id": "123456"})
+    httpx_mock.add_response(status_code=200, json={"id": "123456"})
 
     with patch("time.sleep"):
         result = post_items(items, webhook_url=WEBHOOK, discord_config=config, interval_seconds=0)
@@ -88,7 +88,7 @@ def test_header_only_in_first_batch(httpx_mock):
         import json as _json
         requests.append(_json.loads(request.content))
         from httpx import Response
-        return Response(204)
+        return Response(200, json={"id": "123456"})
 
     httpx_mock.add_callback(capture)
     httpx_mock.add_callback(capture)
@@ -96,8 +96,8 @@ def test_header_only_in_first_batch(httpx_mock):
     with patch("time.sleep"):
         post_items(items, webhook_url=WEBHOOK, discord_config=config, interval_seconds=0)
 
-    assert requests[0].get("content") == "📰 Header"
-    assert "content" not in requests[1]
+    assert requests[0].get("content") == "📰 Header\n読んだら✅を付けてください"
+    assert requests[1]["content"] == "読んだら✅を付けてください"
 
 
 def test_empty_items_returns_empty_result():
@@ -113,7 +113,7 @@ def test_429_retries_once_and_succeeds(httpx_mock):
     config = make_config()
     items = [make_item(1)]
     httpx_mock.add_response(status_code=429, headers={"Retry-After": "0.01"})
-    httpx_mock.add_response(status_code=204)
+    httpx_mock.add_response(status_code=200, json={"id": "123456"})
 
     with patch("time.sleep"):
         result = post_items(items, webhook_url=WEBHOOK, discord_config=config, interval_seconds=0)
@@ -142,7 +142,7 @@ def test_5xx_retries_and_succeeds(httpx_mock):
     items = [make_item(1)]
     httpx_mock.add_response(status_code=500)
     httpx_mock.add_response(status_code=500)
-    httpx_mock.add_response(status_code=204)
+    httpx_mock.add_response(status_code=200, json={"id": "123456"})
 
     with patch("time.sleep") as mock_sleep:
         result = post_items(items, webhook_url=WEBHOOK, discord_config=config, interval_seconds=0)
@@ -198,7 +198,7 @@ def test_401_no_retry(httpx_mock):
 def test_second_batch_failure_partial_result(httpx_mock):
     config = make_config(embeds_per_message=2)
     items = [make_item(i) for i in range(4)]
-    httpx_mock.add_response(status_code=204)
+    httpx_mock.add_response(status_code=200, json={"id": "123456"})
     httpx_mock.add_response(status_code=500)
     httpx_mock.add_response(status_code=500)
     httpx_mock.add_response(status_code=500)
@@ -209,3 +209,43 @@ def test_second_batch_failure_partial_result(httpx_mock):
 
     assert len(result.posted) == 2
     assert len(result.failed) == 2
+
+
+@pytest.mark.parametrize("query", ["", "?thread_id=999", "?wait=false&thread_id=999"])
+def test_wait_true_captures_message_id(httpx_mock, query):
+    httpx_mock.add_response(status_code=200, json={"id": "987654321"})
+    result = post_items([make_item(1)], webhook_url=WEBHOOK + query,
+                        discord_config=make_config(), interval_seconds=0)
+    assert result.message_ids == ["987654321"]
+    request = httpx_mock.get_request()
+    assert request.url.params.get_list("wait") == ["true"]
+    if query:
+        assert request.url.params["thread_id"] == "999"
+
+
+@pytest.mark.parametrize("response", [{}, {"id": None}, {"id": "bad"}, []])
+def test_missing_id_is_failure(httpx_mock, response):
+    httpx_mock.add_response(status_code=200, json=response)
+    result = post_items([make_item(1)], webhook_url=WEBHOOK,
+                        discord_config=make_config(), interval_seconds=0)
+    assert result.message_ids == []
+    assert result.posted == []
+    assert len(result.failed) == 1
+
+
+def test_204_without_id_is_failure(httpx_mock):
+    httpx_mock.add_response(status_code=204)
+    result = post_items([make_item(1)], webhook_url=WEBHOOK,
+                        discord_config=make_config(), interval_seconds=0)
+    assert not result.message_ids
+    assert len(result.failed) == 1
+
+
+def test_partial_failure_only_returns_successful_ids(httpx_mock):
+    httpx_mock.add_response(status_code=200, json={"id": "123"})
+    httpx_mock.add_response(status_code=403)
+    result = post_items([make_item(1), make_item(2)], webhook_url=WEBHOOK,
+                        discord_config=make_config(embeds_per_message=1), interval_seconds=0)
+    assert result.message_ids == ["123"]
+    assert [item.title for item in result.posted] == ["Article 1"]
+    assert [item.title for item in result.failed] == ["Article 2"]

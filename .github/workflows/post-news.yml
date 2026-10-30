@@ -2,7 +2,7 @@ name: Post Daily News
 
 on:
   schedule:
-    - cron: "0 1 * * *"   # 10:00 JST
+    - cron: "55 22 * * *"  # 07:55 JST
     - cron: "0 13 * * *"  # 22:00 JST
   workflow_dispatch:
 
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: post-news
+  group: discord-news-state
   cancel-in-progress: false
 
 jobs:
@@ -19,6 +19,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - uses: actions/setup-python@v5
         with:
@@ -29,6 +31,7 @@ jobs:
 
       - name: Run bot
         env:
+          DISCORD_CHANNEL_ID: ${{ vars.DISCORD_CHANNEL_ID || '1290456657653928048' }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python -m src.main
 
@@ -37,6 +40,6 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add state/posted_links.json
-          git diff --cached --quiet || git commit -m "chore(state): update posted_links [skip ci]"
+          git add state/posted_links.json state/pending_reads.json
+          git diff --cached --quiet || git commit -m "chore(state): update news state [skip ci]"
           git push

@@ -3,17 +3,19 @@ from __future__ import annotations
 import logging
 import os
 import sys
-from pathlib import Path
 
 from .config_loader import load_config
 from .deduplicator import StateStore
 from .discord_poster import post_items
 from .feed_fetcher import fetch_feed
+from .pending_reads import DEFAULT_CHANNEL_ID, PendingReadStore
 
 logging.basicConfig(
     level=os.environ.get("LOG_LEVEL", "INFO"),
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
@@ -32,6 +34,13 @@ def main() -> int:
 
     state = StateStore()
     state.load()
+
+    pending = PendingReadStore()
+    try:
+        pending.load()  # Fail before posting if unread state cannot be loaded safely.
+    except (OSError, ValueError):
+        logger.error("Could not load pending reads; leaving state unchanged")
+        return 1
 
     all_items = []
     feed_error_count = 0
@@ -56,7 +65,7 @@ def main() -> int:
 
     if not new_items:
         logger.info("No new items today, skipping Discord post")
-        return 0
+        return 2 if feed_error_count else 0
 
     result = post_items(
         new_items,
@@ -64,6 +73,13 @@ def main() -> int:
         discord_config=config.discord,
         interval_seconds=config.settings.post_interval_seconds,
     )
+
+    if result.message_ids:
+        pending.append(
+            result.message_ids,
+            channel_id=os.environ.get("DISCORD_CHANNEL_ID") or DEFAULT_CHANNEL_ID,
+        )
+        pending.save()
 
     if result.posted:
         state.mark_posted(result.posted)
