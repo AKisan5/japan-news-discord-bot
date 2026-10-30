@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 
 import httpx
 
+from .categories import CATEGORIES, normalize_category
 from .config_loader import DiscordConfig
 from .feed_fetcher import FeedItem
 
@@ -82,18 +83,26 @@ def post_items(
         return result
 
     n = discord_config.embeds_per_message
-    batches = [items[i : i + n] for i in range(0, len(items), n)]
+    grouped: dict[str, list[FeedItem]] = {category: [] for category in CATEGORIES}
+    for item in items:
+        grouped[normalize_category(item.feed_category)].append(item)
+
+    batches: list[tuple[str, list[FeedItem]]] = []
+    for category, group in grouped.items():
+        group.sort(key=lambda item: getattr(item, "importance", 0), reverse=True)
+        for offset in range(0, len(group), n):
+            label = f"本日の要約・{len(group)}件" if offset == 0 else "続き"
+            header = f"📰 **{category}**（{label}）"
+            batches.append((header, group[offset : offset + n]))
 
     with httpx.Client(timeout=30) as client:
-        for idx, batch in enumerate(batches):
+        for idx, (header, batch) in enumerate(batches):
             embeds = [_build_embed(item, discord_config.embed_color) for item in batch]
             payload: dict = {
                 "embeds": embeds,
-                "content": "読んだら✅を付けてください",
+                "content": header + "\n読んだら✅を付けてください",
                 "allowed_mentions": {"parse": []},
             }
-            if idx == 0 and discord_config.header:
-                payload["content"] = discord_config.header + "\n" + payload["content"]
 
             message_id = _post_with_retry(client, webhook_url, payload)
 

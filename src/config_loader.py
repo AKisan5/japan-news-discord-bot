@@ -21,9 +21,9 @@ class FeedConfig(BaseModel):
 
 
 class Settings(BaseModel):
-    max_curated: int = Field(default=10, ge=1, le=12)
-    claude_timeout: float = Field(default=60, gt=0)
-    max_items_per_feed: int = 3
+    max_curated: int = Field(default=50, ge=1, le=50)
+    claude_timeout: float = Field(default=120, gt=0)
+    max_items_per_feed: int = 5
     state_retention: int = 1000
     http_timeout: int = 15
     user_agent: str = "news-discord-bot/1.0"
