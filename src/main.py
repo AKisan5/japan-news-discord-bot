@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import sys
+from datetime import datetime, timezone
 
 from .article_fetcher import fetch_article
 from .claude_curator import CurationError, MissingAPIKeyError, select_items, write_briefing
@@ -64,6 +65,16 @@ def main() -> int:
 
     new_items = state.filter_new(all_items)
     logger.info("Total: %d fetched, %d new", len(all_items), len(new_items))
+    # Keep Claude select payload small (Cooper-style cap).
+    SELECT_CANDIDATE_CAP = 80
+    if len(new_items) > SELECT_CANDIDATE_CAP:
+        epoch = datetime.min.replace(tzinfo=timezone.utc)
+        new_items = sorted(
+            new_items,
+            key=lambda item: item.published_at or epoch,
+            reverse=True,
+        )[:SELECT_CANDIDATE_CAP]
+        logger.info("Capped select candidates to %d", len(new_items))
 
     if not new_items:
         logger.info("No new items today, skipping Discord post")
@@ -90,8 +101,8 @@ def main() -> int:
     except MissingAPIKeyError:
         logger.error("ANTHROPIC_API_KEY environment variable is not set")
         return 1
-    except CurationError:
-        logger.error("Claude briefing failed; no news posted and state unchanged")
+    except CurationError as exc:
+        logger.error("Claude briefing failed (%s); no news posted and state unchanged", exc)
         return 2
 
     if result.message_ids:

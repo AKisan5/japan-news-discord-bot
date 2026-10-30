@@ -7,7 +7,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import httpx
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, ValidationError
 
 from .article_fetcher import Article
 from .feed_fetcher import FeedItem
@@ -106,6 +106,8 @@ def _call_claude(system: str, payload: dict | list, *, timeout: float,
             if not text.strip():
                 raise ValueError("Empty content")
             return text
+    except httpx.HTTPStatusError as exc:
+        raise CurationError(f"Claude API HTTP {exc.response.status_code}") from None
     except httpx.HTTPError:
         raise CurationError("Claude API request failed") from None
     except (ValueError, KeyError, TypeError):
@@ -140,14 +142,16 @@ def select_items(items: list[FeedItem], *, max_briefing_items: int = 15,
     )
     try:
         result = _Response.model_validate_json(_extract_json_text(text))
-    except ValueError:
+    except (ValueError, ValidationError):
         raise CurationError("Claude returned invalid JSON selection") from None
     selected: dict[str, FeedItem] = {}
     for entry in result.items:
         source = sources.get(entry.id)
         if source is None or source.url != entry.url:
-            raise CurationError("Claude returned an unknown source")
+            continue
         selected.setdefault(source.url, source)
+    if not selected and result.items:
+        raise CurationError("Claude selection matched no known sources")
     return list(selected.values())[:max_briefing_items]
 
 
@@ -162,18 +166,21 @@ def write_briefing(articles: list[Article], *, timeout: float = 180,
         timeout=timeout, max_tokens=16384,
         model=os.environ.get("ANTHROPIC_WRITE_MODEL") or WRITE_MODEL,
     ))
-    # Reject malformed/truncated or invented-link output before any Discord post.
-    numbers = re.findall(r"^\*\*(\d+)\. .+\*\*$", text, re.MULTILINE)
-    headers = re.findall(r"^\*\*[^\n]+\*\*$", text, re.MULTILINE)
-    sections = [h for h in headers if not re.match(r"\*\*\d+\. ", h)]
+    # Soft structural checks: Cooper prose varies; reject only clear failures.
+    if "📰 **ニュース・ブリーフィング" not in text[:80]:
+        raise CurationError("Claude briefing missing title")
+    numbers = re.findall(r"^\*\*(\d+)\. ", text, re.MULTILINE)
     links = re.findall(r"<(https?://[^<>\s]+)>", text)
     allowed_urls = {article.url for article in articles}
-    if (not text.startswith(f"📰 **ニュース・ブリーフィング {date}**\n")
-        or not numbers or len(numbers) > len(articles)
-        or numbers != [str(i + 1) for i in range(len(numbers))]
-        or not sections or any(h not in SECTION_HEADERS for h in sections)
-        or sections != sorted(set(sections), key=SECTION_HEADERS.index)
-        or len(links) < len(numbers) or not set(links) <= allowed_urls
-        or not re.search(rf"(?<!\d){len(numbers)}本。", text.split(sections[0], 1)[0])):
-        raise CurationError("Claude returned invalid briefing format")
+    if not numbers:
+        raise CurationError("Claude briefing has no numbered stories")
+    if len(numbers) > len(articles) + 2:
+        raise CurationError("Claude briefing has too many stories")
+    if not links:
+        raise CurationError("Claude briefing has no source links")
+    invented = [u for u in links if u not in allowed_urls]
+    if invented:
+        raise CurationError("Claude briefing contains invented links")
+    if len(text) < 120:
+        raise CurationError("Claude briefing too short")
     return text

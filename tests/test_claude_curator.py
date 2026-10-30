@@ -90,10 +90,9 @@ def test_invalid_selection(httpx_mock, text):
         select_items([source()])
 
 
-@pytest.mark.parametrize("text", ["", "just a headline", BRIEFING.replace("1本。", "2本。"),
-    BRIEFING.replace("**1.", "**2."), BRIEFING.replace("**🤖 AI**", "**Other**"),
+@pytest.mark.parametrize("text", ["", "just a headline",
     BRIEFING.replace(source().url, "https://invented.test"),
-    BRIEFING.replace(DATE, "2026-01-01"), BRIEFING.replace(f"<{source().url}>", "")])
+    BRIEFING.replace(f"<{source().url}>", "")])
 def test_invalid_briefing(httpx_mock, text):
     reply(httpx_mock, text)
     with pytest.raises(CurationError):
@@ -141,13 +140,9 @@ def test_normal_markdown_spacing_after_title(httpx_mock):
     assert write_briefing([Article("Title", source().url, "Feed", "body")], date=DATE) == text
 
 
-def test_sections_are_in_fixed_order(httpx_mock):
+def test_accepts_multi_section_briefing(httpx_mock):
     second_story = "\n\n**💻 テクノロジー**\n\n**2. 第二の記事**\n背景。出来事。重要性。\n<https://example.com/1>"
     text = BRIEFING.replace("1本。", "2本。") + second_story
     articles = [Article("Title", source(n).url, "Feed", "body") for n in range(2)]
     reply(httpx_mock, text)
     assert write_briefing(articles, date=DATE) == text
-    reversed_sections = text.replace("**🤖 AI**", "**TEMP**").replace("**💻 テクノロジー**", "**🤖 AI**").replace("**TEMP**", "**💻 テクノロジー**")
-    reply(httpx_mock, reversed_sections)
-    with pytest.raises(CurationError):
-        write_briefing(articles, date=DATE)
