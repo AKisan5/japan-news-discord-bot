@@ -167,7 +167,8 @@ def select_items(items: list[FeedItem], *, max_briefing_items: int = 15,
     return list(selected.values())[:max_briefing_items]
 
 
-def _drop_duplicate_url_stories(text: str, *, reserved: set[str]) -> str:
+def _drop_duplicate_url_stories(text: str, *, reserved: set[str],
+                                allowed: set[str] | None = None) -> str:
     """Keep the first story for each source URL; drop later duplicates."""
     lines = text.splitlines()
     out: list[str] = []
@@ -179,7 +180,9 @@ def _drop_duplicate_url_stories(text: str, *, reserved: set[str]) -> str:
         if not block:
             return
         links = re.findall(r"<(https?://[^<>\s]+)>", "\n".join(block))
-        if links and (links[0] in reserved or links[0] in seen_local):
+        if links and (links[0] in reserved or links[0] in seen_local
+                      or (allowed is not None
+                          and any(u not in allowed for u in links))):
             block = []
             return
         if links:
@@ -255,7 +258,13 @@ def write_briefing(articles: list[Article], *, timeout: float = 180,
         if not links:
             raise CurationError("Claude briefing has no source links")
         if any(url not in allowed_urls for url in links):
-            raise CurationError("Claude briefing contains invented links")
+            part = _drop_duplicate_url_stories(part, reserved=set(), allowed=allowed_urls)
+            logger.info("Dropped stories with unknown links in batch")
+            numbers = re.findall(r"^\*\*(\d+)\. ", part, re.MULTILINE)
+            links = re.findall(r"<(https?://[^<>\s]+)>", part)
+            if (not re.findall(r"^\*\*(\d+)\. ", part, re.MULTILINE) or not links
+                    or any(url not in allowed_urls for url in links)):
+                raise CurationError("Claude briefing contains invented links")
         if len(links) != len(set(links)) or seen_urls.intersection(links):
             part = _drop_duplicate_url_stories(part, reserved=seen_urls)
             numbers = re.findall(r"^\*\*(\d+)\. ", part, re.MULTILINE)

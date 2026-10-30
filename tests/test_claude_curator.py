@@ -258,3 +258,14 @@ def test_select_prompt_aims_to_fill_target():
     assert "full target count" in SELECT_SYSTEM_PROMPT
     assert "EVERY supplied article" in WRITE_SYSTEM_PROMPT
     assert "本文未確認" in WRITE_SYSTEM_PROMPT
+
+
+def test_batched_write_drops_only_story_with_invented_link(httpx_mock):
+    articles = [Article("Title", source(i).url, "Feed", "Body")
+                for i in range(WRITE_BATCH_SIZE)]
+    first = batch_text(range(WRITE_BATCH_SIZE), total=len(articles))
+    reply(httpx_mock, first.replace(source(1).url, "https://invented.test/x"))
+    text = write_briefing(articles, date=DATE)
+    assert "invented.test" not in text
+    assert source(0).url in text and source(2).url in text
+    assert f"**{WRITE_BATCH_SIZE}." not in text
