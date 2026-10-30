@@ -79,7 +79,7 @@ def test_batch_split_correct_count(httpx_mock):
     assert len(result.failed) == 0
 
 
-def test_header_only_in_first_batch(httpx_mock):
+def test_category_header_and_continuation_override_config(httpx_mock):
     config = make_config(embeds_per_message=1, header="📰 Header")
     items = [make_item(1), make_item(2)]
     requests = []
@@ -96,8 +96,8 @@ def test_header_only_in_first_batch(httpx_mock):
     with patch("time.sleep"):
         post_items(items, webhook_url=WEBHOOK, discord_config=config, interval_seconds=0)
 
-    assert requests[0].get("content") == "📰 Header\n読んだら✅を付けてください"
-    assert requests[1]["content"] == "読んだら✅を付けてください"
+    assert requests[0]["content"] == "📰 **テクノロジー**（本日の要約・2件）\n読んだら✅を付けてください"
+    assert requests[1]["content"] == "📰 **テクノロジー**（続き）\n読んだら✅を付けてください"
 
 
 def test_empty_items_returns_empty_result():
@@ -255,14 +255,45 @@ def test_japanese_curated_embed_and_reminder(httpx_mock):
     import json
     from src.claude_curator import CuratedItem
     item = CuratedItem("新技術の発表", "https://example.com/1", "要約です。" * 100,
-                       None, "Primary source", "技術", 5)
+                       None, "Primary source", "テクノロジー", 5)
     httpx_mock.add_response(json={"id": "12345"})
     result = post_items([item], webhook_url=WEBHOOK, discord_config=DiscordConfig(), interval_seconds=0)
     request = httpx_mock.get_request()
     payload = json.loads(request.content)
-    assert payload["content"] == "📰 本日の重要ニュース（Claude要約）\n読んだら✅を付けてください"
+    assert payload["content"] == "📰 **テクノロジー**（本日の要約・1件）\n読んだら✅を付けてください"
     assert payload["embeds"][0]["title"] == item.title
     assert payload["embeds"][0]["description"] == item.summary
-    assert payload["embeds"][0]["footer"]["text"] == "Primary source / 技術"
+    assert payload["embeds"][0]["footer"]["text"] == "Primary source / テクノロジー"
     assert request.url.params["wait"] == "true"
     assert result.message_ids == ["12345"]
+
+def test_category_order_importance_and_separate_batches(httpx_mock):
+    import json
+    from src.categories import CATEGORIES
+    from src.claude_curator import CuratedItem
+
+    items = [
+        CuratedItem(f"{category}-{importance}", f"https://example.com/{i}/{importance}",
+                    "要約", None, "Mixed feed", category, importance)
+        for i, category in enumerate(reversed(CATEGORIES))
+        for importance in (1, 5, 3)
+    ]
+    for i in range(12):
+        httpx_mock.add_response(json={"id": str(i + 1)})
+    with patch("time.sleep") as sleep:
+        result = post_items(items, webhook_url=WEBHOOK,
+                            discord_config=make_config(embeds_per_message=2),
+                            interval_seconds=1.5)
+    requests = httpx_mock.get_requests()
+    assert result.message_ids == [str(i + 1) for i in range(12)]
+    assert len(result.posted) == 18
+    assert not result.failed
+    assert sleep.call_count == 11
+    for i, category in enumerate(CATEGORIES):
+        first = json.loads(requests[2 * i].content)
+        rest = json.loads(requests[2 * i + 1].content)
+        assert first["content"] == f"📰 **{category}**（本日の要約・3件）\n読んだら✅を付けてください"
+        assert rest["content"] == f"📰 **{category}**（続き）\n読んだら✅を付けてください"
+        assert [e["title"] for e in first["embeds"]] == [f"{category}-5", f"{category}-3"]
+        assert [e["title"] for e in rest["embeds"]] == [f"{category}-1"]
+        assert first["allowed_mentions"] == {"parse": []}

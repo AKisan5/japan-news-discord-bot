@@ -1,8 +1,8 @@
 settings:
-  max_curated: 10
-  claude_timeout: 60
-  max_items_per_feed: 3
-  state_retention: 1000
+  max_curated: 50
+  claude_timeout: 120
+  max_items_per_feed: 5
+  state_retention: 5000
   http_timeout: 15
   user_agent: "news-discord-bot/1.0 (+https://github.com/AKisan5/japan-news-discord-bot)"
   post_interval_seconds: 1.5
@@ -72,7 +72,7 @@ feeds:
     enabled: true
 
   - name: "Google News AI EN"
-    url: "https://news.google.com/rss/search?q=artificial+intelligence+when:1d&hl=en-US&gl=US&ceid=US:en"
+    url: "https://news.google.com/rss/search?q=artificial+intelligence+OR+OpenAI+OR+Anthropic+OR+Google+DeepMind+when:1d&hl=en-US&gl=US&ceid=US:en"
     category: "AI"
     enabled: true
 
@@ -114,4 +114,85 @@ feeds:
   - name: "ITmedia NEWS"
     url: "https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml"
     category: "テクノロジー"
+    enabled: true
+
+  # --- 主要紙・国際報道・AI ---
+  - name: "BBC World"
+    url: "https://feeds.bbci.co.uk/news/world/rss.xml"
+    category: "国際"
+    enabled: true
+
+  - name: "Bloomberg Politics"
+    url: "https://feeds.bloomberg.com/politics/news.rss"
+    category: "国際"
+    enabled: true
+
+  - name: "CNBC World"
+    url: "https://www.cnbc.com/id/100727362/device/rss/rss.html"
+    category: "経済・市場"
+    enabled: true
+
+  - name: "NYT Technology"
+    url: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml"
+    category: "テクノロジー"
+    enabled: true
+
+  - name: "WSJ World"
+    url: "https://feeds.a.dj.com/rss/RSSWorldNews.xml"
+    category: "国際"
+    enabled: true
+
+  - name: "Reuters via GN"
+    url: "https://news.google.com/rss/search?q=site:reuters.com+when:1d&hl=en-US&gl=US&ceid=US:en"
+    category: "国際"
+    enabled: true
+
+  - name: "CNN via GN"
+    url: "https://news.google.com/rss/search?q=site:cnn.com+when:1d&hl=en-US&gl=US&ceid=US:en"
+    category: "国際"
+    enabled: true
+
+  - name: "日経 via GN"
+    url: "https://news.google.com/rss/search?q=site:nikkei.com+when:1d&hl=ja&gl=JP&ceid=JP:ja"
+    category: "経済・市場"
+    enabled: true
+
+  - name: "読売 via GN"
+    url: "https://news.google.com/rss/search?q=site:yomiuri.co.jp+when:1d&hl=ja&gl=JP&ceid=JP:ja"
+    category: "国内"
+    enabled: true
+
+  - name: "朝日 via GN"
+    url: "https://news.google.com/rss/search?q=site:asahi.com+when:1d&hl=ja&gl=JP&ceid=JP:ja"
+    category: "国内"
+    enabled: true
+
+  - name: "Yahoo 国内"
+    url: "https://news.yahoo.co.jp/rss/topics/domestic.xml"
+    category: "国内"
+    enabled: true
+
+  - name: "Yahoo 国際"
+    url: "https://news.yahoo.co.jp/rss/topics/world.xml"
+    category: "国際"
+    enabled: true
+
+  - name: "Yahoo 経済・市場"
+    url: "https://news.yahoo.co.jp/rss/topics/business.xml"
+    category: "経済・市場"
+    enabled: true
+
+  - name: "Yahoo テクノロジー"
+    url: "https://news.yahoo.co.jp/rss/topics/it.xml"
+    category: "テクノロジー"
+    enabled: true
+
+  - name: "Wired AI"
+    url: "https://www.wired.com/feed/tag/ai/latest/rss"
+    category: "AI"
+    enabled: true
+
+  - name: "MIT Tech Review"
+    url: "https://www.technologyreview.com/feed/"
+    category: "AI"
     enabled: true

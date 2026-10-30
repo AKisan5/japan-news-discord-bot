@@ -269,3 +269,55 @@ def test_real_curator_failure_never_posts_or_saves(
     state.save.assert_not_called()
     pending.return_value.save.assert_not_called()
     assert "test-secret-never-log" not in caplog.text
+
+
+def test_config_50_category_posts_and_pending_reads(
+    monkeypatch, tmp_path, httpx_mock, mock_curator
+):
+    import json
+    from src.categories import CATEGORIES
+    from src.claude_curator import CuratedItem
+    from src.config_loader import load_config
+
+    config = load_config()
+    config.settings.post_interval_seconds = 0
+    assert config.settings.max_curated == 50
+    assert config.settings.claude_timeout == 120
+    assert config.settings.max_items_per_feed == 5
+    items = [
+        CuratedItem(f"記事{i}", f"https://example.com/{i}", "事実と重要な理由。",
+                    None, "Mixed feed", CATEGORIES[i % 6], i % 5 + 1)
+        for i in reversed(range(50))
+    ]
+    mock_curator.side_effect = None
+    mock_curator.return_value = items
+    state = MagicMock()
+    state.filter_new.return_value = items
+    # Two batches for each of six categories (8 or 9 items each).
+    ids = [str(100 + i) for i in range(12)]
+    for message_id in ids:
+        httpx_mock.add_response(json={"id": message_id})
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
+    monkeypatch.setenv("DISCORD_CHANNEL_ID", "654321")
+    with patch("src.main.load_config", return_value=config), \
+         patch("src.main.StateStore", return_value=state), \
+         patch("src.main.fetch_feed", return_value=[]) as fetch:
+        from src.main import main
+        assert main() == 0
+    mock_curator.assert_called_once_with(items, max_curated=50, timeout=120)
+    assert all(call.kwargs["max_items"] == 5 for call in fetch.call_args_list)
+    requests = httpx_mock.get_requests()
+    assert len(requests) == 12
+    assert sum(len(json.loads(r.content)["embeds"]) for r in requests) == 50
+    for i, category in enumerate(CATEGORIES):
+        first, rest = [json.loads(r.content) for r in requests[i * 2:i * 2 + 2]]
+        assert f"**{category}**" in first["content"]
+        assert f"{9 if i < 2 else 8}件" in first["content"]
+        assert f"**{category}**（続き）" in rest["content"]
+        assert len(first["embeds"]) == 5
+    assert all(r.url.params["wait"] == "true" for r in requests)
+    pending = json.loads((tmp_path / "state/pending_reads.json").read_text())
+    assert [entry["message_id"] for entry in pending] == ids
+    assert all(entry["channel_id"] == "654321" for entry in pending)
+    state.mark_posted.assert_called_once_with(items)

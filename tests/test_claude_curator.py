@@ -4,7 +4,7 @@ import httpx
 import pytest
 
 from src.claude_curator import (
-    API_URL, DEFAULT_MODEL, CurationError, MissingAPIKeyError, curate_items,
+    API_URL, CHUNK_SIZE, DEFAULT_MODEL, CurationError, MissingAPIKeyError, curate_items,
 )
 from src.feed_fetcher import FeedItem
 
@@ -16,7 +16,7 @@ def source(n=0):
 def selection(n=0, importance=4, **kwargs):
     return {"id": str(n), "url": source(n).url, "title_ja": "重要な発表",
             "summary_ja": "新技術が発表されました。業界に影響があります。",
-            "category": "技術", "importance": importance, **kwargs}
+            "category": "テクノロジー", "importance": importance, **kwargs}
 
 
 def reply(httpx_mock, items, **kwargs):
@@ -36,7 +36,7 @@ def test_request_and_japanese_mapping(httpx_mock):
     result = curate_items([source()], timeout=12)
     assert result[0].title == "重要な発表"
     assert result[0].summary == selection()["summary_ja"]
-    assert result[0].feed_category == "技術"
+    assert result[0].feed_category == "テクノロジー"
     assert result[0].feed_name == "Feed"
     assert result[0].importance == 4
     request = httpx_mock.get_request()
@@ -63,12 +63,12 @@ def test_validation_sort_dedup_and_cap(httpx_mock):
 def test_chunking_global_cap_and_model_override(httpx_mock, monkeypatch):
     monkeypatch.setenv("ANTHROPIC_MODEL", "custom-model")
     reply(httpx_mock, [selection(0, 2)])
-    reply(httpx_mock, [selection(40, 5)])
-    result = curate_items([source(i) for i in range(41)], max_curated=1)
-    assert [item.url for item in result] == [source(40).url]
+    reply(httpx_mock, [selection(CHUNK_SIZE, 5)])
+    result = curate_items([source(i) for i in range(CHUNK_SIZE + 1)], max_curated=1)
+    assert [item.url for item in result] == [source(CHUNK_SIZE).url]
     requests = httpx_mock.get_requests()
     assert len(requests) == 2
-    for request, count in zip(requests, [40, 1]):
+    for request, count in zip(requests, [CHUNK_SIZE, 1]):
         body = json.loads(request.content)
         assert body["model"] == "custom-model"
         assert len(json.loads(body["messages"][0]["content"])) == count
@@ -134,4 +134,38 @@ def test_later_chunk_failure_discards_all(httpx_mock):
     reply(httpx_mock, [selection()])
     httpx_mock.add_response(status_code=503)
     with pytest.raises(CurationError):
-        curate_items([source(i) for i in range(41)])
+        curate_items([source(i) for i in range(CHUNK_SIZE + 1)])
+
+
+@pytest.mark.parametrize("category", [
+    "AI", "テクノロジー", "経済・市場", "国際", "国内", "Web3・金融",
+])
+def test_fixed_categories_accepted(httpx_mock, category):
+    reply(httpx_mock, [selection(category=category)])
+    assert curate_items([source()])[0].feed_category == category
+
+
+def test_unknown_category_remapped(httpx_mock):
+    reply(httpx_mock, [selection(category="自由なカテゴリ")])
+    assert curate_items([source()])[0].feed_category == "テクノロジー"
+
+
+def test_global_50_cap_dedup_and_ai_tiebreak_across_chunks(httpx_mock):
+    sources = [source(i) for i in range(70)]
+    sources[35].url = sources[0].url
+    reply(httpx_mock, [selection(i, 3) for i in range(35)])
+    reply(httpx_mock, [
+        selection(i, 5 if i == 35 else 3,
+                  url=sources[i].url, category="AI" if i >= 60 else "国際")
+        for i in range(35, 70)
+    ])
+    result = curate_items(sources, max_curated=50)
+    assert len(result) == len({item.url for item in result}) == 50
+    assert result[0].url == sources[0].url
+    assert result[0].importance == 5
+    assert [item.url for item in result[1:11]] == [source(i).url for i in range(60, 70)]
+    for request in httpx_mock.get_requests():
+        body = json.loads(request.content)
+        assert body["max_tokens"] == 32768
+        assert "at most 50 items" in body["system"]
+        assert "Source summary" in body["messages"][0]["content"]
