@@ -12,6 +12,7 @@ from .config_loader import load_config
 from .deduplicator import StateStore
 from .discord_poster import PostResult, post_briefing
 from .feed_fetcher import fetch_feed
+from .reddit_fetcher import RedditClient
 from .pending_reads import DEFAULT_CHANNEL_ID, PendingReadStore
 
 logging.basicConfig(
@@ -53,7 +54,25 @@ def main() -> int:
         nonlocal feed_error_count
         feed_error_count += 1
 
+    reddit = RedditClient.from_env(
+        timeout=config.settings.http_timeout,
+        default_user_agent=config.settings.user_agent,
+    )
     for feed in config.feeds:
+        if feed.type == "reddit":
+            if reddit is None:
+                logger.warning(
+                    "Skipping %r: REDDIT_CLIENT_ID/REDDIT_CLIENT_SECRET not set", feed.name
+                )
+                continue
+            items = reddit.fetch(
+                feed,
+                max_items=config.settings.max_items_per_feed,
+                on_error=on_feed_error,
+            )
+            logger.info("Feed %r: fetched %d items", feed.name, len(items))
+            all_items.extend(items)
+            continue
         items = fetch_feed(
             feed,
             timeout=config.settings.http_timeout,

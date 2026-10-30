@@ -137,3 +137,16 @@ python -m src.check_reminder
 ## ライセンス
 
 MIT License — 詳細は [LICENSE](LICENSE) を参照してください。
+
+## Reddit (OAuth API)
+
+Reddit feeds (`type: reddit` in `config/feeds.yml`) use Reddit's official API with app-only OAuth.
+
+1. Go to https://www.reddit.com/prefs/apps → "create another app…" → type **script**
+   (redirect URI can be `http://localhost:8080`).
+2. Copy the client ID (string under the app name) and the secret.
+3. In GitHub: Settings → Secrets and variables → Actions → add
+   `REDDIT_CLIENT_ID` and `REDDIT_CLIENT_SECRET`.
+   Optional: `REDDIT_USER_AGENT` env (defaults to `settings.user_agent`).
+
+If the secrets are missing, Reddit feeds are skipped with a warning and other feeds still post.

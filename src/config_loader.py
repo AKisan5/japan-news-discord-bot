@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Literal
 
 import yaml
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -8,16 +9,30 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 
 class FeedConfig(BaseModel):
     name: str
-    url: str
+    url: str = ""
     category: str
     enabled: bool = True
+    type: Literal["rss", "reddit"] = "rss"
+    # Reddit-only fields (type: reddit)
+    subreddit: str | None = None
+    listing: Literal["hot", "top"] = "top"
+    time_filter: Literal["hour", "day", "week", "month", "year", "all"] = "day"
 
     @field_validator("url")
     @classmethod
     def validate_url(cls, v: str) -> str:
-        if not v.startswith(("http://", "https://")):
+        if v and not v.startswith(("http://", "https://")):
             raise ValueError(f"URL must start with http:// or https://: {v!r}")
         return v
+
+    @model_validator(mode="after")
+    def check_type_fields(self) -> "FeedConfig":
+        if self.type == "reddit":
+            if not self.subreddit:
+                raise ValueError(f"reddit feed {self.name!r} requires subreddit")
+        elif not self.url:
+            raise ValueError(f"rss feed {self.name!r} requires url")
+        return self
 
 
 class Settings(BaseModel):

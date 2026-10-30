@@ -27,7 +27,8 @@ def test_expanded_feeds_enabled_and_unique():
     }
     assert required <= feeds.keys()
     assert all(feeds[name].enabled for name in required)
-    assert len({feed.url for feed in config.feeds}) == len(config.feeds)
+    keys = [feed.url or f"reddit:{feed.subreddit}" for feed in config.feeds]
+    assert len(set(keys)) == len(keys)
     assert "OpenAI+OR+Anthropic+OR+Google+DeepMind+when:1d" in feeds["Google News AI EN"].url
     # Existing sources remain available alongside major papers.
     assert {"NHK 主要ニュース", "COINPOST", "OpenAI", "Google DeepMind"} <= feeds.keys()

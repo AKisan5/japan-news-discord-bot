@@ -203,29 +203,32 @@ feeds:
     category: "Web3"
     enabled: true
 
-  # --- Reddit ---
-  # Disabled: reddit.com RSS returned 403/429 from datacenter IPs when verified
-  # (2026-10-30). Re-enable if fetched from a non-blocked network / OAuth API.
-  # Proxy RSS also tried 2026-10-30 (UA news-discord-bot/1.0), all failed:
-  #   rsshub.app 403; rsshub.rssforever.com 503; rss.datuan.dev 530;
-  #   hub.slarker.me / rsshub.ktachibana.party / rsshub.woodland.cafe 404;
-  #   rsshub.pseudoyu.com / rsshub.feeded.xyz timeout; rss-bridge.org 429;
-  #   redlib: catsarch 429, perennialte.ch 410, nadeko 418, privacyredirect 404,
-  #   safereddit 503, opnxng 302 (no feed), tux.pizza/invak.id timeout;
-  #   pullpush API 429. Native reddit.com mostly 429 (one 200 then throttled).
+  # --- Reddit (official OAuth API, app-only) ---
+  # Needs GitHub Actions secrets REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET.
+  # Without them these feeds are skipped with a warning.
+  # (reddit.com RSS and public proxies were blocked from CI IPs, 2026-10-30.)
   - name: "Reddit r/MachineLearning"
-    url: "https://www.reddit.com/r/MachineLearning/top/.rss?t=day"
+    type: reddit
+    subreddit: "MachineLearning"
     category: "AI"
-    enabled: false
+    enabled: true
+  - name: "Reddit r/artificial"
+    type: reddit
+    subreddit: "artificial"
+    category: "AI"
+    enabled: true
   - name: "Reddit r/technology"
-    url: "https://www.reddit.com/r/technology/top/.rss?t=day"
+    type: reddit
+    subreddit: "technology"
     category: "テクノロジー"
-    enabled: false
+    enabled: true
   - name: "Reddit r/japannews"
-    url: "https://www.reddit.com/r/japannews/top/.rss?t=day"
+    type: reddit
+    subreddit: "japannews"
     category: "国際"
-    enabled: false
+    enabled: true
   - name: "Reddit r/CryptoCurrency"
-    url: "https://www.reddit.com/r/CryptoCurrency/top/.rss?t=day"
+    type: reddit
+    subreddit: "CryptoCurrency"
     category: "Web3"
-    enabled: false
+    enabled: true
