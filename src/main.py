@@ -66,7 +66,7 @@ def main() -> int:
     new_items = state.filter_new(all_items)
     logger.info("Total: %d fetched, %d new", len(all_items), len(new_items))
     # Keep Claude select payload small (Cooper-style cap).
-    SELECT_CANDIDATE_CAP = 80
+    SELECT_CANDIDATE_CAP = 150
     if len(new_items) > SELECT_CANDIDATE_CAP:
         epoch = datetime.min.replace(tzinfo=timezone.utc)
         new_items = sorted(

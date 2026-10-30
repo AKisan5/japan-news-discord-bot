@@ -15,6 +15,7 @@ from .feed_fetcher import FeedItem
 API_URL = "https://api.anthropic.com/v1/messages"
 DEFAULT_MODEL = "claude-haiku-4-5-20251001"
 WRITE_MODEL = "claude-sonnet-4-5-20250929"  # Cooper-quality prose
+WRITE_BATCH_SIZE = 8
 SECTION_HEADERS = (
     "**🤖 AI**", "**💻 テクノロジー**", "**📈 経済・市場**",
     "**🌍 国際**", "**🇯🇵 国内**", "**💰 Web3・金融**",
@@ -37,8 +38,7 @@ quotes, names, background or causal claims. Ground facts in extracted article
 bodies, not assumed knowledge or RSS teasers. When body is empty, only the title
 is available: be conservative, explicitly state 本文未確認 if included, and omit
 it if insufficient for a useful account. Never imply you read an unavailable body.
-Begin exactly with: 📰 **ニュース・ブリーフィング YYYY-MM-DD** (use supplied date).
-Next line: 今日は … が中心。N本。 Describe the actual main themes and item count.
+Follow the batch instructions for the briefing title and introduction.
 Group stories in this fixed order, omitting empty categories:
 **🤖 AI**, **💻 テクノロジー**, **📈 経済・市場**, **🌍 国際**,
 **🇯🇵 国内**, **💰 Web3・金融**.
@@ -52,7 +52,7 @@ publisher/primary link on its own line in <https://...> format. Use only supplie
 URLs; do not invent primary links. Each story must end with that story
 article's own URL from the matching articles[].url field - never reuse
 another story's link. articles[].index is only for your reference. You may combine duplicate stories and skip
-weak evidence. The introduction's N must match the final number of stories.
+weak evidence. Start story numbering at start_index and increment by one.
 No code fences, tables, preamble or read-reaction reminder.
 """
 
@@ -173,29 +173,66 @@ def write_briefing(articles: list[Article], *, timeout: float = 180,
         }
         for i, article in enumerate(articles, start=1)
     ]
-    text = _strip_fence(_call_claude(
-        WRITE_SYSTEM_PROMPT,
-        {"date": date, "articles": payload_articles},
-        timeout=timeout, max_tokens=16384,
-        model=os.environ.get("ANTHROPIC_WRITE_MODEL") or WRITE_MODEL,
-    ))
-    # Soft structural checks: Cooper prose varies; reject only clear failures.
-    if "📰 **ニュース・ブリーフィング" not in text[:80]:
-        raise CurationError("Claude briefing missing title")
-    numbers = re.findall(r"^\*\*(\d+)\. ", text, re.MULTILINE)
-    links = re.findall(r"<(https?://[^<>\s]+)>", text)
+    parts = []
+    seen_urls: set[str] = set()
+    story_count = 0
+    previous_category = None
     allowed_urls = {article.url for article in articles}
-    if not numbers:
-        raise CurationError("Claude briefing has no numbered stories")
-    if len(numbers) > len(articles) + 2:
+    for offset in range(0, len(payload_articles), WRITE_BATCH_SIZE):
+        first_batch = offset == 0
+        instructions = (
+            "This is the first batch. Begin exactly with: "
+            "📰 **ニュース・ブリーフィング YYYY-MM-DD** (use supplied date).\n"
+            "Next line: 今日は … が中心。N本。 Use total_stories for N, covering "
+            "the whole briefing, not just this batch. Describe the actual main "
+            "themes. Then write category sections."
+            if first_batch else
+            "Continue the same briefing. NO title line and NO introduction. "
+            "Continue global story numbering from start_index. Add category "
+            "headers as needed; previous_category is the last section already written. "
+            "Write only this batch's articles; never repeat earlier stories or URLs."
+        )
+        part = _strip_fence(_call_claude(
+            WRITE_SYSTEM_PROMPT + "\n" + instructions,
+            {"date": date, "total_stories": len(articles),
+             "start_index": story_count + 1, "previous_category": previous_category,
+             "articles": payload_articles[offset:offset + WRITE_BATCH_SIZE]},
+            timeout=timeout, max_tokens=16384,
+            model=os.environ.get("ANTHROPIC_WRITE_MODEL") or WRITE_MODEL,
+        ))
+        if first_batch:
+            if "📰 **ニュース・ブリーフィング" not in part[:80]:
+                raise CurationError("Claude briefing missing title")
+        else:
+            part = re.sub(r"^[ \t]*(?:📰[ \t]*)?\*\*ニュース・ブリーフィング[^\n]*(?:\n|$)", "", part,
+                          flags=re.MULTILINE).strip()
+        numbers = re.findall(r"^\*\*(\d+)\. ", part, re.MULTILINE)
+        links = re.findall(r"<(https?://[^<>\s]+)>", part)
+        if not numbers:
+            raise CurationError("Claude briefing has no numbered stories")
+        if not links:
+            raise CurationError("Claude briefing has no source links")
+        if any(url not in allowed_urls for url in links):
+            raise CurationError("Claude briefing contains invented links")
+        if len(links) != len(set(links)) or seen_urls.intersection(links):
+            raise CurationError("Claude briefing reuses the same source link")
+        seen_urls.update(links)
+        # Keep numbering continuous even if a continuation restarts at one.
+        next_number = iter(range(story_count + 1, story_count + len(numbers) + 1))
+        part = re.sub(r"^\*\*\d+\. ", lambda _: f"**{next(next_number)}. ",
+                      part, flags=re.MULTILINE)
+        story_count += len(numbers)
+        for line in part.splitlines():
+            if line.strip() in SECTION_HEADERS:
+                previous_category = line.strip()
+        parts.append(part)
+    # The writer may skip weak evidence; keep the first introduction truthful.
+    parts[0] = re.sub(r"^(今日は[^\n]*?)\d+本", lambda m: f"{m[1]}{story_count}本",
+                      parts[0], count=1, flags=re.MULTILINE)
+    text = "\n\n".join(parts)
+    # Soft structural checks: Cooper prose varies; reject only clear failures.
+    if story_count > len(articles) + 2:
         raise CurationError("Claude briefing has too many stories")
-    if not links:
-        raise CurationError("Claude briefing has no source links")
-    invented = [u for u in links if u not in allowed_urls]
-    if invented:
-        raise CurationError("Claude briefing contains invented links")
-    if len(links) != len(set(links)):
-        raise CurationError("Claude briefing reuses the same source link")
     if len(text) < 120:
         raise CurationError("Claude briefing too short")
     return text

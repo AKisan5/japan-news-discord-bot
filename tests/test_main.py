@@ -1,6 +1,6 @@
 import json
 from contextlib import ExitStack
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
@@ -25,7 +25,9 @@ def pipeline(monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("DISCORD_WEBHOOK_URL", WEBHOOK)
     monkeypatch.setenv("DISCORD_CHANNEL_ID", "654321")
-    cfg = Config(feeds=[], settings=Settings(post_interval_seconds=0, state_retention=100))
+    cfg = Config(feeds=[], settings=Settings(
+        max_briefing_items=50, claude_timeout=300, max_items_per_feed=8,
+        post_interval_seconds=0, state_retention=100))
     with ExitStack() as stack:
         mocks = {}
         for name in ("load_config", "StateStore", "select_items", "fetch_article",
@@ -67,11 +69,11 @@ def test_no_new_items(pipeline):
 def test_selection_fetch_write_post_and_seen_state(pipeline):
     assert main() == 0
     pipeline["select_items"].assert_called_once_with(
-        [item(), item(1)], max_briefing_items=15, timeout=180)
+        [item(), item(1)], max_briefing_items=50, timeout=300)
     pipeline["fetch_article"].assert_called_once_with(
         item(), timeout=20, user_agent=pipeline["config"].settings.user_agent)
     pipeline["write_briefing"].assert_called_once_with(
-        [pipeline["fetch_article"].return_value], timeout=180)
+        [pipeline["fetch_article"].return_value], timeout=300)
     pipeline["post_briefing"].assert_called_once_with(
         "Japanese briefing", webhook_url=WEBHOOK, interval_seconds=0)
     pipeline["state"].mark_posted.assert_called_once_with([item()])
@@ -89,6 +91,27 @@ def test_empty_selection_marks_noise_seen(pipeline):
     pipeline["write_briefing"].assert_not_called()
     pipeline["post_briefing"].assert_not_called()
     pipeline["state"].mark_posted.assert_called_once_with([item(), item(1)])
+
+
+def test_selection_candidates_capped_at_150_newest(pipeline):
+    epoch = datetime(2026, 10, 1, tzinfo=timezone.utc)
+    candidates = [FeedItem("Title", item(i).url, "RSS teaser",
+                           epoch + timedelta(minutes=i), "Feed", "AI")
+                  for i in range(170)]
+    pipeline["state"].filter_new.return_value = candidates
+    assert main() == 0
+    pipeline["select_items"].assert_called_once_with(
+        list(reversed(candidates))[:150], max_briefing_items=50, timeout=300)
+
+
+def test_write_still_prefers_articles_with_usable_bodies(pipeline):
+    selected = [item(i) for i in range(8)]
+    articles = [Article("Title", entry.url, "Feed", "Body" if i < 5 else "")
+                for i, entry in enumerate(selected)]
+    pipeline["select_items"].return_value = selected
+    pipeline["fetch_article"].side_effect = articles
+    assert main() == 0
+    pipeline["write_briefing"].assert_called_once_with(articles[:5], timeout=300)
 
 
 @pytest.mark.parametrize("stage", ["select_items", "write_briefing"])

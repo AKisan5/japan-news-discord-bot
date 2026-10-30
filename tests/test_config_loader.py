@@ -5,8 +5,10 @@ from src.config_loader import Settings, load_config
 
 
 def test_briefing_limits():
-    assert Settings().max_briefing_items == 15
-    assert Settings().claude_timeout == 180
+    settings = load_config().settings
+    assert settings.max_briefing_items == 50
+    assert settings.claude_timeout == 300
+    assert settings.max_items_per_feed == 8
     assert Settings().article_timeout == 20
     assert Settings(max_briefing_items=50).max_briefing_items == 50
     for limit in (0, 51):

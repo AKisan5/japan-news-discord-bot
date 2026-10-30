@@ -1,4 +1,5 @@
 import json
+import re
 
 import httpx
 import pytest
@@ -6,7 +7,7 @@ import pytest
 from src.article_fetcher import Article
 from src.claude_curator import (
     API_URL, WRITE_MODEL, DEFAULT_MODEL, CurationError, MissingAPIKeyError,
-    SECTION_HEADERS, select_items, write_briefing,
+    SECTION_HEADERS, WRITE_BATCH_SIZE, select_items, write_briefing,
 )
 from src.feed_fetcher import FeedItem
 
@@ -165,3 +166,76 @@ def test_accepts_multi_section_briefing(httpx_mock):
     articles = [Article("Title", source(n).url, "Feed", "body") for n in range(2)]
     reply(httpx_mock, text)
     assert write_briefing(articles, date=DATE) == text
+
+
+def batch_text(indices, *, start_index=1, total=None):
+    header = (f"📰 **ニュース・ブリーフィング {DATE}**\n"
+              f"今日は新技術が中心。{total}本。\n\n") if total else ""
+    return header + "**🤖 AI**\n\n" + "\n\n".join(
+        f"**{number}. 新技術{index}の発表**\n"
+        "既存の課題があった。企業が新技術を発表した。業務への導入に影響する。\n"
+        f"<{source(index).url}>"
+        for number, index in enumerate(indices, start=start_index)
+    )
+
+
+@pytest.mark.parametrize("total", [WRITE_BATCH_SIZE + 1, 50])
+def test_batched_write_multiple_calls_and_continuous_numbering(httpx_mock, total):
+    articles = [Article(f"Title {i}", source(i).url, "Feed", f"Body {i}")
+                for i in range(total)]
+    for offset in range(0, total, WRITE_BATCH_SIZE):
+        # Simulate a model that restarts numbering in every continuation.
+        reply(httpx_mock, batch_text(
+            range(offset, min(offset + WRITE_BATCH_SIZE, total)),
+            total=total if offset == 0 else None,
+        ))
+    text = write_briefing(articles, date=DATE, timeout=300)
+    assert re.findall(r"^\*\*(\d+)\. ", text, re.MULTILINE) == [
+        str(i) for i in range(1, total + 1)]
+    assert text.count("📰 **ニュース・ブリーフィング") == 1
+    assert f"{total}本。" in text
+    requests = httpx_mock.get_requests()
+    assert len(requests) == (total + WRITE_BATCH_SIZE - 1) // WRITE_BATCH_SIZE
+    for offset, request in zip(range(0, total, WRITE_BATCH_SIZE), requests):
+        body = json.loads(request.content)
+        payload = json.loads(body["messages"][0]["content"])
+        assert body["model"] == WRITE_MODEL
+        assert request.extensions["timeout"]["read"] == 300
+        assert payload["total_stories"] == total
+        assert payload["start_index"] == offset + 1
+        assert [a["index"] for a in payload["articles"]] == list(
+            range(offset + 1, min(offset + WRITE_BATCH_SIZE, total) + 1))
+        if offset:
+            assert "NO title line" in body["system"]
+            assert payload["previous_category"] == "**🤖 AI**"
+        else:
+            assert "Begin exactly with:" in body["system"]
+
+
+def test_batched_write_strips_continuation_title_and_uses_actual_story_count(httpx_mock):
+    articles = [Article("Title", source(i).url, "Feed", "Body")
+                for i in range(WRITE_BATCH_SIZE + 1)]
+    # First batch skips weak evidence, so the next story should be number two.
+    reply(httpx_mock, BRIEFING)
+    reply(httpx_mock, f"```markdown\n📰 **ニュース・ブリーフィング {DATE}**\n\n"
+          + batch_text([WRITE_BATCH_SIZE], start_index=2) + "\n```")
+    text = write_briefing(articles, date=DATE)
+    assert text.count("ニュース・ブリーフィング") == 1
+    assert "2本。" in text
+    assert "**2. 新技術" in text
+    request = json.loads(httpx_mock.get_requests()[1].content)
+    payload = json.loads(request["messages"][0]["content"])
+    assert payload["start_index"] == 2
+
+
+@pytest.mark.parametrize("url,error", [
+    (source().url, "reuses"), ("https://invented.test/story", "invented"),
+])
+def test_batched_write_rejects_reused_or_invented_links(httpx_mock, url, error):
+    articles = [Article("Title", source(i).url, "Feed", "Body")
+                for i in range(WRITE_BATCH_SIZE + 1)]
+    reply(httpx_mock, batch_text(range(WRITE_BATCH_SIZE), total=len(articles)))
+    continuation = batch_text([WRITE_BATCH_SIZE], start_index=WRITE_BATCH_SIZE + 1)
+    reply(httpx_mock, continuation.replace(source(WRITE_BATCH_SIZE).url, url))
+    with pytest.raises(CurationError, match=error):
+        write_briefing(articles, date=DATE)

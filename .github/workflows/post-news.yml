@@ -3,7 +3,7 @@ name: Post Daily News
 on:
   schedule:
     - cron: "55 22 * * *"  # 07:55 JST
-    - cron: "0 13 * * *"  # 22:00 JST
+    - cron: "0 9 * * *"  # 18:00 JST
   workflow_dispatch:
 
 permissions:
@@ -16,7 +16,7 @@ concurrency:
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
