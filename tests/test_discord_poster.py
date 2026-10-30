@@ -55,11 +55,11 @@ def test_embed_title_truncated_at_256():
     assert len(embed["title"]) == 256
 
 
-def test_embed_description_truncated_at_300():
-    long_summary = "B" * 400
-    item = FeedItem("T", "https://x.com", long_summary[:300], None, "F", "C")
+def test_embed_description_truncated_at_900():
+    long_summary = "B" * 1000
+    item = FeedItem("T", "https://x.com", long_summary, None, "F", "C")
     embed = _build_embed(item, 0)
-    assert len(embed["description"]) <= 300
+    assert len(embed["description"]) == 900
 
 
 # --- batch splitting ---
@@ -249,3 +249,20 @@ def test_partial_failure_only_returns_successful_ids(httpx_mock):
     assert result.message_ids == ["123"]
     assert [item.title for item in result.posted] == ["Article 1"]
     assert [item.title for item in result.failed] == ["Article 2"]
+
+
+def test_japanese_curated_embed_and_reminder(httpx_mock):
+    import json
+    from src.claude_curator import CuratedItem
+    item = CuratedItem("新技術の発表", "https://example.com/1", "要約です。" * 100,
+                       None, "Primary source", "技術", 5)
+    httpx_mock.add_response(json={"id": "12345"})
+    result = post_items([item], webhook_url=WEBHOOK, discord_config=DiscordConfig(), interval_seconds=0)
+    request = httpx_mock.get_request()
+    payload = json.loads(request.content)
+    assert payload["content"] == "📰 本日の重要ニュース（Claude要約）\n読んだら✅を付けてください"
+    assert payload["embeds"][0]["title"] == item.title
+    assert payload["embeds"][0]["description"] == item.summary
+    assert payload["embeds"][0]["footer"]["text"] == "Primary source / 技術"
+    assert request.url.params["wait"] == "true"
+    assert result.message_ids == ["12345"]

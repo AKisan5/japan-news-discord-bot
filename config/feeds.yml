@@ -1,4 +1,6 @@
 settings:
+  max_curated: 10
+  claude_timeout: 60
   max_items_per_feed: 3
   state_retention: 1000
   http_timeout: 15
@@ -8,7 +10,7 @@ settings:
 discord:
   embed_color: 0x1E90FF
   embeds_per_message: 5
-  header: "📰 本日のニュース（見出し）"
+  header: "📰 本日の重要ニュース（Claude要約）"
 
 feeds:
   # --- 総合ニュース ---

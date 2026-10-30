@@ -23,7 +23,7 @@ def _build_embed(item: FeedItem, color: int) -> dict:
     embed: dict = {
         "title": item.title[:256],
         "url": item.url,
-        "description": item.summary[:300],
+        "description": item.summary[:900],
         "color": color,
         "footer": {"text": f"{item.feed_name} / {item.feed_category}"},
     }
