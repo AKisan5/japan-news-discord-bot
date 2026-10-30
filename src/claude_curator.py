@@ -89,6 +89,63 @@ def _extract_json_text(text: str) -> str:
     return cleaned[start:end + 1]
 
 
+# Pricing per million tokens (USD), from https://docs.anthropic.com/en/docs/about-claude/pricing
+# Exact ids first; substring fallbacks for 5.5-generation models (Haiku 5.5 rate for <=100k ctx).
+PRICING_EXACT = {
+    "claude-haiku-4-5-20251001": (1.0, 5.0),
+    "claude-sonnet-4-5-20250929": (3.0, 15.0),
+}
+PRICING_SUBSTRING = (("sonnet-5-5", (2.0, 10.0)), ("haiku-5-5", (0.10, 0.50)),
+                     ("sonnet", (3.0, 15.0)), ("haiku", (1.0, 5.0)))
+
+
+def model_rates(model: str) -> tuple[float, float]:
+    if model in PRICING_EXACT:
+        return PRICING_EXACT[model]
+    for key, rates in PRICING_SUBSTRING:
+        if key in model:
+            return rates
+    return (3.0, 15.0)
+
+
+class UsageTracker:
+    """Accumulates Anthropic token usage per model for one run."""
+
+    def __init__(self) -> None:
+        self.by_model: dict[str, dict[str, int]] = {}
+
+    def reset(self) -> None:
+        self.by_model.clear()
+
+    def add(self, model: str, usage: dict) -> None:
+        bucket = self.by_model.setdefault(model, {"input": 0, "output": 0, "calls": 0})
+        # Cache reads/writes are billed as input; fold them in for a rough estimate.
+        bucket["input"] += sum(int(usage.get(k) or 0) for k in (
+            "input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"))
+        bucket["output"] += int(usage.get("output_tokens") or 0)
+        bucket["calls"] += 1
+
+    def cost_usd(self) -> float:
+        total = 0.0
+        for model, b in self.by_model.items():
+            rin, rout = model_rates(model)
+            total += b["input"] / 1e6 * rin + b["output"] / 1e6 * rout
+        return total
+
+    def total_tokens(self) -> int:
+        return sum(b["input"] + b["output"] for b in self.by_model.values())
+
+    def summary_line(self) -> str:
+        parts = []
+        for model, b in self.by_model.items():
+            label = "Sonnet" if "sonnet" in model else "Haiku" if "haiku" in model else model
+            parts.append(f"{label} in/out {b['input']:,}/{b['output']:,}")
+        return "API目安: " + " · ".join(parts + [f"約${self.cost_usd():.2f}"])
+
+
+usage_tracker = UsageTracker()
+
+
 def _call_claude(system: str, payload: dict | list, *, timeout: float,
                  max_tokens: int, model: str | None = None) -> str:
     api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
@@ -107,6 +164,11 @@ def _call_claude(system: str, payload: dict | list, *, timeout: float,
             )
             response.raise_for_status()
             body = response.json()
+            usage = body.get("usage") or {}
+            if isinstance(usage, dict):
+                usage_tracker.add(chosen, usage)
+                logger.info("Claude usage: model=%s input_tokens=%s output_tokens=%s",
+                            chosen, usage.get("input_tokens"), usage.get("output_tokens"))
             if body["stop_reason"] != "end_turn":
                 raise CurationError("Claude did not complete response")
             text = "".join(block["text"] for block in body["content"]

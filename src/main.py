@@ -6,7 +6,8 @@ import sys
 from datetime import datetime, timezone
 
 from .article_fetcher import fetch_article
-from .claude_curator import CurationError, MissingAPIKeyError, select_items, write_briefing
+from .claude_curator import (CurationError, MissingAPIKeyError, select_items, usage_tracker,
+                             write_briefing)
 from .config_loader import load_config
 from .deduplicator import StateStore
 from .discord_poster import PostResult, post_briefing
@@ -82,6 +83,7 @@ def main() -> int:
 
     result = PostResult()
     selected = []
+    usage_tracker.reset()
     try:
         selected = select_items(
             new_items,
@@ -115,6 +117,10 @@ def main() -> int:
             articles = deduped
             logger.info("Writing Cooper-style briefing with Sonnet")
             briefing = write_briefing(articles, timeout=config.settings.claude_timeout)
+            cost_line = usage_tracker.summary_line()
+            logger.info("Claude usage summary: %s total_tokens=%d by_model=%s",
+                        cost_line, usage_tracker.total_tokens(), usage_tracker.by_model)
+            briefing = f"{briefing}\n\n{cost_line}"
             logger.info("Posting briefing (%d chars) to Discord", len(briefing))
             result = post_briefing(
                 briefing, webhook_url=webhook_url,

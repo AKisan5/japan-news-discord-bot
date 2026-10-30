@@ -75,7 +75,7 @@ def test_selection_fetch_write_post_and_seen_state(pipeline):
     pipeline["write_briefing"].assert_called_once_with(
         [pipeline["fetch_article"].return_value], timeout=300)
     pipeline["post_briefing"].assert_called_once_with(
-        "Japanese briefing", webhook_url=WEBHOOK, interval_seconds=0)
+        "Japanese briefing\n\nAPI目安: 約$0.00", webhook_url=WEBHOOK, interval_seconds=0)
     pipeline["state"].mark_posted.assert_called_once_with([item()])
     pipeline["state"].save.assert_called_once_with(retention=100)
     pending = json.loads((pipeline["tmp_path"] / "state/pending_reads.json").read_text())

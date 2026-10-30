@@ -277,3 +277,25 @@ def test_batched_write_drops_only_story_with_invented_link(httpx_mock):
     assert "invented.test" not in text
     assert source(0).url in text and source(2).url in text
     assert f"**{WRITE_BATCH_SIZE}." not in text
+
+
+def test_usage_tracker_accumulates_and_costs(httpx_mock):
+    from src.claude_curator import UsageTracker, usage_tracker
+    usage_tracker.reset()
+    httpx_mock.add_response(url=API_URL, json={
+        "stop_reason": "end_turn", "content": [{"type": "text", "text": BRIEFING}],
+        "usage": {"input_tokens": 1000, "output_tokens": 500}})
+    write_briefing([Article("Title", source().url, "Feed", "body")], date=DATE)
+    assert usage_tracker.by_model["claude-sonnet-4-5-20250929"] == {
+        "input": 1000, "output": 500, "calls": 1}
+    t = UsageTracker()
+    t.add("claude-haiku-4-5-20251001", {"input_tokens": 1_000_000, "output_tokens": 0})
+    t.add("claude-sonnet-4-5-20250929", {"input_tokens": 0, "output_tokens": 1_000_000,
+                                         "cache_read_input_tokens": 0})
+    t.add("claude-haiku-4-5-20251001", {"input_tokens": 0, "output_tokens": 200_000})
+    assert abs(t.cost_usd() - (1 + 15 + 1)) < 1e-9
+    t2 = UsageTracker()
+    t2.add("claude-sonnet-5-5", {"input_tokens": 1_000_000, "output_tokens": 1_000_000})
+    assert abs(t2.cost_usd() - 12) < 1e-9
+    line = t.summary_line()
+    assert line.startswith("API目安: Haiku in/out 1,000,000/200,000") and line.endswith("約$17.00")
