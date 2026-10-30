@@ -14,6 +14,7 @@ from .feed_fetcher import FeedItem
 
 API_URL = "https://api.anthropic.com/v1/messages"
 DEFAULT_MODEL = "claude-haiku-4-5-20251001"
+WRITE_MODEL = "claude-sonnet-4-5-20250929"  # Cooper-quality prose
 SECTION_HEADERS = (
     "**🤖 AI**", "**💻 テクノロジー**", "**📈 経済・市場**",
     "**🌍 国際**", "**🇯🇵 国内**", "**💰 Web3・金融**",
@@ -81,16 +82,17 @@ def _extract_json_text(text: str) -> str:
 
 
 def _call_claude(system: str, payload: dict | list, *, timeout: float,
-                 max_tokens: int) -> str:
+                 max_tokens: int, model: str | None = None) -> str:
     api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
     if not api_key:
         raise MissingAPIKeyError("ANTHROPIC_API_KEY environment variable is not set")
+    chosen = model or os.environ.get("ANTHROPIC_MODEL") or DEFAULT_MODEL
     try:
         with httpx.Client(timeout=timeout) as client:
             response = client.post(
                 API_URL,
                 headers={"x-api-key": api_key, "anthropic-version": "2023-06-01"},
-                json={"model": os.environ.get("ANTHROPIC_MODEL") or DEFAULT_MODEL,
+                json={"model": chosen,
                       "max_tokens": max_tokens, "system": system,
                       "messages": [{"role": "user", "content": json.dumps(
                           payload, ensure_ascii=False, separators=(",", ":"))}]},
@@ -134,6 +136,7 @@ def select_items(items: list[FeedItem], *, max_briefing_items: int = 15,
     text = _call_claude(
         SELECT_SYSTEM_PROMPT + f"\nSelect at most {max_briefing_items} items.",
         payload, timeout=timeout, max_tokens=4096,
+        model=os.environ.get("ANTHROPIC_SELECT_MODEL") or os.environ.get("ANTHROPIC_MODEL") or DEFAULT_MODEL,
     )
     try:
         result = _Response.model_validate_json(_extract_json_text(text))
@@ -157,6 +160,7 @@ def write_briefing(articles: list[Article], *, timeout: float = 180,
         WRITE_SYSTEM_PROMPT,
         {"date": date, "articles": [vars(article) for article in articles]},
         timeout=timeout, max_tokens=16384,
+        model=os.environ.get("ANTHROPIC_WRITE_MODEL") or WRITE_MODEL,
     ))
     # Reject malformed/truncated or invented-link output before any Discord post.
     numbers = re.findall(r"^\*\*(\d+)\. .+\*\*$", text, re.MULTILINE)

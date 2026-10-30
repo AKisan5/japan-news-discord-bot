@@ -5,7 +5,7 @@ import pytest
 
 from src.article_fetcher import Article
 from src.claude_curator import (
-    API_URL, DEFAULT_MODEL, CurationError, MissingAPIKeyError,
+    API_URL, WRITE_MODEL, DEFAULT_MODEL, CurationError, MissingAPIKeyError,
     SECTION_HEADERS, select_items, write_briefing,
 )
 from src.feed_fetcher import FeedItem
@@ -70,7 +70,7 @@ def test_write_receives_bodies_and_missing_body_instruction(httpx_mock):
                 Article("Unavailable", source(1).url, "Paper", "")]
     assert write_briefing(articles, date=DATE) == BRIEFING
     body = json.loads(httpx_mock.get_request().content)
-    assert body["model"] == DEFAULT_MODEL
+    assert body["model"] == WRITE_MODEL
     assert json.loads(body["messages"][0]["content"]) == {
         "date": DATE, "articles": [vars(a) for a in articles]}
     assert "untrusted" in body["system"]
