@@ -21,7 +21,7 @@ class FeedConfig(BaseModel):
 
 
 class Settings(BaseModel):
-    max_items_per_feed: int = 5
+    max_items_per_feed: int = 3
     state_retention: int = 1000
     http_timeout: int = 15
     user_agent: str = "news-discord-bot/1.0"
@@ -31,7 +31,7 @@ class Settings(BaseModel):
 class DiscordConfig(BaseModel):
     embed_color: int = 0x1E90FF
     embeds_per_message: int = 5
-    header: str | None = "📰 本日の主要ニュース"
+    header: str | None = "📰 本日のニュース（見出し）"
 
 
 class Config(BaseModel):

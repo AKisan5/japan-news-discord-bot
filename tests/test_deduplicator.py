@@ -154,3 +154,13 @@ def test_load_returns_url_set(tmp_path):
     store = StateStore(path)
     urls = store.load()
     assert urls == {"https://a.com/1", "https://a.com/2"}
+
+
+def test_filter_new_deduplicates_across_feeds(tmp_path):
+    store = StateStore(tmp_path / "state.json")
+    first = make_item("https://example.com/shared")
+    second = make_item(first.url)
+    second.feed_name = "Other feed"
+    assert store.filter_new([first, second]) == [first]
+    # Filtering alone must not mark a URL posted: failed posts must be retried.
+    assert store.filter_new([first]) == [first]

@@ -36,7 +36,12 @@ class StateStore:
 
     def filter_new(self, items: list[FeedItem]) -> list[FeedItem]:
         posted_urls = set(self._posted.keys())
-        return [item for item in items if item.url not in posted_urls]
+        new = []
+        for item in items:
+            if item.url not in posted_urls:
+                new.append(item)
+                posted_urls.add(item.url)
+        return new
 
     def mark_posted(self, items: list[FeedItem]) -> None:
         now = datetime.now(_JST).isoformat()

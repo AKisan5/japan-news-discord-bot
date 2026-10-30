@@ -170,3 +170,23 @@ def test_feed_failure_does_not_stop_posting(monkeypatch):
         main()
 
     mock_post.assert_called_once()
+
+
+def test_successful_message_ids_saved_to_pending(monkeypatch, tmp_path):
+    import json
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("DISCORD_WEBHOOK_URL", "https://discord.test/wh")
+    monkeypatch.setenv("DISCORD_CHANNEL_ID", "654321")
+    item = make_item("https://example.com/ok")
+    mock_state = MagicMock()
+    mock_state.filter_new.return_value = [item]
+    with patch("src.main.load_config", return_value=_make_config()), \
+         patch("src.main.StateStore", return_value=mock_state), \
+         patch("src.main.post_items", return_value=PostResult(posted=[item], message_ids=["12345"])):
+        from src.main import main
+        assert main() == 0
+    data = json.loads((tmp_path / "state/pending_reads.json").read_text())
+    assert data[0]["message_id"] == "12345"
+    assert data[0]["channel_id"] == "654321"
+    assert data[0]["kind"] == "news"
+    assert data[0]["posted_at"]

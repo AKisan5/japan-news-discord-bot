@@ -1,0 +1,44 @@
+name: Check News Read Reminders
+
+on:
+  schedule:
+    - cron: "0 1,3,6,9,12 * * *"  # 10, 12, 15, 18, 21 JST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: discord-news-state
+  cancel-in-progress: false
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Check reactions and remind
+        env:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_GUILD_ID: ${{ vars.DISCORD_GUILD_ID || '1173405237390868610' }}
+        run: python -m src.check_reminder
+
+      - name: Commit state
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/pending_reads.json
+          git diff --cached --quiet || git commit -m "chore(state): update pending reads [skip ci]"
+          git push

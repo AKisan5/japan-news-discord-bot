@@ -1,14 +1,14 @@
 settings:
-  max_items_per_feed: 5
+  max_items_per_feed: 3
   state_retention: 1000
   http_timeout: 15
-  user_agent: "news-discord-bot/1.0 (+https://github.com/<owner>/<repo>)"
+  user_agent: "news-discord-bot/1.0 (+https://github.com/AKisan5/japan-news-discord-bot)"
   post_interval_seconds: 1.5
 
 discord:
   embed_color: 0x1E90FF
   embeds_per_message: 5
-  header: "📰 本日の主要ニュース"
+  header: "📰 本日のニュース（見出し）"
 
 feeds:
   # --- 総合ニュース ---
@@ -47,4 +47,69 @@ feeds:
   - name: "Finextra"
     url: "https://www.finextra.com/rss/channel.aspx?channel=news"
     category: "Fintech"
+    enabled: true
+
+  - name: "BBC Technology"
+    url: "https://feeds.bbci.co.uk/news/technology/rss.xml"
+    category: "テクノロジー"
+    enabled: true
+
+  - name: "BBC Business"
+    url: "https://feeds.bbci.co.uk/news/business/rss.xml"
+    category: "経済"
+    enabled: true
+
+  - name: "Bloomberg Markets"
+    url: "https://feeds.bloomberg.com/markets/news.rss"
+    category: "経済"
+    enabled: true
+
+  - name: "Bloomberg Technology"
+    url: "https://feeds.bloomberg.com/technology/news.rss"
+    category: "テクノロジー"
+    enabled: true
+
+  - name: "Google News AI EN"
+    url: "https://news.google.com/rss/search?q=artificial+intelligence+when:1d&hl=en-US&gl=US&ceid=US:en"
+    category: "AI"
+    enabled: true
+
+  - name: "Google News 生成AI JA"
+    url: "https://news.google.com/rss/search?q=%E7%94%9F%E6%88%90AI&hl=ja&gl=JP&ceid=JP:ja"
+    category: "AI"
+    enabled: true
+
+  - name: "CNBC Top"
+    url: "https://www.cnbc.com/id/100003114/device/rss/rss.html"
+    category: "経済"
+    enabled: true
+
+  - name: "TechCrunch AI"
+    url: "https://techcrunch.com/category/artificial-intelligence/feed/"
+    category: "AI"
+    enabled: true
+
+  - name: "The Verge AI"
+    url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+    category: "AI"
+    enabled: true
+
+  - name: "Ars Technica"
+    url: "https://feeds.arstechnica.com/arstechnica/index"
+    category: "テクノロジー"
+    enabled: true
+
+  - name: "OpenAI"
+    url: "https://openai.com/news/rss.xml"
+    category: "AI"
+    enabled: true
+
+  - name: "Google DeepMind"
+    url: "https://deepmind.google/blog/rss.xml"
+    category: "AI"
+    enabled: true
+
+  - name: "ITmedia NEWS"
+    url: "https://rss.itmedia.co.jp/rss/2.0/news_bursts.xml"
+    category: "テクノロジー"
     enabled: true
