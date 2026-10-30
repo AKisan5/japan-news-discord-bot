@@ -8,7 +8,7 @@ def test_briefing_limits():
     settings = load_config().settings
     assert settings.max_briefing_items == 50
     assert settings.claude_timeout == 300
-    assert settings.max_items_per_feed == 8
+    assert settings.max_items_per_feed == 10
     assert Settings().article_timeout == 20
     assert Settings(max_briefing_items=50).max_briefing_items == 50
     for limit in (0, 51):

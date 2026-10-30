@@ -51,7 +51,7 @@ def test_selection_metadata_only_and_global_cap(httpx_mock, monkeypatch):
     assert request.headers["anthropic-version"] == "2023-06-01"
     body = json.loads(request.content)
     assert body["model"] == "custom-model"
-    assert "at most 2 items" in body["system"]
+    assert "Target: return 2 items" in body["system"]
     payload = json.loads(body["messages"][0]["content"])
     assert len(payload) == 80  # One global selection, including late feeds.
     assert payload[0] == {"id": "0", "title": "English 0", "rss_summary": "RSS teaser",
