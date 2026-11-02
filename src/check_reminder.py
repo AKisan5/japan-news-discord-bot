@@ -16,12 +16,17 @@ API_BASE = "https://discord.com/api/v10"
 CHECK = "✅"
 
 
-def build_reminder_line(entry: dict[str, str], guild_id: str) -> str:
-    jump_link = (
-        f"https://discord.com/channels/{guild_id}/"
-        f"{entry['channel_id']}/{entry['message_id']}"
-    )
-    return f"🔔 まだ✅が付いていないニュースがあります {jump_link} — 読んだら✅を付けてください"
+def build_summary_line(entries: list[dict[str, str]], guild_id: str) -> str:
+    lines = [f"🔔 未読ニュースが {len(entries)} 件あります。各投稿に✅を付けると消えます。"]
+    oldest_first = sorted(entries, key=lambda e: datetime.fromisoformat(e["posted_at"]))
+    for entry in oldest_first[:3]:
+        lines.append(
+            f"https://discord.com/channels/{guild_id}/"
+            f"{entry['channel_id']}/{entry['message_id']}"
+        )
+    if len(entries) > 3:
+        lines.append(f"ほか {len(entries) - 3} 件")
+    return "\n".join(lines)
 
 
 def _request(client: httpx.Client, method: str, path: str, **kwargs) -> httpx.Response:
@@ -71,6 +76,7 @@ def has_human_check(client: httpx.Client, entry: dict[str, str]) -> bool:
 def check_pending(client: httpx.Client, store: PendingReadStore, *, guild_id: str) -> int:
     failures = 0
     seen = set()
+    unread_by_channel: dict[str, list[dict[str, str]]] = {}
     for entry in sorted(store.entries[:], key=lambda e: datetime.fromisoformat(e["posted_at"])):
         key = (entry["channel_id"], entry["message_id"])
         if key in seen:
@@ -84,18 +90,20 @@ def check_pending(client: httpx.Client, store: PendingReadStore, *, guild_id: st
                 ]
                 store.save()
                 continue
-            _request(client, "POST", f"/channels/{entry['channel_id']}/messages", json={
-                "content": build_reminder_line(entry, guild_id),
-                "message_reference": {
-                    "message_id": entry["message_id"],
-                    "channel_id": entry["channel_id"],
-                    "fail_if_not_exists": False,
-                },
+            unread_by_channel.setdefault(entry["channel_id"], []).append(entry)
+        except (httpx.HTTPError, ValueError, KeyError, TypeError):
+            # Do not log exception strings, response bodies, or authentication headers.
+            logger.error("Could not check message %s; keeping pending", entry["message_id"])
+            failures += 1
+
+    for channel_id, entries in unread_by_channel.items():
+        try:
+            _request(client, "POST", f"/channels/{channel_id}/messages", json={
+                "content": build_summary_line(entries, guild_id),
                 "allowed_mentions": {"parse": [], "replied_user": False},
             })
         except (httpx.HTTPError, ValueError, KeyError, TypeError):
-            # Do not log exception strings, response bodies, or authentication headers.
-            logger.error("Could not check/remind message %s; keeping pending", entry["message_id"])
+            logger.error("Could not send summary to channel %s; keeping pending", channel_id)
             failures += 1
     return failures
 

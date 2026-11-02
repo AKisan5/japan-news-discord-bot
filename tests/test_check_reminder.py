@@ -3,7 +3,7 @@ import json
 import httpx
 import pytest
 
-from src.check_reminder import API_BASE, build_reminder_line, check_pending, has_human_check, main
+from src.check_reminder import API_BASE, build_summary_line, check_pending, has_human_check, main
 from src.pending_reads import DEFAULT_GUILD_ID, PendingReadStore
 
 
@@ -25,11 +25,10 @@ def add_check(httpx_mock, entry, users):
     httpx_mock.add_response(url=url + "/reactions/%E2%9C%85?limit=100&type=0", json=users)
 
 
-def test_reminder_line(store):
-    assert build_reminder_line(store.entries[0], DEFAULT_GUILD_ID) == (
-        "🔔 まだ✅が付いていないニュースがあります "
+def test_summary_line(store):
+    assert build_summary_line(store.entries, DEFAULT_GUILD_ID) == (
+        "🔔 未読ニュースが 1 件あります。各投稿に✅を付けると消えます。\n"
         "https://discord.com/channels/1173405237390868610/456/123"
-        " — 読んだら✅を付けてください"
     )
 
 
@@ -56,10 +55,11 @@ def test_unread_reminded_once_per_run_and_retained(httpx_mock, store, users):
     assert store.entries == [entry, entry]
     posts = [r for r in httpx_mock.get_requests() if r.method == "POST"]
     assert len(posts) == 2  # One reminder per run; no daily suppression.
-    payload = json.loads(posts[0].content)
-    assert payload["message_reference"]["message_id"] == "123"
-    assert payload["content"] == build_reminder_line(entry, DEFAULT_GUILD_ID)
-    assert payload["allowed_mentions"]["replied_user"] is False
+    for post in posts:
+        payload = json.loads(post.content)
+        assert "message_reference" not in payload
+        assert payload["content"] == build_summary_line([entry], DEFAULT_GUILD_ID)
+        assert payload["allowed_mentions"]["replied_user"] is False
 
 
 @pytest.mark.parametrize("failure", ["message", "reactions", "send"])
@@ -106,11 +106,19 @@ def test_pending_oldest_first(httpx_mock, store):
     store.entries[1]["posted_at"] = "2026-10-29T00:00:00+00:00"
     for entry in reversed(store.entries):
         add_check(httpx_mock, entry, [])
-        httpx_mock.add_response(method="POST", json={"id": "999"})
+    httpx_mock.add_response(method="POST", json={"id": "999"})
     with httpx.Client() as client:
         check_pending(client, store, guild_id=DEFAULT_GUILD_ID)
     posts = [json.loads(r.content) for r in httpx_mock.get_requests() if r.method == "POST"]
-    assert [p["message_reference"]["message_id"] for p in posts] == ["124", "123"]
+    assert len(posts) == 1
+    assert "message_reference" not in posts[0]
+    content = posts[0]["content"]
+    assert "未読ニュースが 2 件" in content
+    assert content.index("/456/124") < content.index("/456/123")
+    requests = httpx_mock.get_requests()
+    assert [r.url.path.split("/")[-1] for r in requests if r.method == "GET"
+            and "/reactions/" not in r.url.path] == ["124", "123"]
+    assert requests[-1].method == "POST"
 
 
 def test_pending_roundtrip_deduplication(store):
@@ -172,3 +180,48 @@ def test_one_failed_entry_does_not_block_others(httpx_mock, store):
     with httpx.Client() as client:
         assert check_pending(client, store, guild_id=DEFAULT_GUILD_ID) == 1
     assert [e["message_id"] for e in store.entries] == ["123"]
+    assert all(r.method == "GET" for r in httpx_mock.get_requests())
+
+
+@pytest.mark.parametrize("count", [3, 5])
+def test_unread_summary_count_and_link_limit(httpx_mock, store, count):
+    store.append([str(124 + i) for i in range(count - 1)], channel_id="456")
+    store.save()
+    original = store.entries[:]
+    for entry in store.entries:
+        add_check(httpx_mock, entry, [])
+    httpx_mock.add_response(method="POST", json={"id": "999"})
+    with httpx.Client() as client:
+        assert check_pending(client, store, guild_id=DEFAULT_GUILD_ID) == 0
+    posts = [r for r in httpx_mock.get_requests() if r.method == "POST"]
+    assert len(posts) == 1
+    payload = json.loads(posts[0].content)
+    assert "message_reference" not in payload
+    content = payload["content"]
+    assert f"未読ニュースが {count} 件" in content
+    assert content.count("https://discord.com/channels/") == 3
+    if count > 3:
+        assert content.endswith(f"ほか {count - 3} 件")
+    assert store.entries == original
+    assert json.loads(store.path.read_text()) == original
+
+
+def test_summary_failure_keeps_all_unread_and_continues_channels(httpx_mock, store):
+    store.append(["124"], channel_id="456")
+    store.append(["123"], channel_id="789")
+    store.save()
+    original = store.entries[:]
+    for entry in store.entries:
+        add_check(httpx_mock, entry, [])
+    httpx_mock.add_response(method="POST", url=f"{API_BASE}/channels/456/messages", status_code=403)
+    httpx_mock.add_response(method="POST", url=f"{API_BASE}/channels/789/messages", json={"id": "999"})
+    with httpx.Client() as client:
+        assert check_pending(client, store, guild_id=DEFAULT_GUILD_ID) == 1
+    posts = [r for r in httpx_mock.get_requests() if r.method == "POST"]
+    assert len(posts) == 2
+    for post, count in zip(posts, [2, 1]):
+        payload = json.loads(post.content)
+        assert f"未読ニュースが {count} 件" in payload["content"]
+        assert "message_reference" not in payload
+    assert store.entries == original
+    assert json.loads(store.path.read_text()) == original
