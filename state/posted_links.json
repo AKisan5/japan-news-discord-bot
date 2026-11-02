@@ -2,6 +2,206 @@
   "version": 1,
   "posted": [
     {
+      "url": "https://www.nytimes.com/2026/11/02/business/anthropic-earnings-ai.html",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/02/technology/marvell-lumentum-115-billion-merger-ai.html",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-02/anthropic-ipo-explained-s-1-filing-nasdaq-listing-and-key-risks",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/02/oracle-files-to-sell-20-billion-in-new-stock-bonds-to-finance-ai-buildout.html",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-02/anthropic-braces-for-pre-ipo-election-impact-as-ai-debate-rages",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1024604/openai-data-center-grid-protection-program",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/02/technology/anthropic-ai-computing-power.html",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/02/anthropic-ant-s-1-quarter-financials.html",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/tech/1024588/brave-lawsuit-ai-scraping-new-york-times",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382348/nvidia-nike-biggest-wave-yet-tokenized-stock-objections",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/02/marvell-lumentum-ai-deal.html",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-02/deepseek-boosts-ai-agent-offering-with-new-creator-mode",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/space/2026/11/china-releases-timeline-for-lunar-landing-on-the-moon-targeting-before-2030/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/02/1147660/raising-the-quality-of-insights-in-agentic-analytics/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382341/mercado-bitcoin-halts-withdrawals-40-million-hack",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/42ai-comes-out-of-stealth-with-62-5m-and-a-world-model-that-can-predict-human-behavior/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/elon-musk-throttles-grok-bot-limits-due-to-unsustainably-high-costs/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-02/binance-boosts-market-maker-incentives-in-wake-of-record-hack",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-02/meta-readies-cross-border-investment-bond-offering",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/omen-ai-adds-liquid-know-how-in-16-million-aquatic-labs-acquisition/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://openai.com/index/grid-protectors-program",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/openai-is-finally-merging-chatgpts-chat-and-work-tabs/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/02/1147702/stop-counting-tokens-start-counting-what-ships/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/02/1147889/the-download-agentic-web-arrives-eliminating-traffic-deaths/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/when-you-should-and-shouldnt-use-ai-to-search-the-web/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/hundreds-of-mundane-ai-apps-are-hiding-abusive-deepfake-features/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/02/1147846/the-agentic-web-is-here/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://openai.com/index/lifeval",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/02/midterm-election-stocks-defense-healthcare-crypto-ai.html",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-02/oracle-leads-17-firm-high-grade-bond-push-before-us-midterm-vote",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/02/business/media/ai-microtargeting-midterm-elections.html",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382355/north-korea-laundering-binance-hack-loot-new-wallet-every-25-seconds",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/ckpqg8lve73go?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382353/proton-users-revolt-ceo-calls-security-caution-loser-thinking-ai",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cq1kd1nee80eo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261102de69492",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://news.yahoo.co.jp/pickup/6601107?source=rss",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://news.yahoo.co.jp/pickup/6601104?source=rss",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.itmedia.co.jp/news/article/2611/02/2000002828/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://news.yahoo.co.jp/pickup/6601094?source=rss",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE1QV0diNkE3Tkh5VEFham51U0xCdWZVQnBuV3lhZmdjRGx4dTNiekxvV3ppZmh4RDBxMGZURFh5cl9TbVlsVG5NSnJSU1dIdm8ycUhrQkVqR0plYXVnT3RMOUY3WXJ2MFU?oc=5",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261102de69784",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261102de69807",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9zalFNTkpQNDJTR2hjekF2T3YwT09IN1J5SFV1NTMtZFYzSUtJeXNJZy1Kc0tub290SkNmTzl0RC1uT0psNXl1bVZyMVFidVI3aGJaRElrVzh2dkMtZEI1WFRsSnNadms?oc=5",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9iYklya0dfd1JWV0xQQXNkU1dDQWE1eEQ4SlhzN0dMTkJITnlGUE5zRTBkR3JtNGVWVHhWM1BfdTVqUE9jU3NsSnBRZ3ViNy1zWjNvY0JKcG1jZ2JYVjlrVVJaZHRXcjhsYXNWcQ?oc=5",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://news.yahoo.co.jp/pickup/6601090?source=rss",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.itmedia.co.jp/news/article/2611/02/2000002823/",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=746032",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.finextra.com/event-info/650/agentic-commerce-at-scale-why-trust-is-the-new-foundation-for-payments?utm_medium=rssfinextra&utm_source=finextrafeed",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
+      "url": "https://www.finextra.com/event-info/639/mind-the-gap-whats-missing-from-modern-resilience?utm_medium=rssfinextra&utm_source=finextrafeed",
+      "posted_at": "2026-11-03T04:11:18.757774+09:00"
+    },
+    {
       "url": "https://news.web.nhk/newsweb/na/nd-20261102de69346",
       "posted_at": "2026-11-02T10:59:52.146034+09:00"
     },
