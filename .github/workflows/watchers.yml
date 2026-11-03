@@ -1,0 +1,91 @@
+name: Watchers (SUI daily / Even G2)
+
+# Primary trigger: Cloudflare Worker `watchers-trigger` calls workflow_dispatch on time
+# (GitHub's own schedule ran 2.5-10 h late in Nov 2026). The schedule below is a late backup;
+# state/watchers/*.json prevents a second post on the same day and repeated alerts.
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "morning = Even G2 + SUI daily"
+        type: choice
+        options: [morning, even, sui, sui-alert]
+        default: morning
+      channel:
+        description: "news = #ニュース, test = #bot"
+        type: choice
+        options: [news, test]
+        default: news
+      dry_run:
+        type: boolean
+        default: false
+      force:
+        description: "post even if already posted today"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "30 23 * * *"     # 08:30 JST backup for the morning posts
+    - cron: "45 3,7,11 * * *" # 12:45 / 16:45 / 20:45 JST backup for SUI alerts
+
+permissions:
+  contents: write
+
+concurrency:
+  group: watchers-state
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TARGET: ${{ inputs.target || (github.event.schedule == '30 23 * * *' && 'morning' || 'sui-alert') }}
+      CHANNEL: ${{ inputs.channel || 'news' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Run watchers
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          GITHUB_TOKEN: ${{ github.token }}
+          WATCHER_SUI_CONTEXT: ${{ vars.WATCHER_SUI_CONTEXT }}
+          WATCHER_EVEN_CONTEXT: ${{ vars.WATCHER_EVEN_CONTEXT }}
+          DRY_RUN_FLAG: ${{ inputs.dry_run && '--dry-run' || '' }}
+          FORCE_FLAG: ${{ inputs.force && '--force' || '' }}
+        run: |
+          status=0
+          if [ "$TARGET" = "morning" ]; then targets="even sui"; else targets="$TARGET"; fi
+          for t in $targets; do
+            python -m src.watchers.run --target "$t" --channel "$CHANNEL" $DRY_RUN_FLAG $FORCE_FLAG || status=$?
+          done
+          exit $status
+
+      - name: Commit state
+        if: always() && env.CHANNEL == 'news' && !inputs.dry_run
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/watchers/
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(state): update watchers state [skip ci]"
+          for attempt in 1 2 3; do
+            git pull --rebase --autostash origin "${{ github.ref_name }}" && git push origin "HEAD:${{ github.ref_name }}" && exit 0
+            git rebase --abort 2>/dev/null || true
+            echo "::warning::State push attempt $attempt/3 failed; retrying"
+            sleep $((attempt * 5))
+          done
+          echo "::error::Failed to push watchers state after 3 attempts; items may be reposted next run."
+          exit 1
