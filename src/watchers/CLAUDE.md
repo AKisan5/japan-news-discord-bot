@@ -30,6 +30,8 @@ SUIデイリーと Even G2ウォッチャーの朝刊、そして SUI速報を�
 - `python -m src.watchers.run --target even|sui|sui-alert [--dry-run] [--channel news|test]`
 - `--dry-run` は投稿も状態の更新もせず、本文を標準出力と `$GITHUB_STEP_SUMMARY` に出す
 - `channel=test` は #bot（1365351401173028916）に `DISCORD_BOT_TOKEN` で投稿する。本番は `DISCORD_WEBHOOK_URL`（#ニュース）で、username を上書きする
+- 無人の起動（Worker・schedule）の投稿先は、リポジトリ変数 `WATCHER_CHANNEL` で決まる（未設定なら test）。Aki が #bot での試験を見て品質を認めたら `news` にする（出自: Aki 承認プランの完了条件）
+- #bot への投稿も状態ファイルを進める。dry-run と `--replay` は進めない
 - 個人の文脈（Aki の好み）は公開リポジトリに書かない。リポジトリ変数 `WATCHER_SUI_CONTEXT`・`WATCHER_EVEN_CONTEXT` から読む
 
 ## 費用の歯止め（出自: Fable 判断）

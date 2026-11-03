@@ -12,10 +12,10 @@ on:
         options: [morning, even, sui, sui-alert]
         default: morning
       channel:
-        description: "news = #ニュース, test = #bot"
+        description: "news = #ニュース, test = #bot, default = repository variable WATCHER_CHANNEL"
         type: choice
-        options: [news, test]
-        default: news
+        options: [default, news, test]
+        default: default
       dry_run:
         type: boolean
         default: false
@@ -44,7 +44,8 @@ jobs:
     timeout-minutes: 30
     env:
       TARGET: ${{ inputs.target || (github.event.schedule == '30 23 * * *' && 'morning' || 'sui-alert') }}
-      CHANNEL: ${{ inputs.channel || 'news' }}
+      # Until Aki approves the quality, unattended runs go to #bot: repository variable WATCHER_CHANNEL=test.
+      CHANNEL: ${{ (inputs.channel != 'default' && inputs.channel) || vars.WATCHER_CHANNEL || 'test' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -83,7 +84,7 @@ jobs:
           exit $status
 
       - name: Commit state
-        if: always() && env.CHANNEL == 'news' && !inputs.dry_run && inputs.replay == ''
+        if: always() && !inputs.dry_run && inputs.replay == ''
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

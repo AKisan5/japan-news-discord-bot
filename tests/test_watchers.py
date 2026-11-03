@@ -162,16 +162,20 @@ def test_run_posts_and_records_state(monkeypatch, tmp_path):
     assert len(posted) == 1
 
 
-def test_run_test_channel_does_not_touch_state(monkeypatch, tmp_path):
+def test_run_test_channel_advances_state_but_dry_run_does_not(monkeypatch, tmp_path):
     monkeypatch.chdir(tmp_path)
     ev = [Evidence(source="公式ブログ", title="b", url="https://evenrealities.example/blog/1")]
     monkeypatch.setattr(even, "collect", lambda state, since: Collected(evidence=list(ev)))
     monkeypatch.setattr(run, "_x_evidence", lambda *a: [])
     monkeypatch.setattr(llm, "write_briefing", lambda **kw: Briefing(lead="", items=[_item()]))
     monkeypatch.setattr(run, "url_alive", lambda u: True)
-    monkeypatch.setattr(run, "post_to_discord", lambda text, **kw: ["1"])
+    sent = []
+    monkeypatch.setattr(run, "post_to_discord", lambda text, **kw: sent.append(kw) or ["1"])
+    assert run.run("even", dry_run=True, channel="test") == 0
+    assert sent == [] and not (tmp_path / "state/watchers/even.json").exists()
     assert run.run("even", dry_run=False, channel="test") == 0
-    assert not (tmp_path / "state/watchers/even.json").exists()
+    assert sent == [{"username": "Even G2ウォッチャー", "channel": "test"}]
+    assert WatcherState("even").is_reported("https://evenrealities.example/blog/1")
 
 
 def test_writer_failure_returns_2(monkeypatch, tmp_path):

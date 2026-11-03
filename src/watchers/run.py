@@ -141,19 +141,18 @@ def run(target: str, *, dry_run: bool, channel: str, force: bool = False,
     except RuntimeError as exc:
         logger.error("post failed: %s", exc)
         return 2
-    logger.info("posted %d messages", len(ids))
-    if channel == "news":
-        state.mark_reported([normalize_url(u) for u in used_urls], today)
+    logger.info("posted %d messages to %s", len(ids), channel)
+    # The #bot trial advances the same state as #ニュース, so the switch-over continues seamlessly.
+    state.mark_reported([normalize_url(u) for u in used_urls], today)
+    if target == "sui-alert":
+        for key, _r, _u in alerts:
+            state.data["alerts"][key] = now.isoformat()
+    else:
         for src, keys in collected.seen.items():
-            if target != "sui-alert":
-                state.set_seen(src, keys)
-        if target == "sui-alert":
-            for key, _r, _u in alerts:
-                state.data["alerts"][key] = now.isoformat()
-        else:
-            state.data["last_posted_at"] = now.isoformat()
-            state.data["last_posted_day"] = today
-        state.save(today)
+            state.set_seen(src, keys)
+        state.data["last_posted_at"] = now.isoformat()
+        state.data["last_posted_day"] = today
+    state.save(today)
     return 0
 
 
