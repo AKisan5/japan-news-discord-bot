@@ -28,18 +28,25 @@ def _x_evidence(module, state: WatcherState, since) -> list[Evidence]:
     urls = llm.discover_x_urls(accounts=module.X_ACCOUNTS, queries=module.X_QUERIES, since=since)
     logger.info("X discovery returned %d URLs", len(urls))
     out: list[Evidence] = []
+    stats = {"reported": 0, "unfetchable": 0, "too_old": 0}
+    ages: list[str] = []
     for url in urls:
         if state.is_reported(url):
+            stats["reported"] += 1
             continue
         ev = fetch_x_post(url)  # exact text / author / time from fxtwitter
         if not ev or state.is_reported(ev.url):
+            stats["unfetchable" if not ev else "reported"] += 1
             continue
         when = parse_dt(ev.published_at)
         if not when or when < since:
+            stats["too_old"] += 1
+            ages.append(when.date().isoformat() if when else "?")
             continue
         out.append(ev)
         if len(out) >= MAX_X_POSTS:
             break
+    logger.info("X posts kept=%d %s old_dates=%s", len(out), stats, sorted(ages)[-8:])
     return out
 
 
