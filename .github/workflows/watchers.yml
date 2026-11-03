@@ -23,6 +23,10 @@ on:
         description: "post even if already posted today"
         type: boolean
         default: false
+      replay:
+        description: "dry-run a past window SINCE,UNTIL (JST ISO, e.g. 2026-11-01T08:11,2026-11-03T08:16)"
+        type: string
+        default: ""
   schedule:
     - cron: "30 23 * * *"     # 08:30 JST backup for the morning posts
     - cron: "45 3,7,11 * * *" # 12:45 / 16:45 / 20:45 JST backup for SUI alerts
@@ -65,16 +69,21 @@ jobs:
           WATCHER_EVEN_CONTEXT: ${{ vars.WATCHER_EVEN_CONTEXT }}
           DRY_RUN_FLAG: ${{ inputs.dry_run && '--dry-run' || '' }}
           FORCE_FLAG: ${{ inputs.force && '--force' || '' }}
+          REPLAY: ${{ inputs.replay }}
         run: |
           status=0
           if [ "$TARGET" = "morning" ]; then targets="even sui"; else targets="$TARGET"; fi
           for t in $targets; do
-            python -m src.watchers.run --target "$t" --channel "$CHANNEL" $DRY_RUN_FLAG $FORCE_FLAG || status=$?
+            if [ -n "$REPLAY" ]; then
+              python -m src.watchers.run --target "$t" --replay "$REPLAY" || status=$?
+            else
+              python -m src.watchers.run --target "$t" --channel "$CHANNEL" $DRY_RUN_FLAG $FORCE_FLAG || status=$?
+            fi
           done
           exit $status
 
       - name: Commit state
-        if: always() && env.CHANNEL == 'news' && !inputs.dry_run
+        if: always() && env.CHANNEL == 'news' && !inputs.dry_run && inputs.replay == ''
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

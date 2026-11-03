@@ -8,6 +8,8 @@ import argparse
 import logging
 import os
 import sys
+import tempfile
+from pathlib import Path
 
 from . import even, llm, sui
 from .common import (Evidence, WatcherState, fetch_x_post, normalize_url, now_jst, parse_dt,
@@ -57,15 +59,20 @@ def _drop_dead_links(briefing, evidence: list[Evidence]) -> list[str]:
     return dead
 
 
-def run(target: str, *, dry_run: bool, channel: str, force: bool = False) -> int:
+def run(target: str, *, dry_run: bool, channel: str, force: bool = False,
+        window: tuple | None = None) -> int:
+    """window=(since, now) replays a past period for comparison (dry-run only, state ignored)."""
     module = even if target == "even" else sui
     state = WatcherState("even" if target == "even" else "sui")
-    now = now_jst()
+    if window:
+        state = WatcherState("replay", root=Path(tempfile.mkdtemp()))
+        state.data["seen"] = {}
+    now = window[1] if window else now_jst()
     today = now.date().isoformat()
     if target != "sui-alert" and not dry_run and not force and state.data.get("last_posted_day") == today:
         logger.info("already posted today (%s); skipping duplicate trigger", today)
         return 0
-    since = since_window(state, now)
+    since = window[0] if window else since_window(state, now)
     logger.info("target=%s since=%s dry_run=%s channel=%s", target, since.isoformat(), dry_run, channel)
 
     alerts: list = []
@@ -88,6 +95,8 @@ def run(target: str, *, dry_run: bool, channel: str, force: bool = False) -> int
             collected.errors.append(f"X 検索: {exc}")
             evidence = collected.evidence
 
+    if window:  # replay: keep only what existed before the window end
+        evidence = [e for e in evidence if not parse_dt(e.published_at) or parse_dt(e.published_at) <= now]
     fresh = [e for e in evidence if not e.source.startswith(DATA_SOURCES)]
     if not fresh and not alerts:
         logger.info("no new primary sources; not posting")
@@ -156,13 +165,19 @@ def main(argv=None) -> int:
     ap.add_argument("--force", action="store_true", help="post even if already posted today")
     ap.add_argument("--collect-only", action="store_true",
                     help="print collected evidence without calling Claude or Discord")
+    ap.add_argument("--replay", metavar="SINCE,UNTIL",
+                    help="dry-run a past window (ISO times, JST if no offset) ignoring state")
     args = ap.parse_args(argv)
     if args.collect_only:
         return collect_only(args.target)
     if not os.environ.get("ANTHROPIC_API_KEY"):
         logger.error("ANTHROPIC_API_KEY is not set")
         return 1
-    return run(args.target, dry_run=args.dry_run, channel=args.channel, force=args.force)
+    window = None
+    if args.replay:
+        a, b = (parse_dt(x if "+" in x else x + "+09:00") for x in args.replay.split(","))
+        window, args.dry_run = (a, b), True
+    return run(args.target, dry_run=args.dry_run, channel=args.channel, force=args.force, window=window)
 
 
 def collect_only(target: str) -> int:
