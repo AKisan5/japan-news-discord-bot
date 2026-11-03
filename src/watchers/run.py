@@ -95,12 +95,16 @@ def run(target: str, *, dry_run: bool, channel: str, force: bool = False,
         evidence = collected.evidence
     else:
         collected = module.collect(state, since)
-        try:
-            evidence = collected.evidence + _x_evidence(module, state, since)
-        except llm.WatcherLLMError as exc:
-            logger.warning("X discovery failed: %s (continuing without X)", exc)
-            collected.errors.append(f"X 検索: {exc}")
-            evidence = collected.evidence
+        evidence = collected.evidence
+        # X is off by default (Aki 2026-11-03「Xなしで進める」): Claude web search only found
+        # months-old posts and the logged-out web is blocked for automation. Set WATCHER_X_SEARCH=1
+        # only if a sanctioned source (e.g. the X API) is wired into _x_evidence later.
+        if os.environ.get("WATCHER_X_SEARCH") == "1":
+            try:
+                evidence = evidence + _x_evidence(module, state, since)
+            except llm.WatcherLLMError as exc:
+                logger.warning("X discovery failed: %s (continuing without X)", exc)
+                collected.errors.append(f"X 検索: {exc}")
 
     if window:  # replay: keep only what existed before the window end
         evidence = [e for e in evidence if not parse_dt(e.published_at) or parse_dt(e.published_at) <= now]
