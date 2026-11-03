@@ -2,6 +2,206 @@
   "version": 1,
   "posted": [
     {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261103de69868",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-03/blackstone-pimco-chiefs-debate-the-perils-of-ai-boom-video",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-03/goldman-s-solomon-sees-very-robust-demand-for-ai-deals",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-03/huafa-s-62-billion-debt-strain-shakes-china-s-credit-market",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/03/north-korea-binance-elliptic-chainalysis.html",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/03/openai-hires-dan-driscoll-national-security.html",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/03/australia-hikes-rates-18-year-high-finflation.html",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9RVGVFdHREb25hRk9BMGVYc3BDdjNLS2x0RUVFVTdGaWozQ0lKbnBkbTlIdURYWkhoUXRLOC0zeFU4WGJjNzdqcVFpaHJFRU1NYU1sMlNMNWUtNHlQR18yX0NLMkpXZTRMVV9qYV9nX2pxaXA1b2c?oc=5",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-03/nvidia-s-huang-gave-blessing-to-marvell-lumentum-megadeal",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-03/state-street-ceo-says-it-s-hard-to-see-ai-as-a-bubble-yet",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-03/china-s-he-says-will-support-free-open-economy-in-hong-kong",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/newsletters/2026-11-03/reliance-s-record-19-billion-surge-lifts-nifty-keeps-india-bulls-in-the-game",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261103de69892",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=746072",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=746073",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=746053",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.itmedia.co.jp/news/article/2611/03/2000002840/",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.itmedia.co.jp/news/article/2611/03/2000002830/",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/anthropic-warns-that-its-very-close-to-rsi-capability-aka-self-building-ai/",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/y-combinators-garry-tan-uses-ai-agents-so-much-he-spends-up-to-200k-a-year-on-tokens/",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/trajectory-raises-45m-to-make-ai-model-training-accessible-to-nontechnical-experts/",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/google-takes-dreambeans-to-india-in-bid-to-bring-ai-generated-personal-stories-to-the-masses/",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/web-host-squarespace-lays-off-19-of-its-employees/",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/new-york-times-and-other-outlets-sue-web-browser-brave-over-alleged-content-scraping/",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/03/iran-us-vance-trump-strikes.html",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261103de69878",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261103de69880",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cm5ynekkn5qko?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cjy56dndlyz0o?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/c6rey4v53exgo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/c6n8dn457ypko?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cmp3grwre9xdo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-03/copper-tin-fall-with-base-metals-on-renewed-ai-stocks-selloff",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-03/offshore-yuan-weakens-after-pboc-moves-to-cool-currency-rally",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-03/gold-holds-biggest-jump-in-two-months-on-iran-peace-deal-hopes",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-03/apple-sets-new-sales-highs-in-china-even-as-increased-costs-bite",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/02/palantir-pltr-earnings-q3-2026.html",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/02/intel-foundry-faces-critical-test-after-stocks-45percent-plunge-in-october.html",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/02/technology/apple-earnings.html",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/02/business/cyberattack-freezers-europe-us-army.html",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382375/claude-built-linux-exploit-bug-ubuntu",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382390/claude-mythos-fable-5-5-gpt-6-2-astra-leaks",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382383/mystery-106-million-crypto-theft-eu-entity-binance-hack",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/apple/2026/11/apples-roaming-home-robot-may-do-facetime-switch-lights-on-and-yell-at-your-cat/",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://openai.com/index/rewarding-defenders-with-bigger-bug-bounties",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://openai.com/index/scaling-git-at-openai",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/02/apple-may-try-to-increase-revenue-by-doing-something-with-third-party-ai-apps/",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMiTEFVX3lxTE5PT3ZJbW0yUHIxNzIwYURGYUVvMC0xczhZNEtJWXN3Z3dGdl9rNndjV09RSHRpSndjM3J4aTVPTy01WTQteGxnQTg2N3c?oc=5",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxOSUtwRktXNFVOV2ZvdjB4VTZFd19qWkxjMGNqZW9KRlV2XzV3ZS1tb1kybmoyQ09aUWgxdFl3ZlFacjdheS1QVTI0TmJEYnNMQVBtS1V2NXZjamdfb1E2ZFRFSnViZTNONG9aV1QyYWNuV0NuT3ZGNUJuVl9seENabVpROWNEMVZxb0t1dTVySEpHNEpxc2RBeFU2TW1PZllZZ3Q1MlB0eHZzMzhnWThDVk9XMzRPWXQ4UlBGZFFyWHlqb2hCMnhlelVYUmV6QkFtSVhR?oc=5",
+      "posted_at": "2026-11-03T12:52:23.260343+09:00"
+    },
+    {
       "url": "https://www.nytimes.com/2026/11/02/business/anthropic-earnings-ai.html",
       "posted_at": "2026-11-03T04:11:18.757774+09:00"
     },
