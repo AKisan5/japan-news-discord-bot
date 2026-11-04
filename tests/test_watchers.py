@@ -317,8 +317,8 @@ def test_news_evidence_keeps_only_fresh_unreported(monkeypatch, tmp_path):
 
 
 def test_rank_candidates_prefers_picks_and_drops_invented_and_old():
-    results = {"https://a.example/new/": {"url": "https://a.example/new/", "page_age": "November 3, 2026"},
-               "https://b.example/old": {"url": "https://b.example/old", "page_age": "2026-09-01"},
-               "https://c.example/x?utm_source=rss": {"url": "https://c.example/x?utm_source=rss", "page_age": ""}}
-    out = llm.rank_candidates(results, ["https://c.example/x", "https://made.up/y"], NOW - timedelta(hours=26))
-    assert [r["url"] for r in out] == ["https://c.example/x?utm_source=rss", "https://a.example/new/"]
+    results = {"https://a.example/news/new-story/": {"url": "https://a.example/news/new-story/", "page_age": "November 3, 2026"},
+               "https://b.example/news/old-story": {"url": "https://b.example/news/old-story", "page_age": "2026-09-01"},
+               "https://c.example/news/x-story?utm_source=rss": {"url": "https://c.example/news/x-story?utm_source=rss", "page_age": ""}}
+    out = llm.rank_candidates(results, ["https://c.example/news/x-story", "https://made.up/y"], NOW - timedelta(hours=26))
+    assert [r["url"] for r in out] == ["https://c.example/news/x-story?utm_source=rss", "https://a.example/news/new-story/"]
