@@ -237,6 +237,9 @@ def fetch_body(url: str, limit: int = BODY_LIMIT) -> tuple[str, str]:
     """(body, reason). reason is '' on success, else e.g. 'HTTP 403' or 'extracted 120 chars'."""
     try:
         resp = get(url, timeout=20)
+        if resp.status_code == 429:  # rate limit (CoinDesk on 11/05): wait once, then retry
+            time.sleep(4)
+            resp = get(url, timeout=20)
     except httpx.HTTPError as exc:
         return "", type(exc).__name__
     if resp.status_code >= 400:
@@ -254,8 +257,20 @@ def with_bodies(evidence: list[Evidence], *, drop_failed: bool) -> tuple[list[Ev
     """
     from concurrent.futures import ThreadPoolExecutor
 
+    # one worker per host so a site is never hit in parallel (avoids 429)
+    by_host: dict[str, list[int]] = {}
+    for i, e in enumerate(evidence):
+        by_host.setdefault(httpx.URL(e.url).host, []).append(i)
+    results: list[tuple[str, str]] = [("", "")] * len(evidence)
+
+    def run_host(idx: list[int]) -> None:
+        for n, i in enumerate(idx):
+            if n:
+                time.sleep(1)
+            results[i] = fetch_body(evidence[i].url)
+
     with ThreadPoolExecutor(max_workers=8) as pool:
-        results = list(pool.map(lambda e: fetch_body(e.url), evidence))
+        list(pool.map(run_host, by_host.values()))
     kept, notes = [], []
     for ev, (body, reason) in zip(evidence, results):
         if body:
