@@ -24,7 +24,7 @@ SUIデイリーと Even G2ウォッチャーの朝刊、そして SUI速報を�
   - Even Hub の公開ストア API（`/api/v1/storefront/discovery`・`/detail`）。公開ページ `https://hub.evenrealities.com/catalogue` が認証なしで使っている API で、robots.txt は全許可。版ごとの `updated_at`・`changelog` で更新を判定する。一覧 API `/api/v1/apps/list` は 401（アプリ内トークンが要る）なので使わない
   - XR メディアの RSS（UploadVR・Road to VR・Engadget・The Verge・9to5Google・MoguraVR）
   - SUI: USDT・USDC・JPYC の発行残高（DefiLlama）、Tether の RSS、Circle の pressroom・blog（RSS が無いので既読一覧と比べる）、Walrus ブログ、Stripe ブログ・AP2 の GitHub・x402 の npm、暗号資産メディア6紙の RSS（話題で絞る）、節「🤖 AIエージェント決済」
-  - 決済の業界紙の RSS（PYMNTS・Finextra・Payments Dive・The Fintech Times・Electronic Payments International・ペイメントナビ）と Cointelegraph の AI タグ。AI エージェント決済の記事は暗号資産メディアより業界紙に多かった（11/04 の実測）
+  - 決済の業界紙の RSS（PYMNTS・Finextra・Payments Dive・The Fintech Times・ペイメントナビ。Electronic Payments International は Actions から 403 なので外した）と Cointelegraph の AI タグ。AI エージェント決済の記事は暗号資産メディアより業界紙に多かった（11/04 の実測）
   - Web 記事の検索（`WATCHER_NEWS_SEARCH=1` のときだけ動く・既定は止める）。Claude の Web 検索は URL を挙げるだけで、検索結果に出た URL しか採らない。日付と中身は記事ページの metadata をコードが読んで確かめる。11/04 の dry-run では候補の大半が古く（SUI は30件中1件・Even は30件中0件が期間内）、X と同じ傾向だったので既定で止めた
 - 取らないもの: jpyc.co.jp は自動アクセスに 403 を返すので取りに行かない（回避しない）。Google ニュースの RSS は記事へのリンクが Google 経由になり本文を確かめられないので使わない。Bing ニュースの RSS は規約が RSS リーダーでの表示以外の利用を禁じているので使わない
 - 集計期間は最短26時間にした（前回投稿が近くても縮めない）。重複は報告済みの URL の除外で防ぐ

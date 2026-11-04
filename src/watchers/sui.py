@@ -51,7 +51,6 @@ MEDIA_FEEDS = [("CoinPost", "https://coinpost.jp/?feed=rss2"),
                ("Finextra", "https://www.finextra.com/rss/headlines.aspx"),
                ("Payments Dive", "https://www.paymentsdive.com/feeds/news/"),
                ("The Fintech Times", "https://thefintechtimes.com/feed/"),
-               ("Electronic Payments International", "https://www.electronicpaymentsinternational.com/feed/"),
                ("ペイメントナビ", "https://paymentnavi.com/feed/")]
 TOPICS = {
     "sui": re.compile(r"\bSui\b|\bSUI\b|Mysten|Walrus|DeepBook|Suilend|Cetus", re.I),
