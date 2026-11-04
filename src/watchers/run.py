@@ -132,8 +132,9 @@ def run(target: str, *, dry_run: bool, channel: str, force: bool = False,
             except llm.WatcherLLMError as exc:
                 logger.warning("X discovery failed: %s (continuing without X)", exc)
                 collected.errors.append(f"X 検索: {exc}")
-        # Web news (2026-11-04 Aki「もうちょっと情報量は多いほうがいい」): on unless WATCHER_NEWS_SEARCH=0
-        if os.environ.get("WATCHER_NEWS_SEARCH", "1") == "1":
+        # Web news via Claude search: off by default. 2026-11-04 dry-runs kept 1 of 30 (SUI) and
+        # 0 of 30 (Even) candidates: search results were mostly old. Trade-press RSS is used instead.
+        if os.environ.get("WATCHER_NEWS_SEARCH") == "1":
             try:
                 known = {normalize_url(e.url) for e in evidence}
                 evidence = evidence + _news_evidence(module, state, since, known)

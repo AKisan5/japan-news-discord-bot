@@ -279,7 +279,7 @@ def test_sui_stable_market_summary(monkeypatch):
 
 @pytest.fixture(autouse=True)
 def _no_news_search(monkeypatch):
-    monkeypatch.setenv("WATCHER_NEWS_SEARCH", "0")  # run() tests must not call Claude / the web
+    monkeypatch.delenv("WATCHER_NEWS_SEARCH", raising=False)  # off by default; run() tests must not call Claude / the web
 
 
 class _Page:

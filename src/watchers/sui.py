@@ -43,12 +43,22 @@ MEDIA_FEEDS = [("CoinPost", "https://coinpost.jp/?feed=rss2"),
                ("CoinDesk", "https://www.coindesk.com/arc/outboundfeeds/rss/"),
                ("The Block", "https://www.theblock.co/rss.xml"),
                ("Decrypt", "https://decrypt.co/feed"),
-               ("Cointelegraph", "https://cointelegraph.com/rss")]
+               ("Cointelegraph", "https://cointelegraph.com/rss"),
+               ("Cointelegraph AI", "https://cointelegraph.com/rss/tag/ai"),
+               # payments trade press: agentic commerce / stablecoin payments (2026-11-04 probe:
+               # most agent-payment stories of 11/02-03 were here, not in crypto media)
+               ("PYMNTS", "https://www.pymnts.com/feed/"),
+               ("Finextra", "https://www.finextra.com/rss/headlines.aspx"),
+               ("Payments Dive", "https://www.paymentsdive.com/feeds/news/"),
+               ("The Fintech Times", "https://thefintechtimes.com/feed/"),
+               ("Electronic Payments International", "https://www.electronicpaymentsinternational.com/feed/"),
+               ("ペイメントナビ", "https://paymentnavi.com/feed/")]
 TOPICS = {
     "sui": re.compile(r"\bSui\b|\bSUI\b|Mysten|Walrus|DeepBook|Suilend|Cetus", re.I),
     "stable": re.compile(r"stablecoin|ステーブルコイン|安定通貨|\bUSDC\b|\bUSDT\b|\bEURC\b|Tether|テザー|"
                          r"\bCircle\b|サークル社|\bJPYC\b|円建て|\bGENIUS Act\b|\bPYUSD\b|\bRLUSD\b|\bUSDe\b", re.I),
-    "agentpay": re.compile(r"x402|\bAP2\b|agentic (?:payment|commerce)|agent(?:ic)? pay|AI agents? (?:pay|payment)|"
+    "agentpay": re.compile(r"x402|\bAP2\b|agentic (?:payments?|commerce|checkout)|agent(?:ic)? pay|"
+                           r"AI agents? (?:pay|payments?|checkout|commerce|shopping)|agent(?:ic)? checkout|"
                            r"machine payments?|Agent Payments Protocol|Intelligent Commerce|Agentic Commerce Protocol|"
                            r"エージェント(?:型)?(?:決済|コマース|ペイメント)|AIエージェント.{0,12}(?:決済|支払)", re.I),
 }
@@ -63,7 +73,7 @@ NEWS_TOPICS = [
 ]
 NEWS_BLOCKED = ["x.com", "twitter.com", "reddit.com", "youtube.com", "coingecko.com",
                 "coinmarketcap.com", "defillama.com", "tradingview.com"]
-MEDIA_CAP = {"sui": 10, "stable": 12, "agentpay": 8}  # newest first, per topic (Fable 判断: 入力トークンの上限)
+MEDIA_CAP = {"sui": 10, "stable": 12, "agentpay": 10}  # newest first, per topic (Fable 判断: 入力トークンの上限)
 STABLE_SYMBOLS = ("USDT", "USDC", "JPYC")
 
 SECTIONS = [

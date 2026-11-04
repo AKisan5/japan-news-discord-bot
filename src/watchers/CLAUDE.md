@@ -24,8 +24,9 @@ SUIデイリーと Even G2ウォッチャーの朝刊、そして SUI速報を�
   - Even Hub の公開ストア API（`/api/v1/storefront/discovery`・`/detail`）。公開ページ `https://hub.evenrealities.com/catalogue` が認証なしで使っている API で、robots.txt は全許可。版ごとの `updated_at`・`changelog` で更新を判定する。一覧 API `/api/v1/apps/list` は 401（アプリ内トークンが要る）なので使わない
   - XR メディアの RSS（UploadVR・Road to VR・Engadget・The Verge・9to5Google・MoguraVR）
   - SUI: USDT・USDC・JPYC の発行残高（DefiLlama）、Tether の RSS、Circle の pressroom・blog（RSS が無いので既読一覧と比べる）、Walrus ブログ、Stripe ブログ・AP2 の GitHub・x402 の npm、暗号資産メディア6紙の RSS（話題で絞る）、節「🤖 AIエージェント決済」
-  - 両方: Web 記事の検索（`WATCHER_NEWS_SEARCH`、既定で動く）。Claude の Web 検索は URL を挙げるだけで、検索結果に出た URL しか採らない。日付と中身は記事ページの metadata をコードが読んで確かめ、日付が取れない記事・期間より古い記事は捨てる
-- 取らないもの: jpyc.co.jp は自動アクセスに 403 を返すので取りに行かない（回避しない）。Google ニュースの RSS は記事へのリンクが Google 経由になり本文を確かめられないので使わない
+  - 決済の業界紙の RSS（PYMNTS・Finextra・Payments Dive・The Fintech Times・Electronic Payments International・ペイメントナビ）と Cointelegraph の AI タグ。AI エージェント決済の記事は暗号資産メディアより業界紙に多かった（11/04 の実測）
+  - Web 記事の検索（`WATCHER_NEWS_SEARCH=1` のときだけ動く・既定は止める）。Claude の Web 検索は URL を挙げるだけで、検索結果に出た URL しか採らない。日付と中身は記事ページの metadata をコードが読んで確かめる。11/04 の dry-run では候補の大半が古く（SUI は30件中1件・Even は30件中0件が期間内）、X と同じ傾向だったので既定で止めた
+- 取らないもの: jpyc.co.jp は自動アクセスに 403 を返すので取りに行かない（回避しない）。Google ニュースの RSS は記事へのリンクが Google 経由になり本文を確かめられないので使わない。Bing ニュースの RSS は規約が RSS リーダーでの表示以外の利用を禁じているので使わない
 - 集計期間は最短26時間にした（前回投稿が近くても縮めない）。重複は報告済みの URL の除外で防ぐ
 - SUI の件数の目安を「8〜12件」から「12〜18件」に上げた。出自: Fable 判断（Aki「もうちょっと情報量は多いほうがいい」と、範囲がステーブルコイン・エージェント決済に広がったため）。目安であり、水増しはしない
 
@@ -50,8 +51,8 @@ SUIデイリーと Even G2ウォッチャーの朝刊、そして SUI速報を�
 ## 費用の歯止め（出自: Fable 判断）
 
 - Web 検索の `max_uses` は X が8、Web 記事が6
-- 1回の実行で Claude を呼ぶのは、Web 記事の検索1回と執筆1回
-- Web 記事は1回15件まで、メディア RSS は話題ごとに sui 10・stable 12・agentpay 8 件まで（新しい順）
+- 1回の実行で Claude を呼ぶのは執筆1回（Web 記事の検索を有効にしたときは＋1回）
+- Web 記事は1回15件まで、メディア RSS は話題ごとに sui 10・stable 12・agentpay 10 件まで（新しい順）
 - Even Hub の詳細取得は1回80件まで
 - SUI速報で Claude を呼ぶのは、A1〜A6 のアラートが出たときだけ
 - 1回あたりの $ は `usage_tracker` で Actions のサマリーに出す
