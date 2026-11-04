@@ -69,7 +69,7 @@ def test_no_new_items(pipeline):
 def test_selection_fetch_write_post_and_seen_state(pipeline):
     assert main() == 0
     pipeline["select_items"].assert_called_once_with(
-        [item(), item(1)], max_briefing_items=50, timeout=300)
+        [item(), item(1)], max_briefing_items=90, timeout=300)
     pipeline["fetch_article"].assert_called_once_with(
         item(), timeout=20, user_agent=pipeline["config"].settings.user_agent)
     pipeline["write_briefing"].assert_called_once_with(
@@ -101,7 +101,7 @@ def test_selection_candidates_capped_at_200_newest(pipeline):
     pipeline["state"].filter_new.return_value = candidates
     assert main() == 0
     pipeline["select_items"].assert_called_once_with(
-        list(reversed(candidates))[:200], max_briefing_items=50, timeout=300)
+        list(reversed(candidates))[:200], max_briefing_items=90, timeout=300)
 
 
 def test_write_orders_usable_bodies_first_but_keeps_thin(pipeline):
@@ -195,3 +195,25 @@ def test_real_select_fetch_write_content_only_pipeline(monkeypatch, tmp_path, ht
     assert [p["message_id"] for p in pending] == ["123", "124"]
     posted = json.loads((tmp_path / "state/posted_links.json").read_text())
     assert {p["url"] for p in posted["posted"]} == {item().url}
+
+
+def test_bodies_replace_thin_articles_up_to_target(pipeline):
+    """Over-selected picks: readable bodies fill the briefing; thin ones only fill a shortfall."""
+    pipeline["config"].settings.max_briefing_items = 3
+    selected = [item(i) for i in range(6)]
+    bodies = ["", "B1", "", "B3", "B4", "B5"]
+    articles = [Article("Title", e.url, "Feed", b) for e, b in zip(selected, bodies)]
+    pipeline["select_items"].return_value = selected
+    pipeline["fetch_article"].side_effect = articles
+    assert main() == 0
+    pipeline["write_briefing"].assert_called_once_with([articles[1], articles[3], articles[4]], timeout=300)
+
+
+def test_thin_articles_fill_only_the_shortfall(pipeline):
+    pipeline["config"].settings.max_briefing_items = 3
+    selected = [item(i) for i in range(4)]
+    articles = [Article("Title", e.url, "Feed", b) for e, b in zip(selected, ["", "B1", "", ""])]
+    pipeline["select_items"].return_value = selected
+    pipeline["fetch_article"].side_effect = articles
+    assert main() == 0
+    pipeline["write_briefing"].assert_called_once_with([articles[1], articles[0], articles[2]], timeout=300)

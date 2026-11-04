@@ -11,8 +11,8 @@ from datetime import datetime, timedelta, timezone
 
 import feedparser
 
-from .common import (Collected, Evidence, WatcherState, feed_entries, fmt_jst, get,
-                     github_headers, normalize_url, parse_dt, strip_html)
+from .common import (Collected, Evidence, WatcherState, extract_body, feed_entries, fmt_jst, get,
+                     github_headers, normalize_url, parse_dt, strip_html, with_bodies)
 
 logger = logging.getLogger(__name__)
 
@@ -103,6 +103,7 @@ def collect(state: WatcherState, since: datetime, *, light: bool = False) -> Col
         _circle(out, state)
         _agentpay_official(out, since)
         _media(out, since)
+        _official_bodies(out)
     out.evidence = [e for e in out.evidence if not state.is_reported(e.url)
                     or e.source.startswith(("CoinGecko", "DefiLlama", "status"))]
     return out
@@ -224,7 +225,8 @@ def _mysten(out: Collected, state: WatcherState) -> None:
         title = re.search(r"<title>(.*?)</title>", page, re.S)
         out.evidence.append(Evidence(source="Mysten Labs ブログ",
                                      title=strip_html(title.group(1), 160) if title else path,
-                                     url=MYSTEN + path, summary=strip_html(page, 1200)))
+                                     url=MYSTEN + path,
+                                     summary=extract_body(page, MYSTEN + path) or strip_html(page, 1200)))
 
 
 def _releases(out: Collected, since: datetime) -> None:
@@ -324,7 +326,7 @@ def _circle(out: Collected, state: WatcherState) -> None:
             out.evidence.append(Evidence(
                 source="Circle 公式", title=strip_html(title.group(1), 200) if title else p, url=CIRCLE + p,
                 published_at=date.group(1) if date else "",
-                summary=(desc.group(1) + " " if desc else "") + strip_html(page, 900)))
+                summary=extract_body(page, CIRCLE + p) or ((desc.group(1) + " " if desc else "") + strip_html(page, 900))))
 
 
 def _agentpay_official(out: Collected, since: datetime) -> None:
@@ -361,6 +363,16 @@ def _agentpay_official(out: Collected, since: datetime) -> None:
                 published_at=when, summary=strip_html(meta.get("description") or "", 300)))
 
 
+def _official_bodies(out: Collected) -> None:
+    """Official posts from RSS (Sui / Walrus / Tether / Stripe blogs): read the body; keep the
+    RSS teaser (marked) when the page cannot be read, since there is no other source."""
+    feeds = ("Sui 公式ブログ", "Walrus 公式ブログ", "Tether 公式", "Stripe 公式ブログ")
+    targets = [e for e in out.evidence if e.source in feeds]
+    if targets:
+        _kept, notes = with_bodies(targets, drop_failed=False)
+        out.body_failures.extend(notes)
+
+
 def _media(out: Collected, since: datetime) -> None:
     """Crypto media (secondary sources) filtered by topic: Sui / stablecoins / AI-agent payments."""
     picked: dict[str, list[Evidence]] = {k: [] for k in TOPICS}
@@ -383,7 +395,10 @@ def _media(out: Collected, since: datetime) -> None:
                                               published_at=r["published"], summary=r["summary"]))
     for topic, items in picked.items():
         items.sort(key=lambda e: parse_dt(e.published_at) or since, reverse=True)
-        out.evidence.extend(items[:MEDIA_CAP[topic]])
+        # read a few extra so items whose body cannot be read can be replaced
+        kept, notes = with_bodies(items[:MEDIA_CAP[topic] + 5], drop_failed=True)
+        out.evidence.extend(kept[:MEDIA_CAP[topic]])
+        out.body_failures.extend(notes)
 
 
 # --- alerts A1–A6 ----------------------------------------------------------
@@ -450,6 +465,9 @@ AI エージェント決済（x402・AP2・Stripe・Visa・Mastercard・Sui の�
 - 価格だけの話題は重要なとき（大きな変動）だけ入れる。毎日の価格報告はしない。
   ただし is_monday が true の日は weekly 節に 7d・30d・時価総額順位・TVL・ステーブルコイン残高・
   BTC/ETH/SOL 比較を1項目で書く
+- summary が「本文: 」で始まる証拠は、記事ページから読んだ本文である。見出しの言い換えで済ませず、
+  本文の要点（誰が・何を・数字・理由・今後）を2〜4文で要約する。「（本文は取得できず…）」で始まる証拠は
+  抜粋に書かれた範囲だけを書き、文末に「（本文未確認）」と付ける
 - 件数は12〜18件が目安にすぎない。少ない日に水増ししない（同じ出来事を分けない・古い話を入れない）。
   新しい証拠が1件も無ければ items を空にする
 - meta には「@SuiNetwork、2026/11/02 19:52 JST」「suiet.app、確認日 2026/11/03」の形で出所と日時を書く

@@ -108,6 +108,7 @@ class Collected:
     errors: list[str] = field(default_factory=list)
     data: dict = field(default_factory=dict)      # numbers etc. (price, TVL)
     seen: dict[str, list[str]] = field(default_factory=dict)  # per-source keys seen this run
+    body_failures: list[str] = field(default_factory=list)  # "host: reason" for unreadable bodies
 
     def fail(self, source: str, exc: Exception | str) -> None:
         msg = f"{source}: {type(exc).__name__ if isinstance(exc, Exception) else exc}"
@@ -215,6 +216,59 @@ def fetch_x_post(url: str) -> Evidence | None:
         published_at=created.isoformat() if created else "",
         summary=text[:800],
     )
+
+
+# --- article bodies --------------------------------------------------------
+
+BODY_LIMIT = 1500   # chars of body passed to the writer per article (Fable 判断: 入力トークンの上限)
+BODY_MIN = 300      # shorter extractions are teasers / nav text, not a body
+
+
+def extract_body(html: str, url: str, limit: int = BODY_LIMIT) -> str:
+    """Main article text via trafilatura ('' when nothing body-like is found)."""
+    import trafilatura  # already a dependency of the news bot
+
+    text = (trafilatura.extract(html, url=url, include_comments=False, include_tables=False,
+                                favor_precision=True) or "").strip()
+    return re.sub(r"\s+", " ", text)[:limit] if len(text) >= BODY_MIN else ""
+
+
+def fetch_body(url: str, limit: int = BODY_LIMIT) -> tuple[str, str]:
+    """(body, reason). reason is '' on success, else e.g. 'HTTP 403' or 'extracted 120 chars'."""
+    try:
+        resp = get(url, timeout=20)
+    except httpx.HTTPError as exc:
+        return "", type(exc).__name__
+    if resp.status_code >= 400:
+        return "", f"HTTP {resp.status_code}"
+    body = extract_body(resp.text, str(resp.url), limit)
+    return (body, "") if body else ("", "本文を抽出できず")
+
+
+def with_bodies(evidence: list[Evidence], *, drop_failed: bool) -> tuple[list[Evidence], list[str]]:
+    """Replace each item's RSS teaser with the article body (parallel fetch).
+
+    drop_failed=True drops items whose body could not be read (secondary media: another
+    outlet usually covers the same story). Otherwise the teaser stays, marked as such.
+    Returns (items, failure notes for the run summary).
+    """
+    from concurrent.futures import ThreadPoolExecutor
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        results = list(pool.map(lambda e: fetch_body(e.url), evidence))
+    kept, notes = [], []
+    for ev, (body, reason) in zip(evidence, results):
+        if body:
+            ev.summary = "本文: " + body
+            kept.append(ev)
+            continue
+        notes.append(f"{httpx.URL(ev.url).host}: {reason}")
+        if not drop_failed:
+            ev.summary = f"（本文は取得できず: {reason}。RSS の抜粋のみ）" + ev.summary
+            kept.append(ev)
+    if notes:
+        logger.info("bodies unavailable: %s", notes)
+    return kept, notes
 
 
 # --- web articles ----------------------------------------------------------

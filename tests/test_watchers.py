@@ -250,6 +250,7 @@ def test_sui_media_topics_window_and_cap(monkeypatch):
                {"title": "Circle USDC old", "link": "https://m.example/old", "published": old_t, "summary": ""}])
     monkeypatch.setattr(sui, "MEDIA_FEEDS", [("M1", "u1"), ("M2", "u2")])
     monkeypatch.setattr(sui, "feed_entries", lambda url: rows)  # same rows in both feeds -> deduped by link
+    monkeypatch.setattr(sui, "with_bodies", lambda items, drop_failed: (items, []))
     out = Collected()
     sui._media(out, NOW - timedelta(hours=26))
     srcs = [e.source for e in out.evidence]
@@ -322,3 +323,20 @@ def test_rank_candidates_prefers_picks_and_drops_invented_and_old():
                "https://c.example/news/x-story?utm_source=rss": {"url": "https://c.example/news/x-story?utm_source=rss", "page_age": ""}}
     out = llm.rank_candidates(results, ["https://c.example/news/x-story", "https://made.up/y"], NOW - timedelta(hours=26))
     assert [r["url"] for r in out] == ["https://c.example/news/x-story?utm_source=rss", "https://a.example/news/new-story/"]
+
+
+def test_with_bodies_reads_body_and_drops_or_marks_failures(monkeypatch):
+    bodies = {"https://a.example/ok": ("記事の本文。" * 60, ""), "https://b.example/ng": ("", "HTTP 403")}
+    monkeypatch.setattr(common, "fetch_body", lambda url, limit=common.BODY_LIMIT: bodies[url])
+    mk = lambda u: Evidence(source="M（報道・stable）", title="t", url=u, summary="RSS teaser")  # noqa: E731
+    kept, notes = common.with_bodies([mk("https://a.example/ok"), mk("https://b.example/ng")], drop_failed=True)
+    assert [e.url for e in kept] == ["https://a.example/ok"] and kept[0].summary.startswith("本文: 記事の本文。")
+    assert notes == ["b.example: HTTP 403"]
+    kept, _ = common.with_bodies([mk("https://b.example/ng")], drop_failed=False)
+    assert kept[0].summary.startswith("（本文は取得できず: HTTP 403。RSS の抜粋のみ）RSS teaser")
+
+
+def test_extract_body_ignores_short_teasers():
+    html = "<html><body><article><p>" + ("Tether said its reserves grew. " * 30) + "</p></article></body></html>"
+    assert common.extract_body(html, "https://x.example/a").startswith("Tether said")
+    assert common.extract_body("<html><body><p>short</p></body></html>", "https://x.example/b") == ""

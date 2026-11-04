@@ -87,6 +87,7 @@ def main() -> int:
     logger.info("Total: %d fetched, %d new", len(all_items), len(new_items))
     # Keep Claude select payload small (Cooper-style cap).
     SELECT_CANDIDATE_CAP = 200
+    SELECT_EXTRA = 40  # extra picks so unreadable articles can be replaced (Fable 判断: 11/04-05 は約半分が本文なし)
     if len(new_items) > SELECT_CANDIDATE_CAP:
         epoch = datetime.min.replace(tzinfo=timezone.utc)
         new_items = sorted(
@@ -104,9 +105,14 @@ def main() -> int:
     selected = []
     usage_tracker.reset()
     try:
+        target = config.settings.max_briefing_items
+        # Over-select, then fill the briefing with articles whose body was actually read.
+        # 2026-11-05 Aki「ちゃんと本文を読んで本文の要約を出力できるようにして」: on 11/04-05 about
+        # half of the 50 picks had no body (Bloomberg/Finextra/OpenAI 403 bot checks, unresolved
+        # Google News links, NHK pages with no extractable text) and were posted as 本文未確認.
         selected = select_items(
             new_items,
-            max_briefing_items=config.settings.max_briefing_items,
+            max_briefing_items=target + SELECT_EXTRA,
             timeout=config.settings.claude_timeout,
         )
         logger.info("Claude selected %d articles", len(selected))
@@ -117,9 +123,12 @@ def main() -> int:
                 user_agent=config.settings.user_agent,
             ) for item in selected]
             with_body = [a for a in articles if a.body]
+            thin = [a for a in articles if not a.body]
             logger.info("Fetched bodies: %d/%d usable", len(with_body), len(articles))
-            # Prefer bodies first, but keep thin articles so we can approach the 50 target.
-            articles = with_body + [a for a in articles if not a.body]
+            # Bodies first (selection order kept); thin articles only fill a shortfall.
+            articles = with_body[:target] + thin[:max(0, target - len(with_body))]
+            logger.info("Briefing input: %d with body, %d without body",
+                        min(len(with_body), target), max(0, len(articles) - len(with_body[:target])))
             # Collapse redirect duplicates onto one story (keep body if any).
             deduped: list = []
             seen_urls: set[str] = set()

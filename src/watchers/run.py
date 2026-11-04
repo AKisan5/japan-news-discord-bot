@@ -172,7 +172,8 @@ def run(target: str, *, dry_run: bool, channel: str, force: bool = False,
     summary = (f"### {module.USERNAME} {target} {now:%Y-%m-%d %H:%M} JST\n"
                f"- 証拠 {len(evidence)}件（X {sum(1 for e in evidence if e.source.startswith('X @'))}件）"
                f"／項目 {len(briefing.items)}件／リンク切れで除外 {len(dead)}件\n"
-               f"- 取得失敗: {collected.errors or 'なし'}\n- {llm.cost_line()}\n")
+               f"- 取得失敗: {collected.errors or 'なし'}\n"
+               f"- 本文を読めなかった記事: {collected.body_failures or 'なし'}\n- {llm.cost_line()}\n")
     if not text:
         logger.info("writer returned no postable items")
         write_summary(summary + "\n投稿なし（項目0件）")

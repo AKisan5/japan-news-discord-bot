@@ -94,6 +94,7 @@ def _fetch_article_once(item: FeedItem, *, timeout: float, user_agent: str) -> A
             if response.url.host == "news.google.com":
                 target = _google_target(str(response.url), response.text)
                 if not target:
+                    _log.info("Body unavailable for %s: Google News link not resolved", item.url)
                     return article
                 article.url = target
                 response = client.get(target)
@@ -109,8 +110,13 @@ def _fetch_article_once(item: FeedItem, *, timeout: float, user_agent: str) -> A
             ) or ""
             if len(text.strip()) >= MIN_BODY_CHARS:
                 article.body = text.strip()[:MAX_BODY_CHARS]
+            else:
+                _log.info("Body unavailable for %s: extracted %d chars (< %d)",
+                          article.url, len(text.strip()), MIN_BODY_CHARS)
     except httpx.TransportError:
         raise
+    except httpx.HTTPStatusError as exc:
+        _log.info("Body unavailable for %s: HTTP %d", article.url, exc.response.status_code)
     except Exception as exc:
         _log.info("Body unavailable for %s: %s", item.url, type(exc).__name__)
         # Paywalls, timeouts, malformed HTML, and extraction failures must not

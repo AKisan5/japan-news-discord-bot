@@ -12,8 +12,8 @@ from datetime import datetime, timedelta, timezone
 
 import feedparser
 
-from .common import (JST, Collected, Evidence, WatcherState, fmt_jst, get, github_headers,
-                     parse_dt, strip_html)
+from .common import (JST, Collected, Evidence, WatcherState, extract_body, fmt_jst, get,
+                     github_headers, parse_dt, strip_html, with_bodies)
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +97,7 @@ def _blog(out: Collected, state: WatcherState) -> None:
         out.evidence.append(Evidence(
             source="公式ブログ", title=strip_html(title.group(1), 160) if title else path,
             url=url, published_at=date.group(1) if date else "",
-            summary=strip_html(page, 1200)))
+            summary=extract_body(page, url) or strip_html(page, 1200)))
 
 
 def _hub(out: Collected, state: WatcherState, since: datetime) -> None:
@@ -275,6 +275,14 @@ def _github(out: Collected, since: datetime) -> None:
 
 
 def _news_feeds(out: Collected, since: datetime) -> None:
+    found: list[Evidence] = []
+    _news_feed_items(found, out, since)
+    kept, notes = with_bodies(found, drop_failed=False)  # Even news is rare: keep teasers, marked
+    out.evidence.extend(kept)
+    out.body_failures.extend(notes)
+
+
+def _news_feed_items(found: list[Evidence], out: Collected, since: datetime) -> None:
     for name, url in NEWS_FEEDS:
         try:
             parsed = feedparser.parse(get(url).text)
@@ -286,7 +294,7 @@ def _news_feeds(out: Collected, since: datetime) -> None:
             ts = e.get("published") or e.get("updated") or ""
             dt = datetime(*e.published_parsed[:6]).isoformat() + "+00:00" if e.get("published_parsed") else ts
             if KEYWORDS.search(text) and _after(dt, since):
-                out.evidence.append(Evidence(source=name, title=e.get("title", ""), url=e.get("link", ""),
+                found.append(Evidence(source=name, title=e.get("title", ""), url=e.get("link", ""),
                                              published_at=dt, summary=strip_html(e.get("summary", ""), 800)))
 
 
@@ -343,6 +351,9 @@ Even Hub で作られているプロダクトと実際の活用事例。補助�
 - メディア（UploadVR・Road to VR・Engadget・The Verge・9to5Google・MoguraVR・mixed-news・「Web 記事（…）」）の記事は
   「〜と報じた」の形で書き、見出しに媒体名を入れる
 - 同じ話題の証拠は1項目にまとめる。新着が無ければ items を空にする。水増ししない
+- summary が「本文: 」で始まる証拠は、記事ページから読んだ本文である。見出しの言い換えで済ませず、
+  本文の要点（誰が・何を・数字・理由・今後）を2〜4文で要約する。「（本文は取得できず…）」で始まる証拠は
+  抜粋に書かれた範囲だけを書き、文末に「（本文未確認）」と付ける
 - 上位の項目は what と why の両方を書く。後半の短い話題は why を '' にしてよい
 - 非公式の改造ファームは unofficial_firmware=true。Reddit の RSS 抜粋だけに基づくものは unverified=true
 - X の投稿は本文（summary）に書かれていることだけを書く。リンク先を見ていなければ「リンク先は未確認」と書く
