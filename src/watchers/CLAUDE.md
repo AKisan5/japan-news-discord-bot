@@ -18,8 +18,8 @@ SUIデイリーと Even G2ウォッチャーの朝刊、そして SUI速報を�
 
 ## 2026-11-04 の情報源の追加（Aki 要求「情報量が減ってしまった」）
 
-- 原因（実測）: Grok 版は投稿の URL の約半分が X 由来だった（Even 10/20〜11/03 は 14〜32 本中 6〜11 本、SUI は 6〜20 本中 1〜13 本）。X を止めたうえ、Grok が Web 検索で拾っていたメディア記事・Even Hub・提携先の発表を拾う取得源が無かった。11/04 の Even は、前夜 19:14 の試験投稿で集計期間が13時間に縮んでいた
-- Aki 原文: 「evenに関してはevenhubでどのようなものが公開されているのか…調べて欲しい」「サークルあたりとか…テザーみたいなステーブルコイン周りの情報…jpycとかusdcとかusdt」「suiに関してはもうちょっと欲しいしaiエージェント決済とかについてももうちょっと欲しい」
+- 原因（実測）: Grok 版は URL の約半分が X 由来だった。X を止めたうえ、メディア記事・Even Hub を拾う取得源が無かった（詳細は chat-log #13）
+- Aki 原文: 「evenhubでどのようなものが公開されているのか」「jpycとかusdcとかusdt」「aiエージェント決済とかについてももうちょっと欲しい」
 - 足したもの
   - Even Hub の公開ストア API（`/api/v1/storefront/discovery`・`/detail`）。公開ページ `https://hub.evenrealities.com/catalogue` が認証なしで使っている API で、robots.txt は全許可。版ごとの `updated_at`・`changelog` で更新を判定する。一覧 API `/api/v1/apps/list` は 401（アプリ内トークンが要る）なので使わない
   - XR メディアの RSS（UploadVR・Road to VR・Engadget・The Verge・9to5Google・MoguraVR）
