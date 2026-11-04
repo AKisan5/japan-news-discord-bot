@@ -41,6 +41,8 @@ def test_since_window_uses_last_post_and_caps_gap(tmp_path):
     assert common.since_window(st, NOW) == NOW - timedelta(hours=26)
     st.data["last_posted_at"] = (NOW - timedelta(hours=48)).isoformat()
     assert common.since_window(st, NOW) == NOW - timedelta(hours=48)
+    st.data["last_posted_at"] = (NOW - timedelta(hours=13)).isoformat()  # an extra post must not shrink the window
+    assert common.since_window(st, NOW) == NOW - timedelta(hours=26)
     st.data["last_posted_at"] = (NOW - timedelta(days=10)).isoformat()
     assert common.since_window(st, NOW) == NOW - timedelta(hours=72)
 
@@ -56,7 +58,7 @@ def test_even_render_matches_grok_format():
         _item(title="根拠なし", evidence_ids=["9"]),  # unknown evidence id -> dropped
     ])
     text = even.render(b, ev, SINCE, NOW)
-    assert text.startswith("# Even G2 新着（2026-11-04 08:06 JST・前回 11/03 08:16 JST 以降）")
+    assert text.startswith("# Even G2 新着（2026-11-04 08:06 JST・11/03 08:16 JST 以降）")
     assert "## 1. 公式サポート新規：KB（11/03 19:41 JST）\n- 何が変わったか: 手順記事が公開された。\n- どんな場面で役立つか: 会議で使う。\n- https://support.example/kb" in text
     assert "- https://reddit.example/r （未確認）" in text
     assert "非公式改造ファームウェア" in text
@@ -198,3 +200,117 @@ def test_writer_failure_returns_2(monkeypatch, tmp_path):
 def test_parse_dt(value, expected):
     got = common.parse_dt(value)
     assert (got.isoformat() if got else None) == expected
+
+
+class _Resp:
+    def __init__(self, data):
+        self._d = data
+
+    def json(self):
+        return self._d
+
+
+def test_even_hub_new_update_and_unknown(monkeypatch, tmp_path):
+    recent, old = (NOW - timedelta(hours=3)).isoformat(), (NOW - timedelta(days=9)).isoformat()
+    disc = {"data": {"plugins": [{"package_id": "a.known"}], "rankings": {"fresh": [{"package_id": "b.fresh"}],
+                                                                       "trending": [{"package_id": "a.known"}]},
+                     "config": {"sections": [{"entries": [{"package_id": "c.other"}]},
+                                             {"folders": [{"featured_items": [{"package_id": "d.old"}]}]}]}}}
+    details = {"a.known": ("1.1.0", recent), "b.fresh": ("1.0.0", recent), "c.other": ("2.0.0", recent),
+               "d.old": ("3.0.0", old)}
+
+    def fake_get(url, params=None, **kw):
+        if url.endswith("/discovery"):
+            return _Resp(disc)
+        ver, when = details[params["package_id"]]
+        return _Resp({"data": {"name": params["package_id"], "creator_name": "dev", "tagline": "t",
+                               "version": {"version": ver, "updated_at": when, "changelog": "c"}}})
+
+    monkeypatch.setattr(even, "get", fake_get)
+    st = WatcherState("even", root=tmp_path)
+    st.set_seen("hub", ["a.known@1.0.0", "d.old@2.0.0"])
+    out = Collected()
+    even._hub(out, st, NOW - timedelta(hours=26))
+    kinds = {e.url.rsplit("/", 1)[1]: e.source for e in out.evidence if e.source != even.WEEKLY_SOURCE}
+    assert kinds == {"a.known": "Even Hub アプリ更新", "b.fresh": "Even Hub 掲載",
+                     "c.other": "Even Hub 掲載"}  # d.old: version outside the window
+    assert "Fresh 欄" in next(e.summary for e in out.evidence if e.url.endswith("b.fresh"))
+    assert "a.known@1.1.0" in out.seen["hub"]
+    assert all(e.url.startswith("https://hub.evenrealities.com/catalogue/") for e in out.evidence)
+
+
+def test_sui_media_topics_window_and_cap(monkeypatch):
+    fresh_t, old_t = (NOW - timedelta(hours=2)).isoformat(), (NOW - timedelta(days=3)).isoformat()
+    rows = ([{"title": f"Tether USDT news {i}", "link": f"https://m.example/s{i}", "published": fresh_t,
+              "summary": ""} for i in range(20)]
+            + [{"title": "Sui DeepBook upgrade", "link": "https://m.example/sui", "published": fresh_t, "summary": ""},
+               {"title": "Coinbase x402 adds agents", "link": "https://m.example/x402", "published": fresh_t,
+                "summary": ""},
+               {"title": "Bitcoin price", "link": "https://m.example/btc", "published": fresh_t, "summary": ""},
+               {"title": "Circle USDC old", "link": "https://m.example/old", "published": old_t, "summary": ""}])
+    monkeypatch.setattr(sui, "MEDIA_FEEDS", [("M1", "u1"), ("M2", "u2")])
+    monkeypatch.setattr(sui, "feed_entries", lambda url: rows)  # same rows in both feeds -> deduped by link
+    out = Collected()
+    sui._media(out, NOW - timedelta(hours=26))
+    srcs = [e.source for e in out.evidence]
+    assert srcs.count("M1（報道・stable）") == sui.MEDIA_CAP["stable"]
+    assert "M1（報道・sui）" in srcs and "M1（報道・agentpay）" in srcs
+    urls = {e.url for e in out.evidence}
+    assert "https://m.example/btc" not in urls and "https://m.example/old" not in urls
+    assert not any(s.startswith("M2") for s in srcs)
+
+
+def test_sui_stable_market_summary(monkeypatch):
+    assets = {"peggedAssets": [
+        {"symbol": "USDT", "pegType": "peggedUSD", "circulating": {"peggedUSD": 178e9},
+         "circulatingPrevDay": {"peggedUSD": 178.5e9}, "circulatingPrevWeek": {"peggedUSD": 181.7e9}},
+        {"symbol": "USDC", "pegType": "peggedUSD", "circulating": {"peggedUSD": 70.9e9},
+         "circulatingPrevDay": {"peggedUSD": 71.2e9}, "circulatingPrevWeek": {"peggedUSD": 71.3e9}},
+        {"symbol": "JPYC", "pegType": "peggedJPY", "circulating": {"peggedJPY": 18_748_509},
+         "circulatingPrevDay": {"peggedJPY": 18_912_062}, "circulatingPrevWeek": {"peggedJPY": 19_456_597}}]}
+    monkeypatch.setattr(sui, "get", lambda url, **kw: _Resp(assets))
+    out = Collected()
+    sui._stable_market(out)
+    s = out.evidence[0].summary
+    assert "USDT 約1,780億ドル" in s and "USDC 約709億ドル" in s and "JPYC 約1,875万円" in s
+    assert "米ドル建て全体 約2,489億ドル" in s
+    assert out.evidence[0].source.startswith(run.DATA_SOURCES)  # numbers alone never trigger a post
+
+
+@pytest.fixture(autouse=True)
+def _no_news_search(monkeypatch):
+    monkeypatch.setenv("WATCHER_NEWS_SEARCH", "0")  # run() tests must not call Claude / the web
+
+
+class _Page:
+    def __init__(self, html, url="https://news.example/a", status=200):
+        self.text, self.url, self.status_code = html, url, status
+        self.headers = {"content-type": "text/html; charset=utf-8"}
+
+
+def test_fetch_article_reads_date_and_meta(monkeypatch):
+    html = ('<html><head><meta property="og:title" content="Mastercard and OpenAI sign agentic deal">'
+            '<meta property="og:description" content="Agent Pay comes to ChatGPT.">'
+            '<meta property="article:published_time" content="2026-11-03T08:56:00Z"></head>'
+            '<body><p>Body text.</p></body></html>')
+    monkeypatch.setattr(common, "get", lambda url, **kw: _Page(html, "https://www.news.example/a"))
+    ev = common.fetch_article("https://www.news.example/a", label="Web 記事・報道")
+    assert ev.source == "Web 記事・報道（news.example）"
+    assert ev.title.startswith("Mastercard") and "Agent Pay" in ev.summary
+    assert ev.published_at.startswith("2026-11-03T08:56")
+    monkeypatch.setattr(common, "get", lambda url, **kw: _Page("<html><p>no date</p></html>"))
+    assert common.fetch_article("https://news.example/b") is None  # cannot prove it is new
+    assert common.fetch_article("https://news.example/b", page_age="November 3, 2026") is not None
+
+
+def test_news_evidence_keeps_only_fresh_unreported(monkeypatch, tmp_path):
+    cands = [{"url": f"https://n.example/{k}", "title": k, "page_age": ""} for k in ("new", "old", "rep", "dup")]
+    monkeypatch.setattr(llm, "discover_news", lambda **kw: cands)
+    times = {"new": NOW - timedelta(hours=2), "old": NOW - timedelta(days=5), "rep": NOW, "dup": NOW}
+    monkeypatch.setattr(run, "fetch_article", lambda url, **kw: Evidence(
+        source="Web 記事・報道（n.example）", title="t", url=url,
+        published_at=times[url.rsplit("/", 1)[1]].isoformat()))
+    st = WatcherState("sui", root=tmp_path)
+    st.mark_reported(["https://n.example/rep"], "2026-11-03")
+    out = run._news_evidence(sui, st, NOW - timedelta(hours=26), {"https://n.example/dup"})
+    assert [e.url for e in out] == ["https://n.example/new"]

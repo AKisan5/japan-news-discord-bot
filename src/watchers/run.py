@@ -12,7 +12,7 @@ import tempfile
 from pathlib import Path
 
 from . import even, llm, sui
-from .common import (Evidence, WatcherState, fetch_x_post, normalize_url, now_jst, parse_dt,
+from .common import (Evidence, WatcherState, fetch_article, fetch_x_post, normalize_url, now_jst, parse_dt,
                      post_to_discord, since_window, url_alive, write_summary)
 
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"),
@@ -20,8 +20,9 @@ logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"),
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger("watchers")
 
-DATA_SOURCES = ("CoinGecko", "DefiLlama", "status.sui.io")
+DATA_SOURCES = ("CoinGecko", "DefiLlama", "status.sui.io", even.WEEKLY_SOURCE)  # numbers only: never post on these alone
 MAX_X_POSTS = 20
+MAX_NEWS = 15  # web articles per run (Fable 判断: 入力トークンの上限)
 
 
 def _x_evidence(module, state: WatcherState, since) -> list[Evidence]:
@@ -47,6 +48,32 @@ def _x_evidence(module, state: WatcherState, since) -> list[Evidence]:
         if len(out) >= MAX_X_POSTS:
             break
     logger.info("X posts kept=%d %s old_dates=%s", len(out), stats, sorted(ages)[-8:])
+    return out
+
+
+def _news_evidence(module, state: WatcherState, since, known: set[str]) -> list[Evidence]:
+    """Web articles: Claude search proposes URLs, the page itself proves date and content."""
+    cands = llm.discover_news(topics=module.NEWS_TOPICS, since=since,
+                              blocked_domains=module.NEWS_BLOCKED)
+    out: list[Evidence] = []
+    stats = {"reported": 0, "unfetchable": 0, "too_old": 0}
+    for c in cands:
+        if state.is_reported(c["url"]) or normalize_url(c["url"]) in known:
+            stats["reported"] += 1
+            continue
+        ev = fetch_article(c["url"], page_age=c.get("page_age", ""), label=module.NEWS_LABEL)
+        if not ev or state.is_reported(ev.url) or normalize_url(ev.url) in known:
+            stats["unfetchable" if not ev else "reported"] += 1
+            continue
+        when = parse_dt(ev.published_at)
+        if not when or when < since:
+            stats["too_old"] += 1
+            continue
+        known.add(normalize_url(ev.url))
+        out.append(ev)
+        if len(out) >= MAX_NEWS:
+            break
+    logger.info("news candidates=%d kept=%d %s", len(cands), len(out), stats)
     return out
 
 
@@ -105,6 +132,14 @@ def run(target: str, *, dry_run: bool, channel: str, force: bool = False,
             except llm.WatcherLLMError as exc:
                 logger.warning("X discovery failed: %s (continuing without X)", exc)
                 collected.errors.append(f"X 検索: {exc}")
+        # Web news (2026-11-04 Aki「もうちょっと情報量は多いほうがいい」): on unless WATCHER_NEWS_SEARCH=0
+        if os.environ.get("WATCHER_NEWS_SEARCH", "1") == "1":
+            try:
+                known = {normalize_url(e.url) for e in evidence}
+                evidence = evidence + _news_evidence(module, state, since, known)
+            except llm.WatcherLLMError as exc:
+                logger.warning("news discovery failed: %s (continuing without it)", exc)
+                collected.errors.append(f"Web 記事検索: {exc}")
 
     if window:  # replay: keep only what existed before the window end
         evidence = [e for e in evidence if not parse_dt(e.published_at) or parse_dt(e.published_at) <= now]

@@ -8,11 +8,11 @@ import hashlib
 import logging
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import feedparser
 
-from .common import (Collected, Evidence, WatcherState, fmt_jst, get, github_headers,
+from .common import (JST, Collected, Evidence, WatcherState, fmt_jst, get, github_headers,
                      parse_dt, strip_html)
 
 logger = logging.getLogger(__name__)
@@ -26,7 +26,29 @@ SUPPORT_API = "https://support.evenrealities.com/api/v2/help_center/en-us/articl
 CHANGELOG = "https://hub.evenrealities.com/docs/reference/changelog"
 NPM_PKG = "@evenrealities/even-terminal"
 NEWS_FEEDS = [("mixed-news", "https://mixed-news.com/en/feed/"),
-              ("metaversewatcher", "https://www.metaversewatcher.io/feed")]
+              ("metaversewatcher", "https://www.metaversewatcher.io/feed"),
+              # 2026-11-04 added (Grok-era posts cited engadget etc.); only KEYWORDS matches are kept
+              ("UploadVR", "https://www.uploadvr.com/rss/"),
+              ("Road to VR", "https://www.roadtovr.com/feed/"),
+              ("Engadget", "https://www.engadget.com/rss.xml"),
+              ("The Verge", "https://www.theverge.com/rss/index.xml"),
+              ("9to5Google", "https://9to5google.com/feed/"),
+              ("MoguraVR", "https://www.moguravr.com/feed/")]
+# Even Hub public storefront: the same unauthenticated API the public page
+# https://hub.evenrealities.com/catalogue uses (robots.txt allows all). 2026-11-04 Aki
+# 「evenhubでどのようなものが公開されているのか…調べて欲しい」
+HUB = "https://hub.evenrealities.com"
+# Web news via Claude search (URLs only; the page proves date/content). X stays off (Aki 2026-11-03).
+NEWS_LABEL = "Web 記事"
+NEWS_TOPICS = [
+    "Even Realities Even G2 smart glasses news, reviews, firmware and app updates, R1 ring",
+    "Even Hub apps for Even G2 (new apps, developer launches, hackathons)",
+    "Even Realities 日本: Even G2 のレビュー・展示・販売・イベント（日本語の記事）",
+]
+NEWS_BLOCKED = ["x.com", "twitter.com", "reddit.com", "youtube.com", "evenrealities.com",
+                "amazon.com", "amazon.co.jp"]
+WEEKLY_SOURCE = "Even Hub ストア（週次）"
+HUB_DETAIL_MAX = 80  # detail calls per run (Fable 判断: discovery に載るのは約70件)
 REDDIT_RSS = "https://www.reddit.com/r/EvenRealities/new/.rss"
 GITHUB_PHRASES = ["even g2", "even-g2", "evenhub", "even hub", "even realities"]
 BULK_UPDATE_MIN = 5  # articles re-saved in the same minute count as one bulk update (Fable 判断)
@@ -40,13 +62,15 @@ def _after(iso: str, since: datetime) -> bool:
 def collect(state: WatcherState, since: datetime) -> Collected:
     out = Collected()
     _blog(out, state)
+    _hub(out, state, since)
     _support(out, since)
     _changelog(out, state)
     _npm(out, since)
     _github(out, since)
     _news_feeds(out, since)
     _reddit(out, since)
-    out.evidence = [e for e in out.evidence if not state.is_reported(e.url)]
+    out.evidence = [e for e in out.evidence if not state.is_reported(e.url)
+                    or e.source.startswith(WEEKLY_SOURCE)]
     return out
 
 
@@ -74,6 +98,70 @@ def _blog(out: Collected, state: WatcherState) -> None:
             source="公式ブログ", title=strip_html(title.group(1), 160) if title else path,
             url=url, published_at=date.group(1) if date else "",
             summary=strip_html(page, 1200)))
+
+
+def _hub(out: Collected, state: WatcherState, since: datetime) -> None:
+    """New apps and version updates on the Even Hub storefront.
+
+    discovery lists Editor's choice, Fresh / Trending rankings, category picks and featured
+    plugins (~70 apps). Each app's detail has version.created_at / updated_at / changelog.
+    seen keys are "package_id@version": a new key whose version was published in the window is
+    reported (a new app if its first version is in the window, otherwise an update).
+    """
+    try:
+        disc = get(f"{HUB}/api/v1/storefront/discovery").json()["data"]
+    except Exception as exc:  # noqa: BLE001
+        return out.fail("Even Hub ストア", exc)
+    ids: list[str] = []
+    ids += [p.get("package_id") for p in disc.get("plugins") or []]
+    for rows in (disc.get("rankings") or {}).values():
+        ids += [r.get("package_id") for r in rows or []]
+    for sec in (disc.get("config") or {}).get("sections") or []:
+        ids += [e.get("package_id") for e in sec.get("entries") or []]
+        for f in sec.get("folders") or []:
+            ids += [e.get("package_id") for e in f.get("featured_items") or []]
+    fresh = {r.get("package_id") for r in (disc.get("rankings") or {}).get("fresh") or []}
+    trending = [r.get("package_id") for r in (disc.get("rankings") or {}).get("trending") or []]
+    ids = [i for i in dict.fromkeys(ids) if i][:HUB_DETAIL_MAX]
+    seen = state.seen("hub")
+    keys: list[str] = []
+    names: dict[str, str] = {}
+    for pid in ids:
+        try:
+            d = get(f"{HUB}/api/v1/storefront/detail", params={"package_id": pid}).json()["data"] or {}
+        except Exception as exc:  # noqa: BLE001
+            out.fail(f"Even Hub {pid}", exc)
+            continue
+        v = d.get("version") or {}
+        names[pid] = d.get("name") or pid
+        key = f"{pid}@{v.get('version', '')}"
+        keys.append(key)
+        if key in seen:
+            continue
+        created, updated = parse_dt(v.get("created_at")), parse_dt(v.get("updated_at"))
+        when = updated or created
+        if not (when and when >= since):
+            continue
+        if any(k.startswith(pid + "@") for k in seen):
+            kind = "Even Hub アプリ更新"
+        else:  # first time seen here: a new app or an update cannot be told apart from the API
+            kind = "Even Hub 掲載"
+        cats = "・".join(d.get("category") or [])
+        tags = ", ".join(d.get("tags") or [])
+        summary = (f"{d.get('name')}（開発者 {d.get('creator_name') or '不明'}）v{v.get('version', '?')}"
+                   f"／カテゴリ {cats or '－'}／タグ {tags or '－'}"
+                   f"{'／ストアの Fresh 欄に掲載中' if pid in fresh else ''}／一言: {d.get('tagline') or ''}"
+                   f"／変更点: {strip_html(v.get('changelog') or '', 500)}"
+                   f"／説明: {strip_html(d.get('description') or '', 900)}")
+        out.evidence.append(Evidence(source=kind, title=f"{d.get('name')} v{v.get('version', '')}",
+                                     url=f"{HUB}/catalogue/{pid}", published_at=when.isoformat(),
+                                     summary=summary))
+    out.seen["hub"] = keys
+    if datetime.now(JST).weekday() == 0 and trending:  # Monday: weekly ranking
+        out.evidence.append(Evidence(
+            source=WEEKLY_SOURCE, title="Even Hub トレンド上位", url=f"{HUB}/catalogue",
+            published_at=datetime.now(timezone.utc).isoformat(),
+            summary="Trending 上位: " + "、".join(f"{i + 1}. {names.get(p, p)}" for i, p in enumerate(trending))))
 
 
 def _support(out: Collected, since: datetime) -> None:
@@ -247,6 +335,13 @@ Even Hub で作られているプロダクトと実際の活用事例。補助�
 - 各項目の evidence_ids に、使った証拠の id を必ず入れる（URL はコードが付ける）
 - 時刻は日本時間（JST）。meta には「11/02 19:41 JST」の形で発表・投稿日時を書く（分からなければ日付だけ）
 - 重要な順に並べる（公式発表・アップデート → Even Hub のプロダクト・事例 → 日本の展示・販売 → コミュニティの声・困りごと）
+- 出所が「Even Hub アプリ更新」「Even Hub 掲載」の証拠は、Even Hub ストアの公式掲載情報である。
+  1アプリ1項目で、見出しは「Even Hub 更新：アプリ名 v版」「Even Hub 掲載：アプリ名（開発者）」の形にし、
+  何ができるか（説明・変更点）と、どんな場面で使えるかを書く。「掲載」は新着か更新かが分からないので
+  「新登場」と書かない（Reddit などの証拠で新登場と分かるときだけ書く）。同じアプリの話題は同じ項目にまとめる
+- 「Even Hub ストア（週次）」の証拠があれば、トレンド上位を1項目にまとめる
+- メディア（UploadVR・Road to VR・Engadget・The Verge・9to5Google・MoguraVR・mixed-news・「Web 記事（…）」）の記事は
+  「〜と報じた」の形で書き、見出しに媒体名を入れる
 - 同じ話題の証拠は1項目にまとめる。新着が無ければ items を空にする。水増ししない
 - 上位の項目は what と why の両方を書く。後半の短い話題は why を '' にしてよい
 - 非公式の改造ファームは unofficial_firmware=true。Reddit の RSS 抜粋だけに基づくものは unverified=true
@@ -276,7 +371,7 @@ def payload(collected: Collected, since: datetime, now: datetime, evidence_paylo
 
 def render(briefing, evidence: list[Evidence], since: datetime, now: datetime) -> str:
     head = (f"# Even G2 新着（{now.strftime('%Y-%m-%d')} {now.strftime('%H:%M')} JST・"
-            f"前回 {fmt_jst(since)} 以降）")
+            f"{fmt_jst(since)} 以降）")
     parts = [head]
     if briefing.lead.strip():
         parts.append(briefing.lead.strip())

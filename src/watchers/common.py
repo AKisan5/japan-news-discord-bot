@@ -67,6 +67,22 @@ def strip_html(text: str, limit: int = 600) -> str:
     return text[:limit]
 
 
+def feed_entries(url: str) -> list[dict]:
+    """RSS/Atom entries as {title, link, published (ISO, UTC), summary}. Raises on fetch errors."""
+    import feedparser  # local import: only the collectors need it
+
+    resp = get(url)
+    resp.raise_for_status()
+    rows = []
+    for e in feedparser.parse(resp.text).entries:
+        tp = e.get("published_parsed") or e.get("updated_parsed")
+        when = datetime(*tp[:6], tzinfo=timezone.utc).isoformat() if tp else (
+            e.get("published") or e.get("updated") or "")
+        rows.append({"title": strip_html(e.get("title", ""), 200), "link": e.get("link", ""),
+                     "published": when, "summary": strip_html(e.get("summary", ""), 700)})
+    return rows
+
+
 @dataclass
 class Evidence:
     """One fact source the writer may cite. Only these URLs may appear in a post."""
@@ -154,12 +170,18 @@ def normalize_url(url: str) -> str:
 
 def since_window(state: WatcherState, now: datetime, *, default_hours: int = 26,
                  max_hours: int = 72) -> datetime:
-    """Start of the reporting window: last post (if recent) else default_hours ago."""
+    """Start of the reporting window: last post (if recent) else default_hours ago.
+
+    The window is never shorter than default_hours: an extra post (e.g. the 19:14 trial on
+    11/03) must not shrink the next morning's window. Items already posted are excluded by the
+    reported-URL state, so the overlap does not repeat them.
+    """
     last = state.last_posted()
     floor = now - timedelta(hours=max_hours)
+    minimum = now - timedelta(hours=default_hours)
     if last and last > floor:
-        return last
-    return now - timedelta(hours=default_hours) if not last else floor
+        return min(last, minimum)
+    return minimum if not last else floor
 
 
 # --- X (fxtwitter) ---------------------------------------------------------
@@ -193,6 +215,66 @@ def fetch_x_post(url: str) -> Evidence | None:
         published_at=created.isoformat() if created else "",
         summary=text[:800],
     )
+
+
+# --- web articles ----------------------------------------------------------
+
+_META_DATE = [
+    re.compile(r'<meta[^>]+(?:property|name|itemprop)="(?:article:published_time|datePublished|pubdate|'
+               r'publish[-_]?date|date|dc\.date|parsely-pub-date|sailthru\.date)"[^>]+content="([^"]+)"', re.I),
+    re.compile(r'<meta[^>]+content="([^"]+)"[^>]+(?:property|name|itemprop)="(?:article:published_time|'
+               r'datePublished)"', re.I),
+    re.compile(r'"datePublished"\s*:\s*"([^"]+)"'),
+    re.compile(r'<time[^>]+datetime="([^"]+)"', re.I),
+]
+
+
+def _meta(html: str, prop: str) -> str:
+    m = (re.search(rf'<meta[^>]+(?:property|name)="{prop}"[^>]+content="([^"]*)"', html, re.I)
+         or re.search(rf'<meta[^>]+content="([^"]*)"[^>]+(?:property|name)="{prop}"', html, re.I))
+    return strip_html(m.group(1), 600) if m else ""
+
+
+def _page_age(value: str) -> datetime | None:
+    dt = parse_dt(value)
+    if dt:
+        return dt
+    for fmt in ("%B %d, %Y", "%b %d, %Y", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(value.strip(), fmt).replace(tzinfo=timezone.utc)
+        except ValueError:
+            continue
+    return None
+
+
+def fetch_article(url: str, *, page_age: str = "", label: str = "Web 記事") -> Evidence | None:
+    """Evidence from the article page itself (title, description, published time), or None.
+
+    The published time comes from the page's own metadata; the search result's page_age is a
+    fallback only. No date at all -> None (cannot prove it is new).
+    """
+    try:
+        resp = get(url, timeout=20)
+    except httpx.HTTPError:
+        return None
+    if resp.status_code >= 400 or "html" not in resp.headers.get("content-type", ""):
+        return None
+    html = resp.text[:600_000]
+    when = None
+    for pat in _META_DATE:
+        m = pat.search(html)
+        if m and (when := parse_dt(m.group(1))):
+            break
+    when = when or _page_age(page_age)
+    if not when:
+        return None
+    title = _meta(html, "og:title") or strip_html((re.search(r"<title>(.*?)</title>", html, re.S | re.I)
+                                                   or re.match("()", "")).group(1), 200)
+    desc = _meta(html, "og:description") or _meta(html, "description")
+    body = strip_html(" ".join(re.findall(r"<p[^>]*>(.*?)</p>", html, re.S | re.I)), 900)
+    host = re.sub(r"^www\.", "", httpx.URL(str(resp.url)).host or "")
+    return Evidence(source=f"{label}（{host}）", title=title or url, url=str(resp.url),
+                    published_at=when.isoformat(), summary=(desc + " " + body).strip()[:1200])
 
 
 # --- URL check and posting -------------------------------------------------
