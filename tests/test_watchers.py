@@ -314,3 +314,11 @@ def test_news_evidence_keeps_only_fresh_unreported(monkeypatch, tmp_path):
     st.mark_reported(["https://n.example/rep"], "2026-11-03")
     out = run._news_evidence(sui, st, NOW - timedelta(hours=26), {"https://n.example/dup"})
     assert [e.url for e in out] == ["https://n.example/new"]
+
+
+def test_rank_candidates_prefers_picks_and_drops_invented_and_old():
+    results = {"https://a.example/new/": {"url": "https://a.example/new/", "page_age": "November 3, 2026"},
+               "https://b.example/old": {"url": "https://b.example/old", "page_age": "2026-09-01"},
+               "https://c.example/x?utm_source=rss": {"url": "https://c.example/x?utm_source=rss", "page_age": ""}}
+    out = llm.rank_candidates(results, ["https://c.example/x", "https://made.up/y"], NOW - timedelta(hours=26))
+    assert [r["url"] for r in out] == ["https://c.example/x?utm_source=rss", "https://a.example/new/"]

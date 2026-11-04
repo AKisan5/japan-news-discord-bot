@@ -4,7 +4,8 @@ from __future__ import annotations
 import json
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
+from urllib.parse import urlparse
 
 import anthropic
 from pydantic import BaseModel, Field
@@ -139,7 +140,11 @@ def discover_news(*, topics: list[str], since: datetime, blocked_domains: list[s
             )
             _track(resp)
             for block in resp.content:
-                for item in getattr(block, "content", None) or []:
+                content = getattr(block, "content", None)
+                if getattr(block, "type", "") == "web_search_tool_result" and not isinstance(content, list):
+                    logger.warning("web search error: %s", getattr(content, "error_code", content))
+                    continue
+                for item in content or []:
                     if getattr(item, "type", "") == "web_search_result" and getattr(item, "url", ""):
                         seen.setdefault(item.url, {"url": item.url, "title": getattr(item, "title", "") or "",
                                                    "page_age": getattr(item, "page_age", "") or ""})
@@ -152,7 +157,31 @@ def discover_news(*, topics: list[str], since: datetime, blocked_domains: list[s
             break
     except anthropic.APIError as exc:
         raise WatcherLLMError(f"Claude API error during news discovery: {type(exc).__name__}") from None
-    return [seen[u] for u in dict.fromkeys(chosen) if u in seen]
+    return rank_candidates(seen, chosen, since)
+
+
+MAX_NEWS_CANDIDATES = 30  # pages fetched per run (Fable 判断)
+
+
+def rank_candidates(results: dict[str, dict], chosen: list[str], since: datetime) -> list[dict]:
+    """Model picks first, then the other results; drop ones whose page_age is before the window."""
+    from .common import _page_age, normalize_url
+
+    by_norm = {normalize_url(u): r for u, r in results.items()}
+    order = [normalize_url(u) for u in chosen] + list(by_norm)
+    out: list[dict] = []
+    for key in dict.fromkeys(order):
+        r = by_norm.get(key)
+        if r and len(urlparse(r["url"]).path.strip("/")) < 6:
+            continue  # home / section pages carry the newest article's date, not their own
+        if not r:
+            continue  # the model named a URL that was not in any search result: never use it
+        age = _page_age(r.get("page_age") or "")
+        if age and age < since - timedelta(days=1):  # page_age is often date-only: 1 day slack
+            continue
+        out.append(r)
+    logger.info("news results=%d chosen=%d candidates=%d", len(results), len(chosen), len(out))
+    return out[:MAX_NEWS_CANDIDATES]
 
 
 # --- writing ---------------------------------------------------------------

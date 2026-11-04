@@ -16,9 +16,22 @@ SUIデイリーと Even G2ウォッチャーの朝刊、そして SUI速報を�
 - 執筆モデル: `claude-sonnet-5-5`
 - 起動: GitHub Actions＋Cloudflare（GitHub の schedule は 2.5〜10 時間遅れた実測があるため）
 
+## 2026-11-04 の情報源の追加（Aki 要求「情報量が減ってしまった」）
+
+- 原因（実測）: Grok 版は投稿の URL の約半分が X 由来だった（Even 10/20〜11/03 は 14〜32 本中 6〜11 本、SUI は 6〜20 本中 1〜13 本）。X を止めたうえ、Grok が Web 検索で拾っていたメディア記事・Even Hub・提携先の発表を拾う取得源が無かった。11/04 の Even は、前夜 19:14 の試験投稿で集計期間が13時間に縮んでいた
+- Aki 原文: 「evenに関してはevenhubでどのようなものが公開されているのか…調べて欲しい」「サークルあたりとか…テザーみたいなステーブルコイン周りの情報…jpycとかusdcとかusdt」「suiに関してはもうちょっと欲しいしaiエージェント決済とかについてももうちょっと欲しい」
+- 足したもの
+  - Even Hub の公開ストア API（`/api/v1/storefront/discovery`・`/detail`）。公開ページ `https://hub.evenrealities.com/catalogue` が認証なしで使っている API で、robots.txt は全許可。版ごとの `updated_at`・`changelog` で更新を判定する。一覧 API `/api/v1/apps/list` は 401（アプリ内トークンが要る）なので使わない
+  - XR メディアの RSS（UploadVR・Road to VR・Engadget・The Verge・9to5Google・MoguraVR）
+  - SUI: USDT・USDC・JPYC の発行残高（DefiLlama）、Tether の RSS、Circle の pressroom・blog（RSS が無いので既読一覧と比べる）、Walrus ブログ、Stripe ブログ・AP2 の GitHub・x402 の npm、暗号資産メディア6紙の RSS（話題で絞る）、節「🤖 AIエージェント決済」
+  - 両方: Web 記事の検索（`WATCHER_NEWS_SEARCH`、既定で動く）。Claude の Web 検索は URL を挙げるだけで、検索結果に出た URL しか採らない。日付と中身は記事ページの metadata をコードが読んで確かめ、日付が取れない記事・期間より古い記事は捨てる
+- 取らないもの: jpyc.co.jp は自動アクセスに 403 を返すので取りに行かない（回避しない）。Google ニュースの RSS は記事へのリンクが Google 経由になり本文を確かめられないので使わない
+- 集計期間は最短26時間にした（前回投稿が近くても縮めない）。重複は報告済みの URL の除外で防ぐ
+- SUI の件数の目安を「8〜12件」から「12〜18件」に上げた。出自: Fable 判断（Aki「もうちょっと情報量は多いほうがいい」と、範囲がステーブルコイン・エージェント決済に広がったため）。目安であり、水増しはしない
+
 ## 品質の仕組み（崩さない）
 
-1. **取得は機械で行う**。RSS・API・GitHub の結果だけを証拠にする
+1. **取得は機械で行う**。RSS・API・GitHub の結果と、コードが記事ページから読んだ内容だけを証拠にする（Claude の検索は URL の候補を出すだけ）
 2. **X（今は止めている）**。動かす場合は、投稿 URL を見つけてから fxtwitter API で本文・投稿者・時刻を取り直し、時刻が対象期間より前の投稿は捨てる
 3. **執筆は構造化出力にする**。項目ごとに title・meta・what・why・urls を受け取り、Markdown はコード（render）で組む。こうすると形式が崩れない
 4. **URL を照合する**。執筆結果の URL は証拠の中にあるものだけを残し、無い URL は落とす。そのうえで HTTP 確認をして、404/410 の項目は落とす
@@ -36,7 +49,9 @@ SUIデイリーと Even G2ウォッチャーの朝刊、そして SUI速報を�
 
 ## 費用の歯止め（出自: Fable 判断）
 
-- Web 検索の `max_uses` は8
-- 1回の実行で Claude を呼ぶのは執筆1回だけ（X を止めている間）
+- Web 検索の `max_uses` は X が8、Web 記事が6
+- 1回の実行で Claude を呼ぶのは、Web 記事の検索1回と執筆1回
+- Web 記事は1回15件まで、メディア RSS は話題ごとに sui 10・stable 12・agentpay 8 件まで（新しい順）
+- Even Hub の詳細取得は1回80件まで
 - SUI速報で Claude を呼ぶのは、A1〜A6 のアラートが出たときだけ
 - 1回あたりの $ は `usage_tracker` で Actions のサマリーに出す
