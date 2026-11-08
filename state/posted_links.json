@@ -2,6 +2,366 @@
   "version": 1,
   "posted": [
     {
+      "url": "https://www.cnbc.com/2026/11/08/ai-agents-risks.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/newsletters/2026-11-08/apple-explores-turning-siri-ai-into-chatgpt-dots-like-agent-ios-28-shake-up",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-08/anthropic-buys-power-for-ai-data-centres-in-3-4b-deal-ft-says",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-08/voters-put-the-ai-data-center-boom-on-notice-video",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1029126/anthropic-metr-report-accelerating-ai-development",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/world-models-will-soon-be-inescapable-what-you-need-to-know/",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/nyt-cooking-new-ai-powered-recipe-modifier-is-pretty-good/",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-08/trump-s-1-5-trillion-defense-budget-to-be-blocked-by-democrats",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-08/wall-street-races-for-megadeals-as-countdown-begins-on-trump-era",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/08/trump-tariffs-democrats-congress-canada.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-08/democratic-sweep-tests-trump-linked-trades-across-latin-america",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/features/2026-11-08/huckabee-sanders-charts-2028-path-blends-trump-white-house-with-faith-health",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/07/after-the-midterms-things-are-looking-rocky-for-elon-musk-and-data-centers/",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-07/ai-backlash-spreads-across-europe-with-data-center-protests",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-08/china-raises-delegate-count-to-2-360-for-2027-party-congress",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cmd7q15drwgeo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-08/poland-s-deadliest-shooting-in-years-deepens-political-divide",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cm3r5gnxqz3jo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-08/colombia-vows-to-protect-journalists-threatened-by-narco-gangs",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-08/voters-punish-major-parties-in-cliffhanger-new-zealand-election",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-08/erdogan-joins-azerbaijan-victory-celebrations-in-sign-of-thaw",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cmy8367lj5xlo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/c6d091ev3p0jo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cm74pk1g51nko?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/c68jzzvjgdy9o?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/08/poppi-founders-jetty-hydration-gatorade.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/08/france-protests-clashes-arrests.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/08/frequent-flyer-miles-points-thanksgiving.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/08/amazon-home-robot-fauna-sprout.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382761/bitcoin-developer-quantum-landmines-losing-bet",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382768/apple-meta-every-magnificent-seven-stock-opts-out-okx-ice-venue",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382770/ai-chip-stocks-bounce-global-rout-bubble-starting-burst",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://decrypt.co/382714/sony-axing-game-discs-will-have-outsized-impact-on-low-income-gamers-experts-say",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/08/cathie-wood-ai-selloff.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/07/trump-ufc-dana-white-press-secretary-offer.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/07/iran-war-midterm-election-oil-price-trump.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/07/berkshire-hathaway-q3-2026-earnings-buybacks.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/07/chinese-exec-was-recruited-to-spy-on-nvidia-ceo-according-to-us-intelligence-memo/",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-07/coreweave-asks-texas-governor-elect-for-data-center-cooperation",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-07/several-senate-republicans-call-for-delaying-leadership-election",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261108de72420",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261108de72609",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261108de72408",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261108de72603",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261108de72485",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261108de72412",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261028de66996",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261108de72392",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261107de72211",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261107de72062",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261107de72163",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261108de72373",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261108de72339",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/07/technology/whistle-blowers-jeffrey-wigand.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/06/technology/kalshi-polymarket-nyt-siena-poll-bets.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/tech/1029489/nyt-cooking-ai-assistant-review",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1029483/nvidia-ai-chips-china-blacklist-government",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/podcast/1029038/ai-cybersecurity-hackers-data-breach-dark-age-alex-stamos",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/apps-for-caregivers-get-a-dose-of-ai-but-that-might-not-be-enough/",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cm8xznl0n1q4o?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/security/2026/11/british-soldier-ignored-order-to-pull-his-sim-card-then-got-blackmailed/",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/science/2026/11/physicists-listened-to-electrical-noise-to-crack-a-superconductor-mystery/",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/science/2026/11/the-migration-that-transformed-africas-languages-genes-and-cultures/",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cmvg652l927lo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=746873",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=746996",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=746987",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=746965",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=746949",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=746797",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/07/trump-doj-democrats-alleged-threats-slotkin.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/make-it/2026/11/08/brand-sponsorship-local-communities.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/08/top-analysts-like-these-3-dividend-stocks-for-consistent-income.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.finextra.com/event-info/641/how-smes-can-simplify-cross-border-money-movement-while-reducing-costs-and-complexity?utm_medium=rssfinextra&utm_source=finextrafeed",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.finextra.com/event-info/651/trade-based-financial-crime-in-2027-exploring-threats-ai-and-portable-trust?utm_medium=rssfinextra&utm_source=finextrafeed",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cmzxjvpqrjxro?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-08/congress-returns-to-a-new-political-reality-video",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNMi1jVmpzNVdpVENwM2V6dGRGaHRkTjd5clR4d0pubHZGanl3d0N5eXdhcU1WVzZxR0YyQkcyR19vdkxvREF5YXE4ZGd4eXhKYWNHdnFqdzdOXzFYbDFLRW90aDg0aGpyN0tST2Q4YWlfYjJzNHhSUWlMY1UyYjIweWxlZFc?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE4tR2lBZUtWQ2lYaGNCcmd5VllrTU1MeE9kMkh3V2N2OFQ3ZWdPSmpxQ2FUOWN2SkJ4eFk4SlRTa2ZTWTdFM0pWUmJTWjRKVWx3Y2dRNGxVc0Mwd2dka2JvQVBQekZST2ZqMUoyd052bWZPaHM5cmE2SHFYbw?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQQTVkajR2S0QtUzdnUVhFVGh6b3JRdjFaOWx1VGVySUdhcjVYck1Sbm54emJiZy1XX3RNbkFDTDdPcDI0UGYyUjZWczVWNW5lOEVKekpLOF9hbkNHWXdmUG5wdFFTODRMSlhLV09LX3Q1d1BMdjZjTVBocUcwdFpYS0ZvWkoyc3lnakN4QXY2N05LbFQzb1JqYy1KWjNWOGIwd3MwbC1PZmgyd0o5NS1ZWmtLU0FaUktSSHRCOWtsaG1mcHc?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE05Nk9UZTZzQ09MSWpBYUEzTnpvSk5VT256NGc0THp6QXhzYm5hYzlXZ2FydTEyR2JGRnZqcnlST01FWTRfOUFXMXdFWDFmY0JsOVhwWHdJdHhQMmg4ZEg3ak5oQjluMm1C?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1ZZU9Pa0lRenJCdGZ5eXcxam44YW9iMWtwbWx0N0VQcG1MRnNMOHRJUHE3QmF5cWp2cmZsVnZfQVFkQk5ad2FTV3BFNWh0QTF4U3A1WklCMWpKRm1PZjVmUGtiRlZaWmJRYVFNc3FB?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-08/can-europe-afford-its-welfare-state-video",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1SMFBlVXFNZ1g2UUo3T3JOLUxXTFRodlBGY2hINXhZXzVqSTYxRUZjblp3eU9FTklaYUVUQ3dqN1p5M1pFSWUxZ1BRV0d4dFBDYklrSnRDcXNhTlBiWEVtN1MxclpIcE9GakEyVg?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxQTHFMSEdFVldTakpCSERNTVhUT3pmX1FUbUtmaEZDTjdtTFVFQ0ZkWjhscHlvT1pVRTJrSzZTNWJtUmNPOVFCeUU2djhnSy13RnUzajZyQklUX3pYWFRRVTJDdGxUUS12WWRZc0V4WGF3bHhEN19Hcml1NzJmbzRZVzAyeEhxYVhDYTZxTy1sTTI4WjN1bi1Xc2NYejF2ckVrYS1keFExQVdXTVlLZ1E?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxPVFoxU2t2RmlfekRDMWk3XzBSMjhnNlN2NVNXV0N2bzlmYnVNeGduMVlpRVhoMVl4UEI5eUQybE5Vai1HeU40WlhIYTVVRHBJMXlmYVdQcHpxTUh6ZkN0MV8zbExqblZQT3ZEdmdUYTVPc0NIeVdMcjlmNEh0dDRIUTRkZ1dmUG5DRzFxZWdDZDA1WU5nN3dOSmVLVkFIYVY0R1gwUlZnQ0JZUkxDY0dHT2RSb1FEV2RubDNlNDE3Y0RXUVU3VTRrMC1RcVNjdw?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/08/wnba-nwsl-womens-sports.html",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTFBoQ2psQUNpUjVrSFBUcTZCTUZmd3ZFU2ZPR2psOUxKem94MUJBRFlhOUNMenNOM1dRcVRoZm43UzVUTEJFcGJpVHB4bTVxSkZ3TDZibGdwVzdVV3ZYckR5a0RfS09MMmR3Q2NJd09kZjZCM0loeU9R?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE5UUWkwYUdSSlZRRDFNU2w0NGtaRkJRWU5UUUkxVTEyRmhkYTBhZFBNUnFhZTJjWTNwZzBJYmZJOFZiVzVfNmN1V1NLQk9sOUZ0bUVmZzcyNFVZY2pfM1BWRzJVLWxuemxNbGVPYTdGb25hbVZYMjJV?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTFB6aUdHYTYtM2NHMV9makZrWW5OVHhIdHdXdzNJeDdZUFd1T2xGa3lueVVCQ0pPaHZvZ3VXVGM0Tk1HWlZ0c2dPdTBIaDJGaFlNc25PNlgxaGsxSF9FOGVHaWhfVEhhMlJlMHVFUHFnYWFQQkZDSnRj?oc=5",
+      "posted_at": "2026-11-09T00:56:09.626548+09:00"
+    },
+    {
       "url": "https://news.web.nhk/newsweb/na/nd-20261106de71419",
       "posted_at": "2026-11-06T12:03:57.582548+09:00"
     },
