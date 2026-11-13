@@ -1,7 +1,7 @@
 {
   "alerts": {},
-  "last_posted_at": "2026-11-13T08:06:45.635715+09:00",
-  "last_posted_day": "2026-11-13",
+  "last_posted_at": "2026-11-14T08:06:38.655753+09:00",
+  "last_posted_day": "2026-11-14",
   "reported": {
     "https://9to5google.com/2026/11/11/even-realities-enterprise-sdk": "2026-11-12",
     "https://evenrealities.typeform.com/to/wngxSIoQ": "2026-10-31",
@@ -18,6 +18,7 @@
     "https://github.com/MiroslavProchazka/Even_G2_OS": "2026-10-26",
     "https://github.com/MrDorachan/GlassPort": "2026-11-08",
     "https://github.com/N1colov/displayplus-music": "2026-11-09",
+    "https://github.com/N1colov/hq": "2026-11-14",
     "https://github.com/Nickwu555wu/even-hub-hud_555": "2026-11-06",
     "https://github.com/NolanGarrett/hermes-even-g2": "2026-10-27",
     "https://github.com/Om-Alve/herdr-even": "2026-11-01",
@@ -33,6 +34,7 @@
     "https://github.com/antonioeram/even-app-messenger": "2026-11-13",
     "https://github.com/asuhacoder/even-grok-bot": "2026-11-12",
     "https://github.com/atlas-open-sources/borderless": "2026-11-04",
+    "https://github.com/azimkhan20002-cmd/hermes-g2": "2026-11-14",
     "https://github.com/capierc3/mentra-media-bridge": "2026-11-11",
     "https://github.com/cdayAI/Even-G2-Potential-Apps": "2026-10-27",
     "https://github.com/d3hospitality/isometric-sf-even-g2": "2026-11-08",
@@ -83,6 +85,8 @@
     "https://hub.evenrealities.com/catalogue/com.kfood.recipe": "2026-11-12",
     "https://hub.evenrealities.com/catalogue/com.marcoschwaer.unifi4g2": "2026-11-05",
     "https://hub.evenrealities.com/catalogue/com.mrdorachan.tuneglance": "2026-11-10",
+    "https://hub.evenrealities.com/catalogue/com.mune.classcaption": "2026-11-14",
+    "https://hub.evenrealities.com/catalogue/com.mune.livecaption": "2026-11-14",
     "https://hub.evenrealities.com/catalogue/com.mune.seoulculture": "2026-11-07",
     "https://hub.evenrealities.com/catalogue/com.quaklab.dragonscouter": "2026-11-11",
     "https://hub.evenrealities.com/catalogue/com.quaklab.phonefinder": "2026-11-10",
@@ -119,6 +123,7 @@
     "https://support.evenrealities.com/hc/en-us/articles/13772975786255-How-to-Choose-the-Right-Size": "2026-10-24",
     "https://support.evenrealities.com/hc/en-us/articles/14127464826511-Privacy-Policy": "2026-11-13",
     "https://support.evenrealities.com/hc/en-us/articles/14269247458319-Dashboard": "2026-11-03",
+    "https://support.evenrealities.com/hc/en-us/articles/14270468632207-Cookie-Policy": "2026-11-14",
     "https://support.evenrealities.com/hc/en-us/articles/14270525749519-Privacy-Policy-Device-APP": "2026-11-01",
     "https://support.evenrealities.com/hc/en-us/articles/14270548833551-Even-Realities-App-Terms-of-Service": "2026-11-01",
     "https://support.evenrealities.com/hc/en-us/articles/14273795154319-Conversate": "2026-11-03",
@@ -146,6 +151,7 @@
     "https://www.evenrealities.com/blogs/news/even-realities-brings-classic-tortoiseshell-design-to-smart-glasses-with-new-even-g2-brown-2": "2026-10-31",
     "https://www.evenrealities.com/blogs/news/introducing-the-even-g2-enterprise-sdk": "2026-11-11",
     "https://www.evenrealities.com/blogs/stories/what-matters-more-than-perfect-language": "2026-10-23",
+    "https://www.metaversewatcher.io/best-smart-glasses-for-prescription-wearers-2026": "2026-11-14",
     "https://www.metaversewatcher.io/even-g2-brown-2-price-sun-clips-chain": "2026-10-27",
     "https://www.metaversewatcher.io/even-g2-enterprise-sdk-company-apps": "2026-11-13",
     "https://www.metaversewatcher.io/even-g2-update-2-4-0-knowledge-base-even-ai-2": "2026-10-27",
@@ -272,6 +278,14 @@
     "https://www.reddit.com/r/EvenRealities/comments/1xunbkp/messaging_on_g2": "2026-11-13",
     "https://www.reddit.com/r/EvenRealities/comments/1xup8cg/live_captions_plugin_for_even_g2_opensource": "2026-11-13",
     "https://www.reddit.com/r/EvenRealities/comments/1xuqpze/i_built_a_smart_glasses_app_for_even_g1g2_glasses": "2026-11-13",
+    "https://www.reddit.com/r/EvenRealities/comments/1xuvfpd/6_month_review": "2026-11-14",
+    "https://www.reddit.com/r/EvenRealities/comments/1xv5mgu/two_missing_things": "2026-11-14",
+    "https://www.reddit.com/r/EvenRealities/comments/1xv8p53/black_friday_deal_is_here": "2026-11-14",
+    "https://www.reddit.com/r/EvenRealities/comments/1xv97l9/buying_an_even_g2_get_3_months_of_chesly_plus_free": "2026-11-14",
+    "https://www.reddit.com/r/EvenRealities/comments/1xvdnst/i_built_a_free_meta_harness_for_all_my_ai_agents": "2026-11-14",
+    "https://www.reddit.com/r/EvenRealities/comments/1xvjv8l/officially_a_g2_owner": "2026-11-14",
+    "https://www.reddit.com/r/EvenRealities/comments/1xvjvcw/officially_a_g2_owner": "2026-11-14",
+    "https://www.reddit.com/r/EvenRealities/comments/1xvl2db/technology_should_bring_us_closer_to_life_step": "2026-11-14",
     "https://x.com/3mintimer/status/2113049047519105267": "2026-10-23",
     "https://x.com/3mintimer/status/2114965111257563571": "2026-10-28",
     "https://x.com/3mintimer/status/2115241711295414535": "2026-10-31",
@@ -458,7 +472,11 @@
       "com.quaklab.dragonscouter@0.3.3",
       "com.jaketran.breathe@1.2.1",
       "com.irispublic.assistant@2.1.394",
-      "com.kfood.recipe@0.1.0"
+      "com.kfood.recipe@0.1.0",
+      "com.gaze.app@2.0.109",
+      "com.mune.classcaption@0.1.4",
+      "com.mune.livecaption@0.1.5",
+      "com.irispublic.assistant@2.1.420"
     ]
   }
 }
