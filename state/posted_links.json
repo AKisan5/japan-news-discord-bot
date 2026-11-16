@@ -2,6 +2,366 @@
   "version": 1,
   "posted": [
     {
+      "url": "https://www.cnbc.com/2026/11/16/altimeters-brad-gerstner-investing-5-billion-in-anthropic-ipo.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/tech-policy/2026/11/us-moves-to-cut-chinas-remote-access-to-ai-chips/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/openai-california-bonta-ai-lawsuit.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/prediction-market-odds-for-tesla-spacex-merger-by-april-2027-top-60percent.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/anthropic-proxy-destiny-tech100-fund.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/16/technology/california-openai-ai-safety.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-16/nasdaq-100-plunges-as-nvidia-earnings-anthropic-ipo-on-horizon",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/fed-ai-task-force-kevin-warsh.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/tech/1034501/nvidia-board-jensen-huang-not-bringing-back",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/16/1148624/the-open-source-movement-wants-jensen-huang-back/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383354/fed-modeling-ai-super-intelligence-scenarios-job-losses-stock-market",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-16/apple-to-let-users-face-unlock-iphone-duo-addressing-key-drawback",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/nvidia-ceo-jensen-huang.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/16/sam-altman-on-nvidia-without-jensen-huang-the-industry-will-be-fine/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/openai-independent-ai-safety-evaluators.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383334/nvidia-stock-rebound-in-sight-if-bulls-can-clear-hurdle",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/16/us/politics/trump-china-ai-chip-loophole.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/bitcoin-slides-to-62000-following-liquidation-cascade-then-rebounds-slightly.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-16/altman-says-ai-industry-will-be-fine-after-huang-s-ouster",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/warren-buffett-donates-5point5-billion-thanksgiving.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/16/fbi-says-artex-ai-open-source-hacking-tool-used-to-breach-networks-in-under-three-hours/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/nvidia-commerce-china-lutnick.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383347/saylor-strategy-buying-bitcoin-adding-little-orange-dip",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/16/jordan-belforts-new-ai-voice-startup-tone-wants-to-sell-like-the-wolf-of-wall-street/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383333/tokenization-is-not-the-finish-line-jupiter-to-let-users-borrow-against-bullish-shares",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/16/openai-will-embed-apollo-researchers-to-investigate-ai-subversion/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/16/openai-releases-a-new-image-classifier-and-chatgpt-warnings-to-combat-csam/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://openai.com/index/expanding-chatgpt-for-academic-researchers",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://openai.com/index/strengthening-online-child-safety",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/health/2026/11/us-now-comfortable-with-children-dying-of-measles-as-death-toll-hits-10/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/16/audible-turns-to-ai-to-help-users-discover-audiobooks/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/16/us-tightens-ai-chip-export-controls-to-deter-chinese-companies-from-accessing-compute-remotely/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/16/google-maps-can-now-build-trip-itineraries-with-real-time-details-about-each-stop/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/ai/2026/11/jensen-huang-allies-build-a-war-room-to-get-him-back-at-nvidia/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.itmedia.co.jp/news/article/2611/16/2000003244/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/cars/2026/11/mercedes-clever-new-driving-assist-handles-complex-traffic-like-a-champ/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/tech/1034083/audible-audio-discovery-ai-feature-availability",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/tech/1034110/google-ask-maps-ai-trip-planning",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/16/business/media/apple-tv-podcasts-youtube.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383301/morning-minute-crypto-hits-extreme-fear-as-bitcoin-plunges",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=748183",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383302/ledger-brings-clear-signing-to-solana-ending-blind-signing-for-jupiter-swaps",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/16/1148599/the-download-testing-tech-promises-cognitive-immortality-quest/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1031740/jensen-huang-nvidia-scandal-isnt-slowing-down",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/16/1146070/building-ai-that-can-work-across-the-enterprise/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/16/freshworks-alums-raise-53m-to-take-on-salesforce-hubspot-with-ai-native-crm/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/gadgets/2026/11/the-drone-delivery-boom-could-be-a-nightmare-for-people-traumatized-by-war/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://openai.com/index/science-at-the-frontier",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/nvidia-was-already-in-trouble-before-the-jensen-huang-mess/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/16/technology/sam-bankman-fried-anthropic.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.itmedia.co.jp/news/article/2611/16/2000003226/",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://openai.com/index/lvmh-media-division-partnership",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383351/trump-elon-musk-sam-altman-jensen-huang-nvidia",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-16/hadrian-targets-critical-bottleneck-in-us-shipbuilding-video",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-16/tusk-jensen-huang-should-not-return-as-nvidia-ceo-video",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPbzVadGNWMEdfc0hWVHpvbUpKWHFOYldmQ0dnYkFGSEdpR1NqZ1dwRGpHeUdydldNM2s4aTVLaUQzaUVZSW9pM3lUY1d6QVZUbDhpMmFBY3Q1ZF9EWmhnZnJ3dW0zTGUwakRwc2VLRWR1S2dvMUxLUTVmcjFxTm9hWGRSNXdSWWc?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-16/nvidia-fallout-adds-new-tension-to-us-china-ai-race-video",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/disney-options-trade-before-earnings.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cry49plv8v3go?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-16/hochul-taps-200-million-from-transit-in-backdoor-raid",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-16/nvidia-bull-ai-growth-story-remains-intact-video",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-16/bloomberg-tech-11-16-2026-video",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQV1daR1hRU01kRkdxbEZMbjdlT2xHb0pXdFE2cWVORVhFMnY4QXJvSENFdnJXa3lkR1FIZFRTWTFrN041Y1drUFBub2VZT1hhdURVTl9Od0FCSmh4Tm16LVVHZFktemdrMkxwVEZhOTJGVVFwZGxXYTdTVlRobElXNXRYSnl3XzRHdEpfOHZDYm1mTUJhMWZqYUtUcGw?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-16/opinion-jensen-huang-cannot-return-to-nvidia-video",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNelJMNzh5ME5mdW85a2xVZXc5REFxNENGQUdsTm9wVkV5WTExRU9PUkpwWXpWQ2RpaHNleUlnTmhlX0c1bjdlN1RVX2dYY1Rqd3gyV25nSVlUMy1zOW1TNGhRaE9BTUl5ekxQcGFRSXdnXzRaOGJVTmJLWm9pMmNFTHNMRFY5aGNfMXUyZEZJTFdNbl8xbGhn?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxOLVFJMnpmWXlULUdXQWJjRkhEOEJua21CajlYeENWNUt6Z1F5Q3RMWHphQ3gwWTJOQjhiQTVadi1uYXIwTXBGN1MzS1N3dmdNdXBHRHdrRU5qS0hNMjBoTzZZNDhXNDBIOWxRVnZkdzlFU0dDOXFMZ01EUE54RktVRjVlSVo2OTdldjBjVWVyenI1LXloZXdzX0E2dGFmSjdfSUJlVDlFV0FESjRCcjlWNXk5NHE3aTh4ZVBfVDBjVFZaQUVtUGhtenhXMzBPakk?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTFB5alFVaGxMUG9vVDhsek5tUXhCQ0lwWEs0YVd6VDZjdHdKbGhWUUxudDE3VGRIRG01NXhZT1V6dFUxYnduZ0V3SFVJaENyZEpMY0txOUdJTjN3VUVSV3NtVGtQMFJiaXkxRXMwU0RBSWRjdXg5WVo4?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPQzZ1TTF4S0hyU0M0ZGU4WnpsLWwwWXpPanFQMEdLZFE1Q1lzTzlvTWNUdGhubTVVYnV2SDh1cDhwSXZZNDczSjBVcHhubWF1UjRGRGVRX3RTV3JxQ3U5REFFZy1rZ29fZklNdExOWmhLX21jYXlQbnhJZlAtSkkxeVV6RW5iWU1ZNGk3dDEwTlh4c0k?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxPZ1hSRjhMemVIX2dQSjBFMUxEdEFKTDZpUTN4RjV0N3hUT1JCaHJFelhIVjZRaWY0aktLelY2X0pjRDJlbFRFRGEzUk5mT1NtMi1yZkY1VlZ2blN2TWtsTktkZGJIVEMxVzMtUWJkVGRuOF9ZNVpKSjdQY185SVkyNjA0M0ZjMWtHSXJOcjVFQmZ1Z3BxWEgzQkdReXI2bmQtZVE?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-16/global-oil-slide-threatens-us-plastics-makers-cost-edge",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxQWVlkSEdUTG11TUMzMTctOExYOVE0ZUh0amNlazF6RmNjS1FLT1VjLWxRdmYwTnBySVRzU1BvUm1EQmFidnZici0tbFdXMGVQTGxJZEFDbGt5M1dQZ2ZHbEw1cVQ4bk1nNUVsZTNwdVJDaUFsY2dCaUpXTUlZYWNRZTh1b0FtaVJYeWRqT3d2WEs1VDI0bjhCclNPWHpNVjA0Si1Cak5VT0VrNXRkSDcwb1cxdzZOYnhfV09PRg?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxNWExxSXJVZFhpQVdrcVhYNXhaWEFldXg4NUxQZmxKNzQ5Z0NnWnNLOGNVZWRxMk1kNDcxOU50dGZTZkZ4a2dMb3pDMzZzRDliRmp0MjdubDVFdjRrbWVMS19LdERoMXhEd2NJLTcyUmRGMFFtU2Z3Q25hMHlJTWY0TGhRVDZBZ21wTlF1YTFCZVFYNEU1Tm9hWjFZWjhJdXYzNDZTeGtmUjl0SmxzVmlRSjJR?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxONnVrdDVQZmVyZUFKNnRudUhRR01ISWhrU1VCZEUwOGx0N1ZucVY2bkR0TTdmV216bk9PbXk1cm91SmxOdmtaTEg5VFgxNXloMW9rV2w0VXJfQjBxc1BER2l4cDdyNFk4SmdWOXgyaUVEU1hMTlJYcmlRSXI1bGJOWThPQzRIRV92aVpBQ0dn?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-16/dollar-erases-liberation-day-loss-as-sell-america-fear-fades",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE0zc1k1MTVGVXo5aGhjRDBZSWgzZWNFVFVaSVRBUjRCT3ctVlNveFRoYTRqRnpPVW1FOXV6ZjlWXzhaNlV2QjV2ZVNuS1ZINjdPdVdvZHUtc2lSSjZnUlE2OU55MENSVzlVR2R6eg?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTFBSS2s0M1BqNFRIWlE4c1kzanBvakgzcW9aVm0tNFpUQU5oNHlBcTdWaVMxbVJ4RTVOd3E0OGRXWDZoV1dlMWM4SndjeDN1bTMwRENGOUtudXAwdkRzN2NTeUtoMmJsbmtKU0xocUNYcFlNRzB6TjZJ?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPOFRscFU2Tnd4dkpNWURqN2NDcEg1eHBNUW9VTTd5YkRBNlA2eVJkV0xsWHpqNExCek4xTUY0VlU5TjJYM1ZJaWE3YkVNZndhUE5CamYyZlh3WGhRUHhUVzhDRW1IUkVTXzBBQ1hXMTkzM0tiNF9DZGpZcUlTb0xQOFBsVEM1VDhnV0taSlpYYTNsQUpyMnlKQzNSenU3alBia0ZJR1QyQ2hSX3g5bG1yX3d3dTBublY1?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNbnY1dHJyUUt2WXptNzV2UFR5WXNVVWF5alZUcVdJLTFIOVcyLUcwNUpVQy0ySzA4cWd1QnBmYzJkaUw5SENRRGpzR3BlQ3B1VFJtU1JvdmdoSmotYTMyVmlwUmhsenIwY21SeXVsTF9yRUoxdV9jVmx6UTk2SDgwYTNNa2IycS1ZV0tveTJReUI2VEhVZUhxMVlaOXVvRi1MZzc2dWhFUnhPanZx?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/videos/c60rkn7vdjxxo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTFA1MUEtbnFPb2Z2azVZUzVNWkQ3RGdoNm9mRHI3Wnlsa19sOHJ4azJNa3dOUTlUemduWkFaLTR5LXNHZUpDd0diQmpCWE9nY2JmcTUwQXNsTEVuaWNCY01HY0dEUDUxMnpnRVNMVEZ4Y0tUZWZ2d3Z0VDF3?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-16/us-oil-producers-sour-on-hedges-as-stronger-finances-offer-cover",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxOOXlLTW9ld2U2cjRMU3pVOFBtOEhlQzE2TnlxazhiOHltQU9icEhwRmhvUFRhWC1uQzJ0bldzQmhJcnNsMmVFVHJhY1hEcWdNcG9KLWJoWlVKSlNHOEZvREdCQjhsQTl5cm5FdXVFNmk4VGFSOHh6ZVlaZUh4NVE0MXUyMVNmNHhvbm1mLTlyR3VGQ25uM094OTdsUDJQNGFfaGxST0VyanJCdENNS213?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-16/warsh-says-fed-staff-are-sketching-out-ai-contingencies-video",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-16/will-spain-s-train-disaster-flip-the-vote-video",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-16/open-interest-11-16-2026-video",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-16/lula-worries-slam-brazil-markets-from-real-to-corporate-bonds",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE5ELTJwMXVUaGtNVy1DQVg2UVJpbmNsMHFYZXJDa2ZMTnJDenBrNGRvdXFNMzZWM3FjcFYybTNiSFoxMnA2MGJFOG56MTJHQWdCM2hvUmxuWUpSekRRSHdVaUY4R29lUUI2TEc3XzZIWXNFbHoxelE?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1VMEdQb2dCSU9OdDZXRUJONWR4Ui1DQ2ZycEZvcnlvVHVJeVJLNnM4WDhJR0NsR1VmbkJqS2VTX2MxQTFzaFo0Y0VXUkhlNkFCZ2MzVGNEWWlocF9SblRNbEoyalNpbzNULTEyWA?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOZEJobHpHMl90WUdVbnpzSGxLb1l3bi1BczhrN29iVW9rUzBtQWE4aFNuM2ZGS1RIQThLdEZPWmZjeExVaHhRaXBubkdqR3R3TXJYTlRqUmRYcXZxYS1pV1lyRlExUDdEUWJ3cTg4aktJVWcxbkg5UW9oeVRXLXhCZjdRQmFNeFJlLXhpWTRMM1lEUVlodGwxVHNCSE9ONTlnem0yekw1dDNraElYZGc?oc=5",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/16/robert-pattinson-james-bond.html",
+      "posted_at": "2026-11-17T04:23:44.145902+09:00"
+    },
+    {
       "url": "https://www.bloomberg.com/news/articles/2026-11-15/vc-firm-run-by-madonna-s-manager-has-7-billion-anthropic-stake",
       "posted_at": "2026-11-16T01:11:52.468380+09:00"
     },
