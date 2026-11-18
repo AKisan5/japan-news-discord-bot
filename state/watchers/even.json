@@ -1,11 +1,12 @@
 {
   "alerts": {},
-  "last_posted_at": "2026-11-18T08:06:47.482366+09:00",
-  "last_posted_day": "2026-11-18",
+  "last_posted_at": "2026-11-19T08:06:37.580728+09:00",
+  "last_posted_day": "2026-11-19",
   "reported": {
     "https://9to5google.com/2026/11/11/even-realities-enterprise-sdk": "2026-11-12",
     "https://evenrealities.typeform.com/to/wngxSIoQ": "2026-10-31",
     "https://github.com/100yenadmin/glasses-platform": "2026-10-20",
+    "https://github.com/3mintimer/muse-relay": "2026-11-19",
     "https://github.com/ARCANGEL0/even-auth": "2026-11-13",
     "https://github.com/Bannerz/G2Attitude": "2026-11-15",
     "https://github.com/Bhanu047/glucose-hud-g2": "2026-11-10",
@@ -40,6 +41,7 @@
     "https://github.com/asuhacoder/even-grok-bot": "2026-11-12",
     "https://github.com/atlas-open-sources/borderless": "2026-11-04",
     "https://github.com/azimkhan20002-cmd/hermes-g2": "2026-11-14",
+    "https://github.com/bbaakkuu-svg/EvenHub-Agenda-Cultural": "2026-11-19",
     "https://github.com/capierc3/mentra-media-bridge": "2026-11-11",
     "https://github.com/cdayAI/Even-G2-Potential-Apps": "2026-10-27",
     "https://github.com/d3hospitality/isometric-sf-even-g2": "2026-11-08",
@@ -64,16 +66,22 @@
     "https://github.com/mjtomei/pageborne": "2026-10-25",
     "https://github.com/mourad-ghafiri/evenrealities-g2-super-intelligence": "2026-10-31",
     "https://github.com/mrahtz/even-g2-js": "2026-11-03",
+    "https://github.com/naplex666/glancefi-g2": "2026-11-19",
     "https://github.com/prudnik-web/Hypernova": "2026-10-23",
     "https://github.com/r-tkbyc/even-my-message-hub": "2026-10-31",
     "https://github.com/reeeeeee-dev/even-herdr": "2026-11-17",
     "https://github.com/reseed-ops/bubbles-even-g2": "2026-10-25",
     "https://github.com/s-iwaki-d/esp32-muse-g2": "2026-10-24",
+    "https://github.com/sauceshib-cyber/glance-g2": "2026-11-19",
+    "https://github.com/sayzard/even-orca": "2026-11-19",
     "https://github.com/shun-yamachika/even-g2-portfolio": "2026-10-28",
     "https://github.com/smavromatis/levelhead-g2": "2026-11-12",
     "https://github.com/smogpaster/dm-copilot": "2026-11-13",
     "https://github.com/sonozaki7/even-agent-bridge": "2026-11-07",
+    "https://github.com/sorbet-ai/even-cc": "2026-11-19",
     "https://github.com/takayana1027/even-hub-app": "2026-11-06",
+    "https://github.com/tonlover247-pixel/yesglance": "2026-11-19",
+    "https://github.com/tungdeptrai07/even-realities-g2-hud": "2026-11-19",
     "https://github.com/watlablog/even-g2-fft": "2026-11-15",
     "https://github.com/youssefelsane-hash/Even_G2-": "2026-11-08",
     "https://github.com/yuk1-kondo/neck-stretch-g2": "2026-11-07",
@@ -512,7 +520,10 @@
       "com.mune.livecaption@0.1.5",
       "com.irispublic.assistant@2.1.420",
       "com.gaze.app@2.0.128",
-      "com.irispublic.assistant@2.1.445"
+      "com.irispublic.assistant@2.1.445",
+      "com.gaze.app@2.0.140",
+      "local.manfr.everreplytranslator@9.8.17",
+      "com.irispublic.assistant@2.1.467"
     ]
   }
 }
