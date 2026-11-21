@@ -1,7 +1,7 @@
 {
   "alerts": {},
-  "last_posted_at": "2026-11-21T08:06:38.455644+09:00",
-  "last_posted_day": "2026-11-21",
+  "last_posted_at": "2026-11-22T08:06:43.429166+09:00",
+  "last_posted_day": "2026-11-22",
   "reported": {
     "https://9to5google.com/2026/11/11/even-realities-enterprise-sdk": "2026-11-12",
     "https://evenrealities.typeform.com/to/wngxSIoQ": "2026-10-31",
@@ -21,9 +21,12 @@
     "https://github.com/ItsRuntimeException/even-g2-dot-assistant": "2026-10-31",
     "https://github.com/JohnRThomas/Even-G1-Firmware": "2026-11-07",
     "https://github.com/JohnRThomas/Even-G1-Simulator": "2026-11-07",
+    "https://github.com/JoshuaLevi/bottoms-up": "2026-11-22",
     "https://github.com/KimUJeon/SubwayQuickExit": "2026-11-20",
+    "https://github.com/Klowor2002/tg-glance": "2026-11-22",
     "https://github.com/LeiGuangTianYi/EvenG2-MD3Music-Lyrics": "2026-11-18",
     "https://github.com/Lutreras333/g2-assistant": "2026-11-18",
+    "https://github.com/M4k10HREM/g2-cad-viewer": "2026-11-22",
     "https://github.com/Matthew30fps/Cyberpunk-HUD-for-EvenG2": "2026-11-11",
     "https://github.com/MiroslavProchazka/Even_G2_OS": "2026-10-26",
     "https://github.com/MrDorachan/GlassPort": "2026-11-08",
@@ -46,6 +49,7 @@
     "https://github.com/amazing200guy1-a11y/opticsentry-os": "2026-11-20",
     "https://github.com/ansarireza/Field-Mastery": "2026-10-31",
     "https://github.com/antonioeram/even-app-messenger": "2026-11-13",
+    "https://github.com/antonmogul/readwise-g2": "2026-11-22",
     "https://github.com/asuhacoder/even-grok-bot": "2026-11-12",
     "https://github.com/atlas-open-sources/borderless": "2026-11-04",
     "https://github.com/azek-dev/g-kentei-quiz-g2": "2026-11-20",
@@ -59,6 +63,7 @@
     "https://github.com/darendrarp/glance-trade-g2": "2026-11-20",
     "https://github.com/dragonautilus/simple-euro-transit": "2026-11-06",
     "https://github.com/drdaeman/g2-bootloader-patch": "2026-11-06",
+    "https://github.com/elijahsgh/bluERsky": "2026-11-22",
     "https://github.com/eugene8080/messenger-glass": "2026-11-05",
     "https://github.com/even-realities/enterprise_sdk": "2026-11-12",
     "https://github.com/even-realities/enterprise_sdk/releases/tag/0.1.0-beta.14": "2026-11-12",
@@ -77,6 +82,7 @@
     "https://github.com/jiajiezhou95/even-nav": "2026-10-23",
     "https://github.com/jimrandomh/faceclaw/releases": "2026-11-03",
     "https://github.com/keenranger/dot-cloud-g2": "2026-10-24",
+    "https://github.com/khj0209/even-g2-assistant": "2026-11-22",
     "https://github.com/khj0209/even-g2-running": "2026-11-20",
     "https://github.com/khj0209/even-g2-status": "2026-11-20",
     "https://github.com/lb2002/g2-study": "2026-11-21",
@@ -107,6 +113,7 @@
     "https://github.com/sora-uzu/even-g2-workout-log": "2026-11-21",
     "https://github.com/sorbet-ai/even-cc": "2026-11-19",
     "https://github.com/takayana1027/even-hub-app": "2026-11-06",
+    "https://github.com/taufik52/even-telegram-inbox": "2026-11-22",
     "https://github.com/tegar07257/inbox30": "2026-11-20",
     "https://github.com/tonlover247-pixel/yesglance": "2026-11-19",
     "https://github.com/tungdeptrai07/even-realities-g2-hud": "2026-11-19",
@@ -137,6 +144,7 @@
     "https://hub.evenrealities.com/catalogue/com.mune.seoulculture": "2026-11-07",
     "https://hub.evenrealities.com/catalogue/com.quaklab.dragonscouter": "2026-11-11",
     "https://hub.evenrealities.com/catalogue/com.quaklab.phonefinder": "2026-11-10",
+    "https://hub.evenrealities.com/catalogue/com.spinai.aisvi": "2026-11-22",
     "https://hub.evenrealities.com/catalogue/com.t3x.tamilprompter": "2026-11-06",
     "https://hub.evenrealities.com/catalogue/com.topcs.ytmlyrics": "2026-11-11",
     "https://hub.evenrealities.com/catalogue/com.tsthagoat.netrunner": "2026-11-05",
@@ -169,6 +177,7 @@
     "https://support.evenrealities.com/hc/en-us/articles/13754841698319-First-Activation": "2026-11-03",
     "https://support.evenrealities.com/hc/en-us/articles/13754865887375-What-s-Included": "2026-11-18",
     "https://support.evenrealities.com/hc/en-us/articles/13754885105295-How-to-Charge": "2026-11-20",
+    "https://support.evenrealities.com/hc/en-us/articles/13754897068559-How-to-Pair": "2026-11-22",
     "https://support.evenrealities.com/hc/en-us/articles/13754911116047-How-to-Control": "2026-11-06",
     "https://support.evenrealities.com/hc/en-us/articles/13755050878479-Frame-Fitting": "2026-11-21",
     "https://support.evenrealities.com/hc/en-us/articles/13755130259599-How-to-Clean-Your-Lens-and-Frame": "2026-11-18",
@@ -565,7 +574,10 @@
       "it.matteopiras.deepsky@1.0.2",
       "com.irispublic.assistant@2.1.479",
       "com.gaze.app@2.0.146",
-      "com.irispublic.assistant@2.1.492"
+      "com.irispublic.assistant@2.1.492",
+      "com.gaze.app@2.0.150",
+      "com.spinai.aisvi@0.4.2",
+      "com.irispublic.assistant@2.1.496"
     ]
   }
 }
