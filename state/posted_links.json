@@ -2,6 +2,366 @@
   "version": 1,
   "posted": [
     {
+      "url": "https://www.cnbc.com/2026/11/24/jensen-huang-nvidia-employee-meeting.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/trump-jensen-huang-nvidia.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/trump-nvidia-jensen-huang-national-security-china-chips.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/anthropic-options-trading-ipo-price.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/jensen-huang-nvidia-congress-gtc.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/nvidia-jensen-huang-fbi-doj-patel-blanche.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383909/bitcoin-losses-worst-since-ftx-is-bottom-near",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383898/wall-street-crypto-extreme-whats-spooking-investors",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383906/cftc-new-crypto-reserves-guidance-actually-allows-what-it-doesnt",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383905/south-korea-moves-lift-ico-ban-after-nearly-decade",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/kalshi-perps-volume-prediction-markets.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/24/anthropic-shares-fall-below-ipo-price-a-worrying-sign-for-ai-startups/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-24/coreweave-bonds-hit-all-time-lows-erasing-nvidia-fueled-gains",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-24/trend-followers-dump-bond-shorts-as-stocks-swoon-aids-haven-bids",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-24/bank-of-canada-fades-core-inflation-switches-gauges",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-24/canadian-dollar-gains-most-since-august-on-boc-inflation-warning",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-24/fhfa-clears-fico-10t-scores-for-fannie-mae-and-freddie-mac",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/consumer-confidence-november-election-midterm.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/retail-turnarounds-holiday-season.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/insmed-sanofi-deal-stock-pharma.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/commercial-real-estate-activity-falls-14percent-in-october.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/24/technology/jensen-huang-apology-nvidia-ceo.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/24/business/nvidia-alice-huang-china.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/23/technology/jensen-huang-nvidia-board-trump.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/23/technology/openai-engineer-secret-recordings.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/23/us/politics/trump-nvidia-national-security.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/23/us/politics/trump-nvidia-huang.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/23/technology/republicans-trump-jensen-huang-nvidia.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/23/technology/trump-nvidia-stock-purchases.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/24/uk-warns-ai-driven-cyberattacks-are-exposing-years-of-weak-security/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/24/meta-brings-its-muse-ai-assistant-directly-into-instagram-dms/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/24/why-a-crusoe-investor-is-betting-on-solar-and-batteries-to-power-future-ai-data-centers/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/24/amazons-decart-acquisition-is-a-bet-on-using-software-to-narrow-the-gap-with-nvidia-in-the-ai-chip-race/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/23/anthropic-launches-claude-ship-letting-ai-agents-review-fix-and-approve-code-changes/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/23/supertake-raises-20m-to-let-ai-agents-turn-your-market-predictions-into-stock-portfolios/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/23/elon-musk-and-others-rejoice-as-jensen-huang-is-reinstated-at-nvidia-amid-scandal/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/jensen-huang-apologizes-to-nvidia-employees-in-first-all-hands-since-his-return/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/ai-agents-can-get-honeypotted-too-aw/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/ai-solved-maths-most-famous-problem/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/jensens-back-stocks-up-what-the-hell-sure/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/ai/2026/11/tidal-will-ban-fully-ai-generated-music-on-december-9/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/gadgets/2026/11/faa-opens-probe-after-amazon-delivery-drone-clips-cable-crashes-into-garage/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/space/2026/11/amazon-surges-launches-with-rival-spacex-after-ula-fails-to-deliver/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/tech-policy/2026/11/how-trump-and-silicon-valley-forced-nvidia-to-take-jensen-huang-back/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/tech-policy/2026/11/kalshi-makes-difficult-decision-to-halt-utah-trading-after-losing-court-fights/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/cars/2026/11/new-york-says-no-more-subscriptions-for-in-car-features-or-does-it/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/space/2026/11/nasa-may-get-2-billion-boost-as-white-house-seeks-to-accelerate-artemis/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/entertainment/1041362/tidal-ai-music-ban",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1041227/the-new-york-times-warns-photographers-not-to-update-photoshop-over-ai-features",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/tech/1041222/jensen-huang-nvidia-scandal-deepfakes",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1040652/jensen-huang-nvidia-trump-reinstated",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1030422/nvidia-jensen-huang-ai-china-alice-huang",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1040819/welcome-to-elite-impunity-jensen-huang",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/science/1040497/ai-data-centers-electricity-un-climate-summit",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1040134/anthropic-claude-ship-ai-pull-requests",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/tech/1040428/nvidia-jensen-huang-ceo-return",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/24/pinterest-will-now-let-parents-limit-the-ai-generated-content-their-teens-see/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/24/tidal-to-ban-and-remove-millions-of-ai-generated-tracks-as-ai-slop-inundates-music-streaming/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/24/1148091/raising-the-stakes-for-enterprise-networks-with-ai-modernization/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/24/1149669/the-download-data-centers-gas-ai-consciousness/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/24/1149622/data-centers-natural-gas/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/23/1149569/a-legendary-philosopher-isnt-buying-anthropics-consciousness-argument/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://deepmind.google/blog/finding-faster-quantum-algorithms-with-agents-and-formal-verification/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383877/europol-traces-28m-in-crypto-behind-europes-illegal-streaming-industry",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383874/justice-department-moves-to-forfeit-1-1b-in-usdc-from-north-koreas-binance-hack",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383857/certik-trains-interpol-investigators-to-trace-and-freeze-stolen-crypto",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://decrypt.co/resources/what-is-pons-the-robinhood-chain-meme-coin-launchpad-explained",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383889/ansem-meme-coin-crashes-wallet-drain-bullpen-security-breach",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383868/morning-minute-jensen-returns-markets-soar-except-crypto",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261124de80879",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261124de80890",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261124de80880",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261124de80861",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.itmedia.co.jp/news/article/2611/24/2000003427/",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261124de80663",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261124de80569",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=749332",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=749260",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=749215",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=749256",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=749155",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://coinpost.jp/?p=749162",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://openai.com/business/customer-stories/intentful-dots",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://openai.com/business/customer-stories/ifood",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://openai.com/index/introducing-shirudo",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-24/most-exciting-time-for-fintech-cunningham-video",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/24/treasury-yields-bonds-inflation.html",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-24/trump-s-nvidia-push-is-crony-capitalism-says-killin-video",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-24/six-million-people-will-fly-this-week-sununu-says-video",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
+      "url": "https://www.finextra.com/pressarticle/111776/rain-issues-instant-issue-physical-cards?utm_medium=rssfinextra&utm_source=finextrafeed",
+      "posted_at": "2026-11-25T05:05:04.861932+09:00"
+    },
+    {
       "url": "https://www.bloomberg.com/news/articles/2026-11-22/spy-chief-says-us-probing-alleged-spy-tied-to-former-nvidia-ceo",
       "posted_at": "2026-11-23T02:00:17.419823+09:00"
     },
