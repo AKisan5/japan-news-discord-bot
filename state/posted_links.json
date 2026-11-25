@@ -2,6 +2,366 @@
   "version": 1,
   "posted": [
     {
+      "url": "https://www.cnbc.com/2026/11/25/nvidia-ai-stock-tech-selloff.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/spacex-fcc-satellite-approval.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/anthropic-ipo-employee-millionaires-sudden-wealth.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/elevenlabs-in-early-talks-for-2027-funding-at-33-billion-value",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/spacex-receives-government-approval-to-launch-space-data-centers",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/25/technology/anthropic-stock-tech-start-ups.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/investingclub/2026/11/25/anthropics-stock-has-been-a-clunker-post-ipo-why-that-matters-for-the-ai-trade.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/us-tariffs-trump-section-301.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/25/want-to-buy-your-kid-an-ai-toy-this-christmas-not-in-new-york/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/openai-bugging-aflozan-bond-release-saudi.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/openai-ipo-odds-2027-prediction-markets.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261126de81560",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/ontario-teachers-ceo-says-very-long-ai-buildout-imperils-bets",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/coreweave-s-banks-to-sell-4-5-billion-meta-tied-loan-next-week",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/coreweave-nvidia-credit-risk-hit-fresh-highs-as-ai-fears-mount",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/spacex-sole-source-deals-targeted-in-defense-spending-bill",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/anthropic-s-post-ipo-struggles-contrast-with-spacex-s-early-days",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/holiday-inflation-thanksgiving-travel-food-gifts.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/treasury-yields-bonds-inflation.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/pce-inflation-report-october-2026.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE40WVh5dnNFV21zMjM1X3dZaHRpY1JVNnFDV3NUSU9abUtzZF8zWE5udU43cHJCLVFlS1ZsWVhhazY4N2NQTmh6b3Vsb3MzVFE4THViT2NreXo0QldKb0tCOG5SZVltRlVoeEtIZA?oc=5",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://news.web.nhk/newsweb/na/nd-20261126de81556",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/25/state-ags-fight-character-ais-plan-to-auction-off-users-private-chats/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383963/openai-changes-chatgpt-drastically-cut-usage-limits",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/tech/1042071/meta-amazon-muse-ai-shopping-discussions",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/25/amazon-and-meta-reportedly-in-talks-to-lift-blockade-on-ai-agent-muse/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/podcast/ai-data-centers-are-becoming-harder-to-build-and-neoclouds-are-feeling-it/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/25/1149836/data-centers-gas-power-plants/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/kalshi-traders-say-the-odds-of-states-imposing-data-center-moratoriums-is-more-likely-than-not.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/tech-policy/2026/11/jury-convicts-huawei-of-stealing-us-trade-secrets-evading-iran-sanctions/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.finextra.com/newsarticle/48816/fincen-takes-some-systems-offline-after-suspected-cyber-attack?utm_medium=rssfinextra&utm_source=finextrafeed",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/security/2026/11/a-familiar-iranian-hacking-group-has-found-a-new-way-to-cause-chaos/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/information-technology/2026/11/backblaze-explains-why-its-sharing-customer-information-with-advertisers/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/tech-policy/2026/11/etsy-clarifies-ai-terms-after-seller-backlash/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383962/ukraine-passes-law-to-legalize-and-tax-its-crypto-market-from-july-2027",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/ukraine-adopts-crypto-rules-to-boost-revenues-for-war-hit-budget",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383944/french-senate-rejects-plan-to-make-crypto-holders-declare-self-custody-wallets",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383967/bitcoin-sinks-inflation-trump-tariffs-ai-selloff",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383938/hyperliquid-leads-altcoin-losses-as-bitcoin-slips-below-59k",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383941/florida-man-jailed-for-using-ai-to-pose-as-streamer-n3on-in-260k-crypto-scam",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383985/elon-musk-x-court-judgment-bitcoin-bot-farm-operators",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383991/elon-musk-spacex-fcc-approval-ai-data-centers-space",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/science/1042278/spacex-fcc-starmind-ai-space-data-centers",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/gadgets/1042162/nothing-ear-note-ai-earbuds-reveal",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.theverge.com/ai-artificial-intelligence/1040081/vibe-coding-open-source-music-firmware",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/c65y10j841jpo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/c3rrgqj2zx5yo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cm3vgdn037z4o?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cq0md8g14zryo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cq772vk664yvo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/ckp80mjr9emyo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cmd718zydz9qo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/ck9q8xp5r5pgo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cw8dv112r5gmo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cq4gn6gj3z37o?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/ckx283y8wwwgo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bbc.co.uk/news/articles/cqwy0rr4rr4yo?at_medium=RSS&at_campaign=rss",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/michael-burry-is-more-long-than-short-after-dumping-nasdaq-puts",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-25/gold-slumps-on-rate-hike-outlook-ai-stocks-selloff-video",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/nvidia-kevin-warsh-fed-market-signals.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.cnbc.com/2026/11/25/norse-atlantic-financial-warning-fuel-costs.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/bc-premier-doerkson-orders-ministers-to-repeal-ndp-environmental-tax-rules",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/russian-refinery-runs-plunge-to-lowest-in-decades-rystad-says",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/articles/2026-11-25/south-african-finance-panel-backs-interbank-rate-transition-law",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.wired.com/story/airplane-turbulence-is-extremely-hard-to-predict-and-avoid/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/25/technology/thanksgiving-ai-doom-family.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/25/technology/personaltech/apps-widgets.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.nytimes.com/2026/11/25/arts/design/artport-whitney-museum-digital-art-ai-paul.html",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/25/1149808/the-download-ai-open-records-permafrost-fires/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.technologyreview.com/2026/11/25/1149702/ai-is-straining-americas-open-records-systems/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/ai/2026/11/ai-can-do-the-calculations-physicists-are-figuring-out-what-comes-next/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/gadgets/2026/11/ladybirds-new-alpha-shows-theres-life-beyond-chromium/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/gadgets/2026/11/ars-live-recap-dont-expect-military-attacks-on-data-centers-to-stop/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/health/2026/11/army-detonates-tons-of-lead-azide-as-local-residents-brace-for-toxic-plume/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://arstechnica.com/space/2026/11/the-fcc-has-authorized-spacex-to-deploy-1-million-satellites/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://techcrunch.com/2026/11/25/the-questions-jensen-huang-and-nvidia-will-still-have-to-answer-about-megaspeed/",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://decrypt.co/383935/take-two-hits-gta-6-pc-port-leonida-with-dmca-taking-down-3007-github-repos",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-25/army-blows-up-hazardous-material-in-iowa-video",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-25/uk-set-to-record-lowest-net-migration-since-1997-video",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-25/netflix-to-buy-radford-studio-center-for-380-million-video",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOZE1sRHlKd3Y1aUpqaUVpeFQ3QjFmX191blVmM1gyS0hidW81RjFjSXJjQndnODAwQU9qb3VkYkJfZ3ppYzdBQ1J5cTRUaDMzamxvZVNsYzB6RUpiVzd2RlhxV2hKaDRjTFdhamRKZ3g3MXZDY1c5c3NMalpmc09aQ3JnNGEyQTR5NG85OW9VTEE1NW9md1VKdFYxeTlnbWNjd25UcjVwamhDX1pIaXc?oc=5",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOSnBOUlJZUTF5cnNnYzhrcm5hcm5NX1lUQWFrOGFKamtueXItbjZISVFEZnRfMkJnd1FIUmZqS1hBanNRbG5femZqZG1OZ0RWUkNOMVNUNUdLdmxsQzhUTzNwWU5aQWlJMTJKMVFIRjRXWENkVmdHb0JMZ3ZYUXBBbHprMU4zel91c2p1WElyd18?oc=5",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxNV3BLV01MMXl1a2FaazhNYWFseVlPZ2g0ZnBwdnI5aFdkV1pHR19QdzZQWDk4YlJMOFZtZk9PbVlwbmU1WXpXWjFHaHVfX3c0SVd5WHFRM0s3eW9EcUE1S1RTYUFxLXBvQmthZFFNYkFNRy1EeHNyM2gyT0prRzNPWEVPaGVGMFo2c1E1eTljc212bU5qY3EtdnlDN01WSTdnRjZOYkZKdW1lcmttSlcwazFrSFlidExMay1iTHlXaW1TQVBIUVE?oc=5",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-25/can-us-chip-controls-slow-china-s-ai-progress-video",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-25/us-genesis-mission-looks-to-ai-to-accelerate-science-video",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/videos/2026-11-25/bloomberg-tech-11-25-2026-video",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQRmdGMDdiZVhMaEZiM2hLVlNhdXQzZkM1b2F5NXFYaWZzbC1mX25kLU56ZThrNjFmZ2JVMW9fbjJhbUMwMXdzN3JLYXAyNE02a0FqclFyblhxZmxfbWRLVlQ5OFdoQkdmNEF1ZTlZUzRVVkkxQm14eDY0R1ZtUXJpRWhaNDE5c1hOM3pUYUhiRmJ1NnlTaGVrQk9uNGwwU2w5UmliTkRpZGQ?oc=5",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBTdjZqUmstZTViM1hzZjlic1BRbzV1dmpmV2M5QURVQXkxTUdFMEpXRFQxeHkzcWZnVjNCeDhZam5IbTh2ekFlVUZCbGJHN0toWmVzcFNhdWU5TlhrdXdlWUU5RGVmNThrMzllenNudWRHTVQ5cjdjQg?oc=5",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOR29qcW5GZG0tWkI3VU9aRnB4ZjJfX3QwSWhGa0cxck9SZk96cDZXT2xsN0tlWDZYQzVITVpfMEdFZDdXZXMzTlNUemV1SUFUY2pZVExWOFFxcUdmRkhvbWthN21mZG44WTAtQXB3ZE10VXV4cGhQOUFULXc2dTU0M0FwQTFiWlR3?oc=5",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
+      "url": "https://www.bloomberg.com/news/newsletters/2026-11-25/fast-fixes-for-cyber-flaws-mean-tech-outages-likely-to-continue",
+      "posted_at": "2026-11-26T04:09:31.755360+09:00"
+    },
+    {
       "url": "https://news.web.nhk/newsweb/na/nd-20261125de81109",
       "posted_at": "2026-11-25T14:14:04.431647+09:00"
     },
